@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/nav_bar.dart';
 import 'package:light_novel_reader_client/components/navigation.dart';
+import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/auth/login.dart';
 import 'package:light_novel_reader_client/pages/auth/register.dart';
@@ -71,8 +72,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Scaffold(
+    return Obx(() {
+      if (context.isMobile && !serverController.serverResponse.success && !authController.auth.isAuthenticated) {
+        return Scaffold(
+          body: SettingsPage(),
+        );
+      }
+
+      return Scaffold(
         body: MainNavigationBar(navItems: [
           if (serverController.serverResponse.success && !authController.auth.isAuthenticated)
             NavBarItem(
@@ -147,7 +154,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
         ]),
-      ),
-    );
+      );
+    });
   }
 }
