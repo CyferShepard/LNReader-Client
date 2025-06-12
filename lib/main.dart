@@ -79,9 +79,9 @@ class _HomePageState extends State<HomePage> {
         );
       }
 
-      return Scaffold(
-        body: MainNavigationBar(navItems: [
-          if (serverController.serverResponse.success && !authController.auth.isAuthenticated)
+      if (serverController.serverResponse.success && !authController.auth.isAuthenticated) {
+        return Scaffold(
+          body: MainNavigationBar(navItems: [
             NavBarItem(
               label: 'Login',
               icon: Icons.login,
@@ -91,68 +91,75 @@ class _HomePageState extends State<HomePage> {
                 uiController.setPage(0);
               },
             ),
-          if (serverController.serverResponse.success && !authController.auth.isAuthenticated && serverController.canRegister)
+            if (serverController.canRegister)
+              NavBarItem(
+                label: 'Register',
+                icon: Icons.app_registration,
+                child: const RegisterPage(),
+                onTap: () {
+                  authController.clearFields();
+                  uiController.setPage(1);
+                },
+              ),
             NavBarItem(
-              label: 'Register',
-              icon: Icons.app_registration,
-              child: const RegisterPage(),
-              onTap: () {
-                authController.clearFields();
-                uiController.setPage(1);
-              },
+              label: 'Settings',
+              icon: Icons.settings,
+              child: SettingsPage(),
             ),
-          if (authController.auth.isAuthenticated)
-            NavBarItem(
-              label: 'History',
-              icon: Icons.timer_outlined,
-              child: History(),
-            ),
-          if (authController.auth.isAuthenticated)
-            NavBarItem(
-              label: 'Favourites',
-              icon: Icons.favorite,
-              child: FavouritesView(),
-            ),
-          if (authController.auth.isAuthenticated)
-            NavBarItem(
-              label: 'Search',
-              icon: Icons.search,
-              child: (apiController.currentSource != "") ? SearchPage() : SourcesPage(),
-            ),
+          ]),
+        );
+      }
+
+      return Scaffold(
+        body: MainNavigationBar(navItems: [
+          NavBarItem(
+            label: 'History',
+            icon: Icons.timer_outlined,
+            child: History(),
+          ),
+          NavBarItem(
+            label: 'Favourites',
+            icon: Icons.favorite,
+            child: FavouritesView(),
+          ),
+          NavBarItem(
+            label: 'Search',
+            icon: Icons.search,
+            child: (apiController.currentSource != "") ? SearchPage() : SourcesPage(),
+          ),
           NavBarItem(
             label: 'Settings',
             icon: Icons.settings,
             child: SettingsPage(),
           ),
-          if (authController.auth.isAuthenticated)
-            NavBarItem(
-              label: 'Logout',
-              icon: Icons.logout,
-              child: Container(),
-              showInMobile: false,
-              onTap: () async {
-                final shouldLogout = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Confirm Logout'),
-                    content: const Text('Are you sure you want to log out?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        child: const Text('Logout'),
-                      ),
-                    ],
-                  ),
-                );
-                if (shouldLogout == true) {
-                  authController.logout();
-                }
-              },
-            ),
+          NavBarItem(
+            label: 'Logout',
+            icon: Icons.logout,
+            child: Container(),
+            showInMobile: false,
+            onTap: () async {
+              final shouldLogout = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Confirm Logout'),
+                  content: const Text('Are you sure you want to log out?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
+              );
+              if (shouldLogout == true) {
+                authController.logout();
+              }
+            },
+          ),
         ]),
       );
     });

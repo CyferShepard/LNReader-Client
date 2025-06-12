@@ -45,11 +45,9 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
         ),
         AnimatedBuilder(
           animation: navController,
-          builder: (context, _) => NavigationBar(
-            selectedIndex: navController.selectedIndex,
-            onDestinationSelected: (index) => navController.select(index),
-            destinations: widget.navItems
-                .where((item) => item.showInMobile)
+          builder: (context, _) {
+            final navItems = widget.navItems.where((item) => item.showInMobile).toList();
+            final destinations = navItems
                 .map(
                   (item) => NavigationDestination(
                     icon: Icon(item.icon),
@@ -60,8 +58,19 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
                     ),
                   ),
                 )
-                .toList(),
-          ),
+                .toList();
+
+            // Check and reset selectedIndex if out of bounds
+            if (navController.selectedIndex >= destinations.length) {
+              navController.select(0);
+            }
+
+            return NavigationBar(
+              selectedIndex: navController.selectedIndex,
+              onDestinationSelected: (index) => navController.select(index),
+              destinations: destinations,
+            );
+          },
         ),
       ],
     );
