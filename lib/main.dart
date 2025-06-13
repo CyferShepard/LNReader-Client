@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
 
     return Obx(
       () => MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Light Novel Reader',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 82, 122, 255)).copyWith(
             secondary: const Color.fromARGB(255, 53, 51, 51),

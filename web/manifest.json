@@ -1,11 +1,11 @@
 {
-  "name": "light_novel_reader_client",
-  "short_name": "light_novel_reader_client",
+  "name": "Light Novel Reader",
+  "short_name": "Light Novel Reader",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",
   "theme_color": "#0175C2",
-  "description": "A new Flutter project.",
+  "description": "Light Novel Reader UI",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [

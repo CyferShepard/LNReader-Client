@@ -77,10 +77,11 @@ class SearchPage extends StatelessWidget {
                     maxCrossAxisExtent: 200, // Each item's max width
                     mainAxisSpacing: 2,
                     crossAxisSpacing: 2,
-                    childAspectRatio: 200 / 410, // width / height
+                    childAspectRatio: 200 / 330, // width / height
                   ),
                   itemBuilder: (context, index) {
                     return NovelCard(
+                      aspectRatio: 200 / 330,
                       novelCardData: NovelCardData(
                         title: items[index].title,
                         cover: items[index].cover,
