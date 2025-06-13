@@ -60,7 +60,7 @@ class NovelCard extends StatelessWidget {
                     ),
                     Container(
                       height: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) *
-                          (novelCardChapterData != null ? 8.5 : 4), // 2 lines + spacing
+                          (novelCardChapterData != null ? 8.5 : 5), // 2 lines + spacing
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.secondary,
                       ),

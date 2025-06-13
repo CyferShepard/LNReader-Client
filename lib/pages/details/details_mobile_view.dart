@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/chapter_list_item_tile.dart';
 import 'package:light_novel_reader_client/components/expandable.dart';
+import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
 
@@ -17,7 +18,7 @@ class DetailsMobilePage extends StatelessWidget {
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
           print('Details page popped');
-          apiController.clearDetails();
+          Future.delayed(Duration(milliseconds: 100), () => apiController.clearDetails());
         }
       },
       child: Obx(
@@ -44,32 +45,38 @@ class DetailsMobilePage extends StatelessWidget {
                     },
                   ),
                 ),
-              Tooltip(
-                message: 'Refresh Details',
-                child: IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () {
-                    apiController.fetchDetails(apiController.details?.url ?? '', source: source);
-                  },
+              if (context.isTabletOrDesktop)
+                Tooltip(
+                  message: 'Refresh Details',
+                  child: IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () {
+                      apiController.fetchDetails(apiController.details?.url ?? '', source: source);
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
-          body: Obx(() {
-            if (apiController.isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+          body: RefreshIndicator(
+            onRefresh: () async {
+              await apiController.fetchDetails(apiController.details?.url ?? '', source: source);
+            },
+            child: Obx(() {
+              if (apiController.isLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-            if (apiController.details == null) {
-              return const Center(
-                child: Text('No details available.'),
-              );
-            }
+              if (apiController.details == null) {
+                return const Center(
+                  child: Text('No details available.'),
+                );
+              }
 
-            return detailsView(context);
-          }),
+              return detailsView(context);
+            }),
+          ),
         ),
       ),
     );

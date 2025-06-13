@@ -85,56 +85,62 @@ class _ReaderPageState extends State<ReaderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: widget.showHeader
-          ? AppBar(
-              title: const Text('Reader'),
-              actions: [
-                if (apiController.chapter?.previousPage != null && apiController.chapter!.previousPage!.isNotEmpty)
-                  Tooltip(
-                    message: 'Previous Chapter',
-                    child: IconButton(
-                      icon: const Icon(Icons.navigate_before),
-                      onPressed: () {
-                        apiController.fetchChapter(
-                          apiController.chapter!.previousPage!,
-                          source: widget.source,
-                        );
-                      },
+    return Obx(
+      () => Scaffold(
+        appBar: widget.showHeader
+            ? AppBar(
+                title: const Text('Reader'),
+                actions: [
+                  if (!apiController.isChapterLoading &&
+                      apiController.chapter?.previousPage != null &&
+                      apiController.chapter!.previousPage!.isNotEmpty)
+                    Tooltip(
+                      message: 'Previous Chapter',
+                      child: IconButton(
+                        icon: const Icon(Icons.navigate_before),
+                        onPressed: () {
+                          apiController.fetchChapter(
+                            apiController.chapter!.previousPage!,
+                            source: widget.source,
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                SizedBox(width: 12),
-                if (apiController.chapter?.nextPage != null && apiController.chapter!.nextPage!.isNotEmpty)
-                  Tooltip(
-                    message: 'Next Chapter',
-                    child: IconButton(
-                      icon: const Icon(Icons.navigate_next),
-                      onPressed: () {
-                        apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
-                      },
+                  SizedBox(width: 12),
+                  if (!apiController.isChapterLoading &&
+                      apiController.chapter?.nextPage != null &&
+                      apiController.chapter!.nextPage!.isNotEmpty)
+                    Tooltip(
+                      message: 'Next Chapter',
+                      child: IconButton(
+                        icon: const Icon(Icons.navigate_next),
+                        onPressed: () {
+                          apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
+                        },
+                      ),
                     ),
-                  ),
-                SizedBox(width: 12),
-                FontSettingsButton(),
-                SizedBox(width: 12),
-              ],
-            )
-          : null,
-      body: Obx(() {
-        if (apiController.isChapterLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+                  SizedBox(width: 12),
+                  FontSettingsButton(),
+                  SizedBox(width: 12),
+                ],
+              )
+            : null,
+        body: Obx(() {
+          if (apiController.isChapterLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        if (apiController.chapter == null) {
-          return const Center(
-            child: Text('No Chapter selected.'),
-          );
-        }
+          if (apiController.chapter == null) {
+            return const Center(
+              child: Text('No Chapter selected.'),
+            );
+          }
 
-        return mainReaderView(context);
-      }),
+          return mainReaderView(context);
+        }),
+      ),
     );
   }
 
