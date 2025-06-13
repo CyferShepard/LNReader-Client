@@ -50,11 +50,11 @@ class History extends StatelessWidget {
           child: GridView.builder(
             itemCount: items.length,
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 180, // Each item's max width
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                childAspectRatio: 9 / 16 // Adjust as needed for your card shape
-                ),
+              maxCrossAxisExtent: 200, // Each item's max width
+              mainAxisSpacing: 2,
+              crossAxisSpacing: 2,
+              childAspectRatio: 200 / 410, // width / height
+            ),
             itemBuilder: (context, index) {
               return NovelCard(
                 novelCardData: NovelCardData(

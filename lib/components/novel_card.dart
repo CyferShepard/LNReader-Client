@@ -20,8 +20,8 @@ class NovelCard extends StatelessWidget {
     required this.novelCardData,
     this.novelCardChapterData,
     this.onTap,
-    this.maxWidth = 180,
-    this.aspectRatio = 9 / 16, // Default aspect ratio
+    this.maxWidth = 200,
+    this.aspectRatio = 200 / 410, // Default aspect ratio
     this.placeHolderImage = const _DefaultPlaceholderImage(),
   });
 
@@ -53,13 +53,14 @@ class NovelCard extends StatelessWidget {
                           ? Image.network(
                               '${client.baseUrl}/proxy/imageProxy?imageUrl=${novelCardData.cover}',
                               fit: BoxFit.cover,
+                              width: maxWidth,
                               errorBuilder: (context, error, stackTrace) => placeHolderImage,
                             )
                           : placeHolderImage,
                     ),
                     Container(
                       height: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) *
-                          (novelCardChapterData != null ? 9 : 5), // 2 lines + spacing
+                          (novelCardChapterData != null ? 8.5 : 4), // 2 lines + spacing
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.secondary,
                       ),
@@ -72,14 +73,17 @@ class NovelCard extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                novelCardData.title,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSecondary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                              SizedBox(
+                                height: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * (3), // 2 lines + spacing
+                                child: Text(
+                                  novelCardData.title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Theme.of(context).colorScheme.onSecondary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
                               ),
                               if (novelCardChapterData != null) ...[
                                 const SizedBox(height: 4),
