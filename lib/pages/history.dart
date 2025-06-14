@@ -51,6 +51,50 @@ class History extends StatelessWidget {
               );
             }
 
+            // List<NovelCard> itemsCards = items.map((item) {
+            //   return NovelCard(
+            //     maxHeight: 356,
+            //     novelCardData: NovelCardData(
+            //       title: item.novel.title,
+            //       cover: item.novel.cover,
+            //       url: item.novel.url,
+            //       source: item.source,
+            //     ),
+            //     novelCardChapterData: NovelCardChapterData(
+            //       date: item.lastRead,
+            //       index: item.chapter.index,
+            //     ),
+            //     onTap: () {
+            //       apiController.fetchDetails(
+            //         item.novel.url,
+            //         source: item.source,
+            //         lastChapterUrl: item.chapter.url,
+            //         canCacheChapters: true,
+            //       );
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //           builder: (context) => DetailsView(
+            //             source: item.source,
+            //             canCacheChapters: true,
+            //           ),
+            //         ),
+            //       );
+            //     },
+            //   );
+            // }).toList();
+
+            // return Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: ItemCardLayoutGrid(
+            //     items: itemsCards,
+            //     itemHeight: 350,
+            //     itemWidth: 200,
+            //     horizontalGap: 2,
+            //     verticalGap: 2,
+            //   ),
+            // );
+
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: GridView.builder(
@@ -63,6 +107,7 @@ class History extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) {
                   return NovelCard(
+                    // maxHeight: 365,
                     novelCardData: NovelCardData(
                       title: items[index].novel.title,
                       cover: items[index].novel.cover,
@@ -78,12 +123,14 @@ class History extends StatelessWidget {
                         items[index].novel.url,
                         source: items[index].source,
                         lastChapterUrl: items[index].chapter.url,
+                        canCacheChapters: true,
                       );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => DetailsView(
                             source: items[index].source,
+                            canCacheChapters: true,
                           ),
                         ),
                       );

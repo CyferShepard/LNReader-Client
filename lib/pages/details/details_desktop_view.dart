@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/chapter_list_item_tile.dart';
+import 'package:light_novel_reader_client/components/font_settings.dart';
+import 'package:light_novel_reader_client/components/genre_chip.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
-import 'package:light_novel_reader_client/pages/settings/font_settings.dart';
 
 class DetailsDesktopPage extends StatelessWidget {
   final String? source;
+  final bool canCacheChapters;
 
-  const DetailsDesktopPage({super.key, this.source});
+  const DetailsDesktopPage({super.key, this.source, required this.canCacheChapters});
 
   @override
   Widget build(BuildContext context) {
@@ -94,15 +96,17 @@ class DetailsDesktopPage extends StatelessWidget {
                     ),
                   ),
                 FontSettingsButton(),
-                Tooltip(
-                  message: 'Refresh Details',
-                  child: IconButton(
-                    icon: const Icon(Icons.refresh),
-                    onPressed: () {
-                      apiController.fetchDetails(apiController.details?.url ?? '', source: source);
-                    },
+                if (apiController.details != null && apiController.details!.url != null)
+                  Tooltip(
+                    message: 'Refresh Details',
+                    child: IconButton(
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () {
+                        apiController.fetchDetails(apiController.details!.url!,
+                            source: source, refresh: true, canCacheChapters: canCacheChapters);
+                      },
+                    ),
                   ),
-                ),
               ],
             ),
             body: Obx(() {
@@ -183,18 +187,18 @@ class DetailsDesktopPage extends StatelessWidget {
               spacing: 8,
               runSpacing: 4,
               children: [
-                for (final tag in apiController.details!.genre)
-                  Chip(
-                    label: Text(tag),
-                    labelStyle: Theme.of(context).textTheme.bodyMedium,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
-                        width: 1,
-                      ),
+                for (final genre in apiController.details!.genre)
+                  GenreChip(
+                    genre: genre.trim(),
+                    textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                    // margin: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
                   ),
               ],
             ),

@@ -177,11 +177,23 @@ class ApiClient {
     }
   }
 
-  Future<Chapters> getChapters(String url, String source, Map<String, String>? additionalProps) async {
+  Future<Chapters> getChapters(
+    String url,
+    String source,
+    Map<String, String>? additionalProps, {
+    bool refresh = false,
+    required bool canCacheChapters,
+  }) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/chapters'),
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
-      body: jsonEncode({'source': source, 'url': url, 'additionalProps': additionalProps}),
+      body: jsonEncode({
+        'source': source,
+        'url': url,
+        'additionalProps': additionalProps,
+        "clearCache": refresh,
+        "cacheData": canCacheChapters
+      }),
     );
     if (response.statusCode == 200) {
       // print(response.body);

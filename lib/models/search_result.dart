@@ -4,6 +4,7 @@ class SearchResult {
   String summary;
   String cover;
   List<String> genres;
+  int? chapterCount;
 
   SearchResult({
     required this.url,
@@ -11,6 +12,7 @@ class SearchResult {
     required this.summary,
     required this.cover,
     required this.genres,
+    this.chapterCount,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class SearchResult {
       'summary': summary,
       'cover': cover,
       'genres': genres,
+      'chapterCount': chapterCount,
     };
   }
 
@@ -36,6 +39,7 @@ class SearchResult {
       summary: json['summary'] as String? ?? 'No summary available.',
       cover: json['cover'] as String? ?? '',
       genres: genres,
+      chapterCount: json['chapterCount'] as int?,
     );
   }
 

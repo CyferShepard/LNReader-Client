@@ -76,4 +76,32 @@ class Details {
           (json['additionalProps'] as Map<String, dynamic>?)?.map((key, value) => MapEntry(key, value as String)) ?? {},
     );
   }
+
+  Details copyWith({
+    String? url,
+    String? cover,
+    String? title,
+    String? summary,
+    List<String>? tags,
+    String? author,
+    String? status,
+    List<String>? genre,
+    String? chapters,
+    String? lastUpdate,
+    Map<String, String>? additionalProps,
+  }) {
+    return Details(
+      url: url ?? this.url,
+      cover: cover ?? this.cover,
+      title: title ?? this.title,
+      summary: summary ?? this.summary,
+      tags: tags ?? this.tags,
+      author: author ?? this.author,
+      status: status ?? this.status,
+      genre: genre ?? this.genre,
+      chapters: chapters ?? this.chapters,
+      lastUpdate: lastUpdate ?? this.lastUpdate,
+      additionalProps: additionalProps ?? this.additionalProps,
+    );
+  }
 }

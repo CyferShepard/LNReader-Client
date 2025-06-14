@@ -115,11 +115,16 @@ class ApiController extends GetxController {
     String url, {
     String? source,
     String? lastChapterUrl,
+    bool refresh = false,
+    required bool canCacheChapters,
   }) async {
     try {
       isLoading = true;
       details = await client.getDetails(url, source ?? currentSource);
       if (details != null) {
+        if (details!.url == null) {
+          details = details!.copyWith(url: url);
+        }
         if (lastChapterUrl == null) {
           History? history = historyController.history
               .firstWhereOrNull((h) => h.novel.url == details!.url && h.source == (source ?? currentSource));
@@ -129,8 +134,14 @@ class ApiController extends GetxController {
           // Fetch chapters only if lastChapterUrl is provided
           isChapterLoading = true;
         }
-        fetchChapters(url,
-            source: source ?? currentSource, additionalProps: details!.additionalProps, lastChapterUrl: lastChapterUrl);
+        fetchChapters(
+          url,
+          source: source ?? currentSource,
+          additionalProps: details!.additionalProps,
+          lastChapterUrl: lastChapterUrl,
+          refresh: refresh,
+          canCacheChapters: canCacheChapters,
+        );
       }
       return details;
     } catch (e) {
@@ -142,10 +153,16 @@ class ApiController extends GetxController {
   }
 
   Future<Chapters?> fetchChapters(String url,
-      {String? source, Map<String, String>? additionalProps, String? lastChapterUrl}) async {
+      {String? source,
+      Map<String, String>? additionalProps,
+      String? lastChapterUrl,
+      bool refresh = false,
+      required bool canCacheChapters}) async {
     try {
       isChaptersLoading = true;
-      chapters = (await client.getChapters(url, source ?? currentSource, additionalProps)).chapters;
+      chapters = (await client.getChapters(url, source ?? currentSource, additionalProps,
+              refresh: refresh, canCacheChapters: canCacheChapters))
+          .chapters;
       if (chapters != null) {
         chapters!.sort((a, b) => a.index.compareTo(b.index));
         if (lastChapterUrl != null) {

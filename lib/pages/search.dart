@@ -69,6 +69,44 @@ class SearchPage extends StatelessWidget {
 
               final items = apiController.searchResults;
 
+              // List<NovelCard> itemsCards = items.map((item) {
+              //   return NovelCard(
+              //     maxHeight: 350,
+              //     novelCardData: NovelCardData(
+              //       title: item.title,
+              //       cover: item.cover,
+              //       url: item.url,
+              //       source: apiController.currentSource,
+              //       genres: item.genres,
+              //     ),
+              //     onTap: () {
+              //       apiController.fetchDetails(
+              //         item.url,
+              //         canCacheChapters: false,
+              //       );
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (context) => DetailsView(
+              //             canCacheChapters: false,
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //   );
+              // }).toList();
+
+              // return Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: ItemCardLayoutGrid(
+              //     items: itemsCards,
+              //     itemHeight: 350,
+              //     itemWidth: 200,
+              //     horizontalGap: 2,
+              //     verticalGap: 2,
+              //   ),
+              // );
+
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: GridView.builder(
@@ -77,23 +115,30 @@ class SearchPage extends StatelessWidget {
                     maxCrossAxisExtent: 200, // Each item's max width
                     mainAxisSpacing: 2,
                     crossAxisSpacing: 2,
-                    childAspectRatio: 200 / 330, // width / height
+                    childAspectRatio: 200 / 350, // width / height
                   ),
                   itemBuilder: (context, index) {
                     return NovelCard(
-                      aspectRatio: 200 / 330,
+                      maxHeight: 350,
                       novelCardData: NovelCardData(
                         title: items[index].title,
                         cover: items[index].cover,
                         url: items[index].url,
                         source: apiController.currentSource,
+                        chapterCount: items[index].chapterCount,
+                        genres: items[index].genres,
                       ),
                       onTap: () {
-                        apiController.fetchDetails(items[index].url);
+                        apiController.fetchDetails(
+                          items[index].url,
+                          canCacheChapters: false,
+                        );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailsView(),
+                            builder: (context) => DetailsView(
+                              canCacheChapters: false,
+                            ),
                           ),
                         );
                       },

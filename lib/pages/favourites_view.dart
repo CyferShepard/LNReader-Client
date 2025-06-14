@@ -50,6 +50,45 @@ class FavouritesView extends StatelessWidget {
             );
           }
 
+          // List<NovelCard> itemsCards = items.map((item) {
+          //   return NovelCard(
+          //     maxHeight: 346,
+          //     novelCardData: NovelCardData(
+          //       title: item.title,
+          //       cover: item.cover,
+          //       url: item.url,
+          //       source: item.source,
+          //     ),
+          //     onTap: () {
+          //       apiController.fetchDetails(
+          //         item.url,
+          //         source: item.source,
+          //         canCacheChapters: true,
+          //       );
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (context) => DetailsView(
+          //             source: item.source,
+          //             canCacheChapters: true,
+          //           ),
+          //         ),
+          //       );
+          //     },
+          //   );
+          // }).toList();
+
+          // return Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: ItemCardLayoutGrid(
+          //     items: itemsCards,
+          //     itemHeight: 340,
+          //     itemWidth: 200,
+          //     horizontalGap: 2,
+          //     verticalGap: 2,
+          //   ),
+          // );
+
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: GridView.builder(
@@ -58,11 +97,11 @@ class FavouritesView extends StatelessWidget {
                 maxCrossAxisExtent: 200, // Each item's max width
                 mainAxisSpacing: 2,
                 crossAxisSpacing: 2,
-                childAspectRatio: 200 / 330, // width / height
+                childAspectRatio: 200 / 340, // width / height
               ),
               itemBuilder: (context, index) {
                 return NovelCard(
-                  aspectRatio: 200 / 330,
+                  maxHeight: 340,
                   novelCardData: NovelCardData(
                     title: items[index].title,
                     cover: items[index].cover,
@@ -70,12 +109,17 @@ class FavouritesView extends StatelessWidget {
                     source: items[index].source,
                   ),
                   onTap: () {
-                    apiController.fetchDetails(items[index].url, source: items[index].source);
+                    apiController.fetchDetails(
+                      items[index].url,
+                      source: items[index].source,
+                      canCacheChapters: true,
+                    );
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => DetailsView(
                           source: items[index].source,
+                          canCacheChapters: true,
                         ),
                       ),
                     );

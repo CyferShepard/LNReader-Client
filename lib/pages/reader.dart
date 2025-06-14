@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:light_novel_reader_client/components/font_settings.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/models/history.dart';
-import 'package:light_novel_reader_client/pages/settings/font_settings.dart';
 
 class ReaderPage extends StatefulWidget {
   const ReaderPage({super.key, this.showHeader = true, this.source});

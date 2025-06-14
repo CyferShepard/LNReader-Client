@@ -4,12 +4,15 @@ import 'package:light_novel_reader_client/pages/details/details_desktop_view.dar
 import 'package:light_novel_reader_client/pages/details/details_mobile_view.dart';
 
 class DetailsView extends StatelessWidget {
-  const DetailsView({super.key, this.source});
+  const DetailsView({super.key, this.source, required this.canCacheChapters});
 
   final String? source;
+  final bool canCacheChapters;
 
   @override
   Widget build(BuildContext context) {
-    return context.isTabletOrDesktop ? DetailsDesktopPage(source: source) : DetailsMobilePage(source: source);
+    return context.isTabletOrDesktop
+        ? DetailsDesktopPage(source: source, canCacheChapters: canCacheChapters)
+        : DetailsMobilePage(source: source, canCacheChapters: canCacheChapters);
   }
 }
