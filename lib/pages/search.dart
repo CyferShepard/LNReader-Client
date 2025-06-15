@@ -94,12 +94,14 @@ class SearchPage extends StatelessWidget {
                         apiController.fetchDetails(
                           items[index].url,
                           canCacheChapters: false,
+                          canCacheNovel: false,
                         );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => DetailsView(
                               canCacheChapters: false,
+                              canCacheNovel: false,
                             ),
                           ),
                         );

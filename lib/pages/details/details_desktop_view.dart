@@ -11,8 +11,9 @@ import 'package:light_novel_reader_client/pages/reader.dart';
 class DetailsDesktopPage extends StatelessWidget {
   final String? source;
   final bool canCacheChapters;
+  final bool canCacheNovel;
 
-  const DetailsDesktopPage({super.key, this.source, required this.canCacheChapters});
+  const DetailsDesktopPage({super.key, this.source, required this.canCacheChapters, required this.canCacheNovel});
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +105,7 @@ class DetailsDesktopPage extends StatelessWidget {
                       icon: const Icon(Icons.refresh),
                       onPressed: () {
                         apiController.fetchDetails(apiController.details!.url!,
-                            source: source, refresh: true, canCacheChapters: canCacheChapters);
+                            source: source, refresh: true, canCacheChapters: canCacheChapters, canCacheNovel: canCacheNovel);
                       },
                     ),
                   ),

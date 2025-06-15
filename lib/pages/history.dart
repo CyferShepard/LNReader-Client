@@ -80,6 +80,7 @@ class History extends StatelessWidget {
                         source: items[index].source,
                         lastChapterUrl: items[index].chapter.url,
                         canCacheChapters: true,
+                        canCacheNovel: true,
                       );
                       Navigator.push(
                         context,
@@ -87,6 +88,7 @@ class History extends StatelessWidget {
                           builder: (context) => DetailsView(
                             source: items[index].source,
                             canCacheChapters: true,
+                            canCacheNovel: true,
                           ),
                         ),
                       );

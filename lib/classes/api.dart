@@ -174,11 +174,16 @@ class ApiClient {
     }
   }
 
-  Future<Details> getDetails(String url, String source) async {
+  Future<Details> getDetails(
+    String url,
+    String source, {
+    bool refresh = false,
+    required bool canCacheNovel,
+  }) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/novel'),
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
-      body: jsonEncode({'source': source, 'url': url}),
+      body: jsonEncode({'source': source, 'url': url, 'clearCache': refresh, "cacheData": canCacheNovel}),
     );
     if (response.statusCode == 200) {
       return Details.fromJson(jsonDecode(response.body));

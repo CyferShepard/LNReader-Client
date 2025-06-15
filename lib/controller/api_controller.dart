@@ -116,11 +116,12 @@ class ApiController extends GetxController {
     String? source,
     String? lastChapterUrl,
     bool refresh = false,
+    required bool canCacheNovel,
     required bool canCacheChapters,
   }) async {
     try {
       isLoading = true;
-      details = await client.getDetails(url, source ?? currentSource);
+      details = await client.getDetails(url, source ?? currentSource, refresh: refresh, canCacheNovel: canCacheNovel);
       if (details != null) {
         if (details!.url == null) {
           details = details!.copyWith(url: url);

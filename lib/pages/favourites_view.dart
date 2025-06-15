@@ -74,6 +74,7 @@ class FavouritesView extends StatelessWidget {
                       items[index].url,
                       source: items[index].source,
                       canCacheChapters: true,
+                      canCacheNovel: true,
                     );
                     Navigator.push(
                       context,
@@ -81,6 +82,7 @@ class FavouritesView extends StatelessWidget {
                         builder: (context) => DetailsView(
                           source: items[index].source,
                           canCacheChapters: true,
+                          canCacheNovel: true,
                         ),
                       ),
                     );

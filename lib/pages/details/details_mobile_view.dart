@@ -11,8 +11,9 @@ import 'package:light_novel_reader_client/pages/reader.dart';
 class DetailsMobilePage extends StatelessWidget {
   final String? source;
   final bool canCacheChapters;
+  final bool canCacheNovel;
 
-  const DetailsMobilePage({super.key, this.source, this.canCacheChapters = true});
+  const DetailsMobilePage({super.key, this.source, this.canCacheChapters = true, this.canCacheNovel = true});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +56,7 @@ class DetailsMobilePage extends StatelessWidget {
                     icon: const Icon(Icons.refresh),
                     onPressed: () {
                       apiController.fetchDetails(apiController.details?.url ?? '',
-                          source: source, refresh: true, canCacheChapters: canCacheChapters);
+                          source: source, refresh: true, canCacheChapters: canCacheChapters, canCacheNovel: canCacheNovel);
                     },
                   ),
                 ),
@@ -64,7 +65,7 @@ class DetailsMobilePage extends StatelessWidget {
           body: RefreshIndicator(
             onRefresh: () async {
               await apiController.fetchDetails(apiController.details?.url ?? '',
-                  source: source, refresh: true, canCacheChapters: canCacheChapters);
+                  source: source, refresh: true, canCacheChapters: canCacheChapters, canCacheNovel: canCacheNovel);
             },
             child: Obx(() {
               if (apiController.isLoading) {
