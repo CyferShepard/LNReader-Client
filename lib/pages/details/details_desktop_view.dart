@@ -203,6 +203,50 @@ class DetailsDesktopPage extends StatelessWidget {
               ],
             ),
           const SizedBox(height: 8),
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.tertiary,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.all(16.0),
+            alignment: Alignment.centerLeft,
+            child: Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    apiController.details!.title,
+                    softWrap: true,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text('Author: ${apiController.details!.author}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSecondary,
+                          )),
+                  const SizedBox(height: 8),
+                  Text('Status: ${apiController.details!.status}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSecondary,
+                          )),
+                  const SizedBox(height: 8),
+                  Text('Last Updated: ${apiController.details!.lastUpdate}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSecondary,
+                          )),
+                  const SizedBox(height: 8),
+                  Text(apiController.details!.genre.join(', '),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSecondary,
+                          )),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
           Text(
             apiController.details!.summary,
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey[400], fontSize: 14),

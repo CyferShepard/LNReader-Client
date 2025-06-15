@@ -123,10 +123,38 @@ class DetailsMobilePage extends StatelessWidget {
 
                 const SizedBox(width: 16),
                 Expanded(
-                  child: Text(
-                    apiController.details!.title,
-                    softWrap: true,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        apiController.details!.title,
+                        softWrap: true,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text('Author: ${apiController.details!.author}',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSecondary,
+                              )),
+                      const SizedBox(height: 8),
+                      Text('Status: ${apiController.details!.status}',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSecondary,
+                              )),
+                      const SizedBox(height: 8),
+                      Text('Last Updated: ${apiController.details!.lastUpdate}',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSecondary,
+                              )),
+                      const SizedBox(height: 8),
+                      Text(apiController.details!.genre.join(', '),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSecondary,
+                              )),
+                    ],
                   ),
                 ),
               ],
@@ -135,14 +163,14 @@ class DetailsMobilePage extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (apiController.details!.genre.isNotEmpty)
+                if (apiController.details!.tags.isNotEmpty)
                   Wrap(
                     spacing: 8,
                     runSpacing: 4,
                     children: [
-                      for (final genre in apiController.details!.genre)
+                      for (final tags in apiController.details!.tags)
                         GenreChip(
-                          genre: genre.trim(),
+                          genre: tags.trim(),
                           textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: Theme.of(context).colorScheme.onSecondary,
                               ),
