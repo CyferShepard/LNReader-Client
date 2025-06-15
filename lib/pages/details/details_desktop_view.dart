@@ -182,12 +182,12 @@ class DetailsDesktopPage extends StatelessWidget {
                 )
               : placeHolderImage,
           const SizedBox(height: 16),
-          if (apiController.details!.genre.isNotEmpty)
+          if (apiController.details!.tags.isNotEmpty)
             Wrap(
               spacing: 8,
               runSpacing: 4,
               children: [
-                for (final genre in apiController.details!.genre)
+                for (final genre in apiController.details!.tags)
                   GenreChip(
                     genre: genre.trim(),
                     textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
