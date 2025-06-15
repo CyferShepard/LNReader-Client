@@ -210,40 +210,38 @@ class DetailsDesktopPage extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,
-            child: Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    apiController.details!.title,
-                    softWrap: true,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  apiController.details!.title,
+                  softWrap: true,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text('Author: ${apiController.details!.author}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSecondary,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text('Author: ${apiController.details!.author}',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                          )),
-                  const SizedBox(height: 8),
-                  Text('Status: ${apiController.details!.status}',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                          )),
-                  const SizedBox(height: 8),
-                  Text('Last Updated: ${apiController.details!.lastUpdate}',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                          )),
-                  const SizedBox(height: 8),
-                  Text(apiController.details!.genre.join(', '),
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                          )),
-                ],
-              ),
+                        )),
+                const SizedBox(height: 8),
+                Text('Status: ${apiController.details!.status}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        )),
+                const SizedBox(height: 8),
+                Text('Last Updated: ${apiController.details!.lastUpdate}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        )),
+                const SizedBox(height: 8),
+                Text(apiController.details!.genre.join(', '),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        )),
+              ],
             ),
           ),
           const SizedBox(height: 8),
