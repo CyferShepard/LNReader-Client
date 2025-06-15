@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/chapter_list_item_tile.dart';
 import 'package:light_novel_reader_client/components/font_settings.dart';
 import 'package:light_novel_reader_client/components/genre_chip.dart';
+import 'package:light_novel_reader_client/components/label_text.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
 
@@ -222,25 +223,55 @@ class DetailsDesktopPage extends StatelessWidget {
                       ),
                 ),
                 const SizedBox(height: 8),
-                Text('Author: ${apiController.details!.author}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        )),
+                LabeledText(
+                  label: 'Author',
+                  text: apiController.details!.author,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                  labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onTertiary,
+                      ),
+                ),
                 const SizedBox(height: 8),
-                Text('Status: ${apiController.details!.status}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        )),
+                LabeledText(
+                  label: 'Status',
+                  text: ' ${apiController.details!.status}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                  labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onTertiary,
+                      ),
+                ),
                 const SizedBox(height: 8),
-                Text('Last Updated: ${apiController.details!.lastUpdate}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        )),
+                LabeledText(
+                  label: 'Genre',
+                  text: apiController.details!.genre.join(', '),
+                  softWrap: true,
+                  maxLines: 3,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                  labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onTertiary,
+                      ),
+                ),
                 const SizedBox(height: 8),
-                Text(apiController.details!.genre.join(', '),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        )),
+                LabeledText(
+                  label: 'Last Updated',
+                  text: apiController.details!.lastUpdate,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                  labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onTertiary,
+                      ),
+                ),
               ],
             ),
           ),

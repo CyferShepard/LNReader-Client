@@ -182,14 +182,39 @@ class _ReaderPageState extends State<ReaderPage> {
                           scrollDirection: Axis.vertical,
                           child: SizedBox(
                             width: double.infinity,
-                            child: Text(
-                              widget.showHeader
-                                  ? '${apiController.chapter!.title}\n\n${apiController.chapter!.content}'
-                                  : apiController.chapter!.content,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .copyWith(height: uiController.lineHeight, fontSize: uiController.fontSize),
+                            child: Column(
+                              children: [
+                                Text(
+                                  widget.showHeader
+                                      ? '${apiController.chapter!.title}\n\n${apiController.chapter!.content}'
+                                      : apiController.chapter!.content,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(height: uiController.lineHeight, fontSize: uiController.fontSize),
+                                ),
+                                if (apiController.chapter!.nextPage != null) ...[
+                                  const SizedBox(height: 50),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size(double.infinity, 50), // Full width button
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                      backgroundColor: Theme.of(context).colorScheme.primary,
+                                    ),
+                                    onPressed: () {
+                                      apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
+                                    },
+                                    child: Text(
+                                      'Next Chapter',
+                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                            color: Theme.of(context).colorScheme.onPrimary,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                         )),

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/chapter_list_item_tile.dart';
 import 'package:light_novel_reader_client/components/expandable.dart';
 import 'package:light_novel_reader_client/components/genre_chip.dart';
+import 'package:light_novel_reader_client/components/label_text.dart';
 import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
@@ -131,34 +132,75 @@ class DetailsMobilePage extends StatelessWidget {
                         softWrap: true,
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSecondary,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                       const SizedBox(height: 8),
-                      Text('Author: ${apiController.details!.author}',
+                      LabeledText(
+                        label: 'Author',
+                        text: apiController.details!.author,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      LabeledText(
+                          label: 'Status',
+                          text: apiController.details!.status,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondary,
+                                color: Theme.of(context).colorScheme.onSurface,
                               )),
                       const SizedBox(height: 8),
-                      Text('Status: ${apiController.details!.status}',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondary,
-                              )),
+                      LabeledText(
+                        label: 'Genre',
+                        softWrap: true,
+                        maxLines: 5,
+                        text: apiController.details!.genre.join(', '),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
                       const SizedBox(height: 8),
-                      Text('Last Updated: ${apiController.details!.lastUpdate}',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondary,
-                              )),
-                      const SizedBox(height: 8),
-                      Text(apiController.details!.genre.join(', '),
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondary,
-                              )),
+                      LabeledText(
+                        label: 'Last Updated',
+                        text: apiController.details!.lastUpdate,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
+            if (apiController.chapter != null) ...[
+              const SizedBox(height: 16),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50), // Full width button
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReaderPage(
+                        source: source,
+                      ),
+                    ),
+                  );
+                },
+                child: Text(
+                  'Resume: ${apiController.chapter!.title}',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                ),
+              ),
+            ],
             const SizedBox(height: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
