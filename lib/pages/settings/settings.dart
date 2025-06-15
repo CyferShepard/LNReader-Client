@@ -19,7 +19,7 @@ class SettingsPage extends StatelessWidget {
       ),
       body: Obx(() {
         bool loggedIn = serverController.serverResponse.success && authController.auth.isAuthenticated;
-        double width = context.width - (loggedIn ? 200 : 0);
+        double width = context.width - (loggedIn ? 300 : 0);
         List<Widget> items = [
           if (loggedIn)
             ConstrainedBox(

@@ -50,45 +50,6 @@ class FavouritesView extends StatelessWidget {
             );
           }
 
-          // List<NovelCard> itemsCards = items.map((item) {
-          //   return NovelCard(
-          //     maxHeight: 346,
-          //     novelCardData: NovelCardData(
-          //       title: item.title,
-          //       cover: item.cover,
-          //       url: item.url,
-          //       source: item.source,
-          //     ),
-          //     onTap: () {
-          //       apiController.fetchDetails(
-          //         item.url,
-          //         source: item.source,
-          //         canCacheChapters: true,
-          //       );
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //           builder: (context) => DetailsView(
-          //             source: item.source,
-          //             canCacheChapters: true,
-          //           ),
-          //         ),
-          //       );
-          //     },
-          //   );
-          // }).toList();
-
-          // return Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: ItemCardLayoutGrid(
-          //     items: itemsCards,
-          //     itemHeight: 340,
-          //     itemWidth: 200,
-          //     horizontalGap: 2,
-          //     verticalGap: 2,
-          //   ),
-          // );
-
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: GridView.builder(

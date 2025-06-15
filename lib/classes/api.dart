@@ -10,6 +10,7 @@ import 'package:light_novel_reader_client/models/details.dart';
 import 'package:light_novel_reader_client/models/favouriteWithNovelMeta.dart';
 import 'package:light_novel_reader_client/models/history.dart';
 import 'package:light_novel_reader_client/models/search_result.dart';
+import 'package:light_novel_reader_client/models/user.dart';
 
 class ApiClient {
   final String baseUrl;
@@ -99,20 +100,34 @@ class ApiClient {
     }
   }
 
-  Future<Auth> updatePassword(Auth auth) async {
+  Future<Auth> resetPassword(Auth auth, {String? username}) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/auth/update'),
+      Uri.parse('$baseUrl/auth/resetPassword'),
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
-      body: jsonEncode({'password': auth.password}),
+      body: jsonEncode({'password': auth.password, 'username': username}),
     );
     if (response.statusCode == 200) {
-      return auth.populateToken(jsonDecode(response.body));
+      return auth.populateToken(jsonDecode(response.body)).copyWith(status: true, errorMessage: '');
     } else {
       return auth.copyWith(
         status: false,
         errorMessage: response.reasonPhrase ?? 'Error Updating Password',
         token: null,
       );
+    }
+  }
+
+  Future<List<User>> getUsers() async {
+    final response = await http.get(Uri.parse('$baseUrl/api/users'),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'});
+    if (response.statusCode == 200) {
+      return User.fromJsonList(jsonDecode(response.body));
+    } else {
+      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
+        authController.logout();
+      }
+      print('Failed to fetch users: ${response.body}');
+      return [];
     }
   }
 

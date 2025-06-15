@@ -51,50 +51,6 @@ class History extends StatelessWidget {
               );
             }
 
-            // List<NovelCard> itemsCards = items.map((item) {
-            //   return NovelCard(
-            //     maxHeight: 356,
-            //     novelCardData: NovelCardData(
-            //       title: item.novel.title,
-            //       cover: item.novel.cover,
-            //       url: item.novel.url,
-            //       source: item.source,
-            //     ),
-            //     novelCardChapterData: NovelCardChapterData(
-            //       date: item.lastRead,
-            //       index: item.chapter.index,
-            //     ),
-            //     onTap: () {
-            //       apiController.fetchDetails(
-            //         item.novel.url,
-            //         source: item.source,
-            //         lastChapterUrl: item.chapter.url,
-            //         canCacheChapters: true,
-            //       );
-            //       Navigator.push(
-            //         context,
-            //         MaterialPageRoute(
-            //           builder: (context) => DetailsView(
-            //             source: item.source,
-            //             canCacheChapters: true,
-            //           ),
-            //         ),
-            //       );
-            //     },
-            //   );
-            // }).toList();
-
-            // return Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: ItemCardLayoutGrid(
-            //     items: itemsCards,
-            //     itemHeight: 350,
-            //     itemWidth: 200,
-            //     horizontalGap: 2,
-            //     verticalGap: 2,
-            //   ),
-            // );
-
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: GridView.builder(
@@ -103,11 +59,11 @@ class History extends StatelessWidget {
                   maxCrossAxisExtent: 200, // Each item's max width
                   mainAxisSpacing: 2,
                   crossAxisSpacing: 2,
-                  childAspectRatio: 200 / 410, // width / height
+                  childAspectRatio: 200 / 360, // width / height
                 ),
                 itemBuilder: (context, index) {
                   return NovelCard(
-                    // maxHeight: 365,
+                    maxHeight: 360,
                     novelCardData: NovelCardData(
                       title: items[index].novel.title,
                       cover: items[index].novel.cover,

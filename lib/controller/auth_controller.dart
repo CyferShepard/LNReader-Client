@@ -129,7 +129,7 @@ class AuthController extends GetxController {
 
     isLoading = true;
     await Future<void>.delayed(const Duration(milliseconds: 200));
-    await client.updatePassword(auth).then((authResponse) async {
+    await client.resetPassword(auth).then((authResponse) async {
       auth = authResponse.isAuthenticated ? authResponse.copyWith(errorMessage: 'Password Updated') : authResponse;
       await saveAuth();
     }).catchError((error) {

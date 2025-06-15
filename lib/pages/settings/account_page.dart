@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/text_field_editor.dart';
 import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
+import 'package:light_novel_reader_client/pages/settings/admin/user_management.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -97,6 +98,35 @@ class AccountPage extends StatelessWidget {
                   )
                 : const Text('Update Password', style: TextStyle(fontSize: 16, color: Colors.white)),
           ),
+          if (authController.auth.isAuthenticated && authController.auth.isAdmin) const SizedBox(height: 16),
+          if (authController.auth.isAuthenticated && authController.auth.isAdmin)
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserManagementPage(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50), // Full width button
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+              child: authController.isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.0,
+                      ),
+                    )
+                  : const Text('Manage Users', style: TextStyle(fontSize: 16, color: Colors.white)),
+            ),
           if (authController.auth.isAuthenticated && context.isMobile) const SizedBox(height: 16),
           if (authController.auth.isAuthenticated && context.isMobile)
             ElevatedButton(

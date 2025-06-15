@@ -1,5 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:light_novel_reader_client/components/genre_chip.dart';
 import 'package:light_novel_reader_client/globals.dart';
 
 class _DefaultPlaceholderImage extends StatelessWidget {
@@ -9,14 +11,17 @@ class _DefaultPlaceholderImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey[300],
-      child: Center(
-          child: SizedBox(
-        height: imageHeight,
-        width: maxWidth,
-        child: const Icon(Icons.book, size: 50),
-      )),
+    return AspectRatio(
+      aspectRatio: maxWidth / imageHeight,
+      child: Container(
+        color: Colors.grey[300],
+        child: Center(
+            child: SizedBox(
+          height: imageHeight,
+          width: maxWidth,
+          child: const Icon(Icons.book, size: 50),
+        )),
+      ),
     );
   }
 }
@@ -48,24 +53,26 @@ class NovelCard extends StatelessWidget {
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight), // Set your max width here
       child: Card(
+        color: Theme.of(context).colorScheme.secondary,
         elevation: 2,
         child: InkWell(
           onTap: onTap,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Stack(
                   alignment: Alignment.topLeft,
                   children: [
                     (novelCardData.cover.isNotEmpty)
-                        ? Image.network(
-                            '${client.baseUrl}/proxy/imageProxy?imageUrl=${novelCardData.cover}',
-                            fit: BoxFit.cover,
-                            width: maxWidth,
-                            height: imageHeight,
-                            errorBuilder: (context, error, stackTrace) => placeHolderImage,
+                        ? AspectRatio(
+                            aspectRatio: maxWidth / imageHeight,
+                            child: Image.network(
+                              '${client.baseUrl}/proxy/imageProxy?imageUrl=${novelCardData.cover}',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => placeHolderImage,
+                            ),
                           )
                         : placeHolderImage,
                     if (novelCardData.chapterCount != null) ...[
@@ -86,74 +93,70 @@ class NovelCard extends StatelessWidget {
                     ],
                   ],
                 ),
-                Container(
-                  height: (imageHeight - maxHeight).abs() - 44, // 2 lines + spacing
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  padding: const EdgeInsets.all(1.0),
-
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Tooltip(
-                      message: novelCardData.title,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * (3), // 2 lines + spacing
-                            child: Text(
-                              novelCardData.title,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).colorScheme.onSecondary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Tooltip(
+                    message: novelCardData.title,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * (3), // 2 lines + spacing
+                          child: AutoSizeText(
+                            novelCardData.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            minFontSize: 12,
+                            maxFontSize: 16,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSecondary,
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
-                          if (novelCardChapterData != null) ...[
-                            const SizedBox(height: 4),
-                            Text(
-                              'Chapter: ${novelCardChapterData!.index}',
+                        ),
+                        if (novelCardChapterData != null) ...[
+                          const SizedBox(height: 4),
+                          AutoSizeText(
+                            'Chapter: ${novelCardChapterData!.index}',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSecondary,
+                                ),
+                          ),
+                          if (novelCardChapterData!.date != null) const SizedBox(height: 4),
+                          if (novelCardChapterData!.date != null)
+                            AutoSizeText(
                               maxLines: 2,
+                              minFontSize: 10,
+                              maxFontSize: 16,
                               overflow: TextOverflow.ellipsis,
+                              DateFormat('dd/MM/yyyy HH:mm:ss').format(novelCardChapterData!.date!),
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: Theme.of(context).colorScheme.onSecondary,
                                   ),
                             ),
-                            if (novelCardChapterData!.date != null) const SizedBox(height: 4),
-                            if (novelCardChapterData!.date != null)
-                              Text(
-                                DateFormat('dd/MM/yyyy HH:mm:ss').format(novelCardChapterData!.date!),
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        ],
+                        if (novelCardData.genres.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Wrap(
+                            spacing: 4,
+                            runSpacing: 2,
+                            children: novelCardData.genres.map((genre) {
+                              return GenreChip(
+                                genre: genre,
+                                textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                                       color: Theme.of(context).colorScheme.onSecondary,
                                     ),
-                              ),
-                          ],
-                          // if (novelCardData.genres.isNotEmpty) ...[
-                          //   const SizedBox(height: 4),
-                          //   Wrap(
-                          //     spacing: 4,
-                          //     runSpacing: 2,
-                          //     children: novelCardData.genres.map((genre) {
-                          //       return GenreChip(
-                          //         genre: genre,
-                          //         textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          //               color: Theme.of(context).colorScheme.onSecondary,
-                          //             ),
-                          //         decoration: BoxDecoration(
-                          //           color: Theme.of(context).colorScheme.primary,
-                          //           borderRadius: BorderRadius.circular(4),
-                          //         ),
-                          //         padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-                          //         // margin: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
-                          //       );
-                          //     }).toList(),
-                          //   ),
-                          // ],
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                                // margin: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
+                              );
+                            }).toList(),
+                          ),
                         ],
-                      ),
+                      ],
                     ),
                   ),
                 ),
