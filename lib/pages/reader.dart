@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/font_settings.dart';
+import 'package:light_novel_reader_client/components/scroll_bar_vertical.dart';
+import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/models/history.dart';
@@ -35,8 +37,6 @@ class _ReaderPageState extends State<ReaderPage> {
           if (_scrollController.hasClients && _scrollController.position.maxScrollExtent > 0) {
             ratio = _scrollController.offset / _scrollController.position.maxScrollExtent;
           }
-          // double roundedRatio = double.parse(ratio.toStringAsFixed(5));
-          // print('Saving position: $ratio for chapter: ${apiController.chapter!.title}');
           historyController.addToHistory(
             novel: apiController.details!,
             chapter: chapterMeta,
@@ -154,73 +154,82 @@ class _ReaderPageState extends State<ReaderPage> {
 
   Padding mainReaderView(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(widget.showHeader ? 0 : 16.0),
+      padding: EdgeInsets.all(16.0),
       child: Row(
         children: [
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!widget.showHeader) ...[
-                    Text(
-                      apiController.chapter!.title,
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    const SizedBox(height: 8),
-                    Divider(
-                      color: Theme.of(context).colorScheme.secondary,
-                      thickness: 1,
-                    ),
-                  ],
-                  Expanded(
-                    child: Obx(() => SingleChildScrollView(
-                          controller: _scrollController,
-                          scrollDirection: Axis.vertical,
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: Column(
-                              children: [
-                                Text(
-                                  widget.showHeader
-                                      ? '${apiController.chapter!.title}\n\n${apiController.chapter!.content}'
-                                      : apiController.chapter!.content,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(height: uiController.lineHeight, fontSize: uiController.fontSize),
-                                ),
-                                if (apiController.chapter!.nextPage != null) ...[
-                                  const SizedBox(height: 50),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(double.infinity, 50), // Full width button
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                      ),
-                                      backgroundColor: Theme.of(context).colorScheme.primary,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // if (!widget.showHeader) ...[
+                //   Text(
+                //     apiController.chapter!.title,
+                //     style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                //           fontWeight: FontWeight.bold,
+                //         ),
+                //   ),
+                //   const SizedBox(height: 8),
+                //   Divider(
+                //     color: Theme.of(context).colorScheme.secondary,
+                //     thickness: 1,
+                //   ),
+                // ],
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ScrollConfiguration(
+                          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: context.isMobile),
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            scrollDirection: Axis.vertical,
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: Obx(
+                                () => Column(
+                                  children: [
+                                    Text(
+                                      widget.showHeader
+                                          ? '${apiController.chapter!.title}\n\n${apiController.chapter!.content}'
+                                          : apiController.chapter!.content,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(height: uiController.lineHeight, fontSize: uiController.fontSize),
                                     ),
-                                    onPressed: () {
-                                      apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
-                                    },
-                                    child: Text(
-                                      'Next Chapter',
-                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                            color: Theme.of(context).colorScheme.onPrimary,
+                                    if (apiController.chapter!.nextPage != null) ...[
+                                      const SizedBox(height: 50),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: const Size(double.infinity, 50), // Full width button
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
                                           ),
-                                    ),
-                                  ),
-                                ],
-                              ],
+                                          backgroundColor: Theme.of(context).colorScheme.primary,
+                                        ),
+                                        onPressed: () {
+                                          apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
+                                        },
+                                        child: Text(
+                                          'Next Chapter',
+                                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                                color: Theme.of(context).colorScheme.onPrimary,
+                                              ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        )),
+                        ),
+                      ),
+                      if (context.isTabletOrDesktop) ScrollBarVertical(scrollController: _scrollController),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],

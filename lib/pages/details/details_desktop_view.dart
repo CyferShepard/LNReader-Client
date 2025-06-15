@@ -53,7 +53,9 @@ class DetailsDesktopPage extends StatelessWidget {
         child: Obx(
           () => Scaffold(
             appBar: AppBar(
-              title: Text(apiController.details?.title ?? 'Novel Details'),
+              title: Text(apiController.details?.title != null
+                  ? (apiController.chapter?.title != null ? apiController.chapter!.title : apiController.details!.title)
+                  : 'Novel Details'),
               actions: [
                 if (apiController.chapter?.previousPage != null && apiController.chapter!.previousPage!.isNotEmpty)
                   Tooltip(
@@ -177,7 +179,7 @@ class DetailsDesktopPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12), // Adjust the radius as needed
                   child: Image.network(
                     '${client.baseUrl}/proxy/imageProxy?imageUrl=${apiController.details!.cover!}',
-                    height: 300,
+                    height: 450,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => placeHolderImage,
                   ),
