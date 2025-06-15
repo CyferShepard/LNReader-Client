@@ -167,11 +167,10 @@ class _ReaderPageState extends State<ReaderPage> {
                     Text(
                       apiController.chapter!.title,
                       style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                            height: 1.5,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 8),
                     Divider(
                       color: Theme.of(context).colorScheme.secondary,
                       thickness: 1,
