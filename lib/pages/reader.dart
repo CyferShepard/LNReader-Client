@@ -88,7 +88,7 @@ class _ReaderPageState extends State<ReaderPage> {
     return Scaffold(
       appBar: widget.showHeader
           ? AppBar(
-              title: const Text('Reader'),
+              title: Text(apiController.chapter?.title ?? 'Reader'),
               actions: [
                 Obx(() {
                   if (!apiController.isChapterLoading &&
@@ -189,9 +189,7 @@ class _ReaderPageState extends State<ReaderPage> {
                                 () => Column(
                                   children: [
                                     Text(
-                                      widget.showHeader
-                                          ? '${apiController.chapter!.title}\n\n${apiController.chapter!.content}'
-                                          : apiController.chapter!.content,
+                                      '\n${apiController.chapter!.content}',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyLarge!
