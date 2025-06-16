@@ -154,7 +154,7 @@ class _ReaderPageState extends State<ReaderPage> {
 
   Padding mainReaderView(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16.0),
+      padding: context.isMobile ? EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 8) : EdgeInsets.all(16.0),
       child: Row(
         children: [
           Expanded(
