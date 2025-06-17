@@ -27,7 +27,8 @@ class DetailsDesktopPage extends StatelessWidget {
         if (didPop) {
           // Handle the pop action, e.g., navigate back or refresh
           print('Details page popped');
-          apiController.clearDetails(); // Clear details when popping
+
+          Future.delayed(Duration(milliseconds: 100), () => apiController.clearDetails());
         }
       },
       child: Focus(

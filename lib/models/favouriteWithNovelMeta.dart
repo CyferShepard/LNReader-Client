@@ -8,6 +8,7 @@ class FavouriteWithNovelMeta {
   final String author;
   final String status;
   final List<String> genres;
+  final String? lastUpdate;
 
   FavouriteWithNovelMeta({
     required this.dateAdded,
@@ -19,6 +20,7 @@ class FavouriteWithNovelMeta {
     required this.author,
     required this.status,
     required this.genres,
+    this.lastUpdate,
   });
 
   Map<String, dynamic> toJson() {
@@ -32,10 +34,21 @@ class FavouriteWithNovelMeta {
       'author': author,
       'status': status,
       'genres': genres,
+      'lastUpdate': lastUpdate ?? 'Unknown',
     };
   }
 
   factory FavouriteWithNovelMeta.fromJson(Map<String, dynamic> json) {
+    List<String> genres = [];
+
+    if (json['genres'] is String) {
+      // If genres is a single string, split it into an array
+      genres = (json['genres'] as String).split(',').map((e) => e.trim()).toList();
+    } else if (json['genres'] is List) {
+      // If genres is already an array, use it directly
+      genres = (json['genres'] as List<dynamic>).cast<String>();
+    }
+
     return FavouriteWithNovelMeta(
       dateAdded: DateTime.parse(json['date_added'] as String),
       source: json['source'] as String? ?? '',
@@ -45,7 +58,8 @@ class FavouriteWithNovelMeta {
       summary: json['summary'] as String? ?? 'No summary available.',
       author: json['author'] as String? ?? 'Unknown Author',
       status: json['status'] as String? ?? 'Unknown',
-      genres: (json['genres'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      genres: genres,
+      lastUpdate: json['last_update'] as String? ?? 'Unknown',
     );
   }
 
