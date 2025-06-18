@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:light_novel_reader_client/components/chapter_list_item_tile.dart';
 import 'package:light_novel_reader_client/components/font_settings.dart';
 import 'package:light_novel_reader_client/components/genre_chip.dart';
 import 'package:light_novel_reader_client/components/label_text.dart';
 import 'package:light_novel_reader_client/globals.dart';
+import 'package:light_novel_reader_client/pages/details/chapter_list_view.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
 import 'package:tab_container/tab_container.dart';
 
@@ -20,8 +20,51 @@ class DetailsDesktopPage extends StatefulWidget {
   State<DetailsDesktopPage> createState() => _DetailsDesktopPageState();
 }
 
-class _DetailsDesktopPageState extends State<DetailsDesktopPage> {
+class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProviderStateMixin {
   bool showChapters = false;
+  late final ScrollController _chaptersScrollController;
+  late TabController _tabController;
+
+  bool loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _chaptersScrollController = ScrollController();
+    _tabController = TabController(length: 2, vsync: this);
+
+    _tabController.addListener(() {
+      if (!mounted) return;
+      if (_tabController.index == 1 && _tabController.indexIsChanging == false) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) scrollToSelectedChapter();
+        });
+      }
+    });
+  }
+
+  void scrollToSelectedChapter() async {
+    if (loaded) return; // <-- Add this line to prevent multiple calls
+    final selectedIndex = apiController.chapters?.indexWhere(
+      (c) => c.url == apiController.chapter?.url,
+    );
+    if (selectedIndex == null || selectedIndex < 0) return;
+
+    if (_chaptersScrollController.hasClients) {
+      _chaptersScrollController.jumpTo(selectedIndex * 60.0);
+      setState(() {
+        loaded = true; // <-- Set loaded to true after scrolling
+      });
+      return;
+    }
+  }
+
+  @override
+  void dispose() {
+    _chaptersScrollController.dispose();
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,72 +199,75 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> {
                   ),
               ],
             ),
-            body: Obx(() {
-              if (apiController.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              if (apiController.details == null) {
-                return const Center(
-                  child: Text('No details available.'),
-                );
-              }
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 350),
-                    child: TabContainer(
-                      tabEdge: TabEdge.top,
-                      borderRadius: BorderRadius.circular(10),
-                      tabBorderRadius: BorderRadius.circular(10),
-                      childPadding: const EdgeInsets.only(top: 8),
-                      selectedTextStyle: const TextStyle(
-                        fontSize: 15.0,
-                      ),
-                      unselectedTextStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary,
-                        fontSize: 13.0,
-                      ),
-                      colors: [
-                        Theme.of(context).colorScheme.secondary,
-                        Theme.of(context).colorScheme.secondary,
-                      ],
-                      tabs: [
-                        Text(
-                          'Details',
-                          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondary,
-                              ),
-                        ),
-                        Text(
-                          'Chapters (${apiController.chapters?.length ?? 0})',
-                          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondary,
-                              ),
-                        ),
-                      ],
-                      children: [
-                        detailsView(context),
-                        chaptersList(context),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: ReaderPage(
-                      showHeader: false,
-                      source: widget.source,
-                    ),
-                  ),
-                ],
-              );
-            }),
+            body: body(context),
           ),
         ),
       ),
+    );
+  }
+
+  Widget body(BuildContext context) {
+    if (apiController.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    if (apiController.details == null) {
+      return const Center(
+        child: Text('No details available.'),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 350),
+          child: TabContainer(
+            controller: _tabController,
+            tabEdge: TabEdge.top,
+            borderRadius: BorderRadius.circular(10),
+            tabBorderRadius: BorderRadius.circular(10),
+            childPadding: const EdgeInsets.only(top: 8),
+            selectedTextStyle: const TextStyle(
+              fontSize: 15.0,
+            ),
+            unselectedTextStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSecondary,
+              fontSize: 13.0,
+            ),
+            colors: [
+              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).colorScheme.secondary,
+            ],
+            tabs: [
+              Text(
+                'Details',
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+              ),
+              Text(
+                'Chapters (${apiController.chapters?.length ?? 0})',
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+              ),
+            ],
+            children: [
+              detailsView(context),
+              ChapterListView(chaptersScrollController: _chaptersScrollController, source: widget.source),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ReaderPage(
+            showHeader: false,
+            source: widget.source,
+          ),
+        ),
+      ],
     );
   }
 
@@ -368,59 +414,6 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget chaptersList(BuildContext context) {
-    if (apiController.chapters == null || apiController.chapters!.isEmpty) {
-      return const Center(
-        child: Text('No chapters available.'),
-      );
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListView.builder(
-        itemCount: apiController.chapters?.length ?? 0,
-        itemBuilder: (context, index) {
-          return Obx(() {
-            final chapter = apiController.chapters![index];
-            final isSelected = uiController.selectedChapters.contains(index);
-            final isCurrent = chapter.url == apiController.chapter?.url;
-            final position = historyController.novelhistory
-                .firstWhereOrNull((historyItem) =>
-                    historyItem.novel.url == apiController.details?.url &&
-                    historyItem.chapter.url == chapter.url &&
-                    historyItem.source == widget.source)
-                ?.position;
-
-            return GestureDetector(
-              key: ValueKey(index),
-              onLongPress: () => uiController.toggleChapterSelection(index, apiController.chapters!.length),
-              onTap: () {
-                if (uiController.multiSelectMode) {
-                  uiController.toggleChapterSelection(index, apiController.chapters!.length);
-                } else {
-                  apiController.fetchChapter(chapter.url, source: widget.source);
-                }
-              },
-              child: Container(
-                color: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.2) : null,
-                child: ChapterListItemTile(
-                  title: chapter.title,
-                  position: position,
-                  selected: isCurrent,
-                  onTap:
-                      uiController.multiSelectMode ? null : () => apiController.fetchChapter(chapter.url, source: widget.source),
-                ),
-              ),
-            );
-          });
-        },
       ),
     );
   }
