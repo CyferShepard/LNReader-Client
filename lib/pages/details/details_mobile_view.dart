@@ -198,7 +198,7 @@ class DetailsMobilePage extends StatelessWidget {
                   );
                 },
                 child: Text(
-                  'Resume: ${apiController.chapter!.title}',
+                  'Resume: ${apiController.chapter!.title} (${((historyController.novelhistory.firstWhereOrNull((historyItem) => historyItem.novel.url == apiController.details?.url && historyItem.chapter.url == apiController.chapter!.url && historyItem.source == source)?.position ?? 0) * 100).toStringAsFixed(2)}%)',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
