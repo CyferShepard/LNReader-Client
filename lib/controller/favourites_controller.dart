@@ -44,4 +44,8 @@ class FavouritesController extends GetxController {
   Future<void> clearFavourites() async {
     favourites = [];
   }
+
+  bool isFavourite(String url, String source) {
+    return favouritesController.favourites.isNotEmpty && favourites.any((f) => f.url == url && f.source == source);
+  }
 }

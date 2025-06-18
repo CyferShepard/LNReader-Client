@@ -23,6 +23,20 @@ class _ReaderPageState extends State<ReaderPage> {
   final ScrollController _scrollController = ScrollController();
   Timer? _debounceTimer;
   late Worker _chapterWorker;
+
+  Future<void> jumpToRatio(double ratio) async {
+    // Wait until the scroll view is ready
+    for (int i = 0; i < 10; i++) {
+      if (_scrollController.hasClients && _scrollController.position.maxScrollExtent > 0) {
+        final max = _scrollController.position.maxScrollExtent;
+        _scrollController.jumpTo(ratio * max);
+        print('Jumping to ratio: $ratio, max: $max, offset: ${_scrollController.offset}');
+        return;
+      }
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -49,16 +63,12 @@ class _ReaderPageState extends State<ReaderPage> {
     });
 
     _chapterWorker = ever(apiController.chapterRx, (_) {
-      // Wait for the next frame so the scroll view is built
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final chapter = apiController.chapter;
         if (chapter == null) return;
-        History? history = historyController.history.firstWhereOrNull((h) => h.url == chapter.url);
+        History? history = historyController.novelhistory.firstWhereOrNull((h) => h.url == chapter.url);
         final ratio = (history?.position ?? 0.0).toDouble();
-        if (_scrollController.hasClients && _scrollController.position.maxScrollExtent > 0) {
-          final max = _scrollController.position.maxScrollExtent;
-          _scrollController.jumpTo(ratio * max);
-        }
+        jumpToRatio(ratio);
       });
     });
   }
@@ -67,12 +77,9 @@ class _ReaderPageState extends State<ReaderPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      History? history = historyController.history.firstWhereOrNull((h) => h.url == apiController.chapter?.url);
+      History? history = historyController.novelhistory.firstWhereOrNull((h) => h.url == apiController.chapter?.url);
       final ratio = (history?.position ?? 0.0).toDouble();
-      if (_scrollController.hasClients && _scrollController.position.maxScrollExtent > 0) {
-        final max = _scrollController.position.maxScrollExtent;
-        _scrollController.jumpTo(ratio * max);
-      }
+      jumpToRatio(ratio);
     });
   }
 
@@ -80,6 +87,7 @@ class _ReaderPageState extends State<ReaderPage> {
   void dispose() {
     _debounceTimer?.cancel();
     _scrollController.dispose();
+    _chapterWorker.dispose(); // <-- Dispose the worker!
     super.dispose();
   }
 

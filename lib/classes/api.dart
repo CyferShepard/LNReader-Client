@@ -306,9 +306,15 @@ class ApiClient {
     }
   }
 
-  Future<List<History>> getHistory() async {
+  Future<List<History>> getHistory({String? url, String? novelUrl, String? source}) async {
+    Uri uri = Uri.parse('$baseUrl/history/get');
+    if (url != null && source != null) {
+      uri = uri.replace(queryParameters: {'url': url, 'source': source});
+    } else if (novelUrl != null && source != null) {
+      uri = uri.replace(queryParameters: {'novelUrl': novelUrl, 'source': source});
+    }
     final response = await http.get(
-      Uri.parse('$baseUrl/history/get'),
+      uri,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${authController.auth.token}',
@@ -344,6 +350,36 @@ class ApiClient {
       // Handle the response as needed
 
       return History.fromJson(jsonDecode(response.body));
+    } else {
+      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
+        authController.logout();
+      }
+      print(Exception('Failed to add to history: ${response.body}'));
+      return null;
+    }
+  }
+
+  Future<List<History>?> markAsRead(
+      {required Details novel,
+      required List<ChapterListItem> chapters,
+      required String source,
+      int page = 0,
+      double position = 0.0}) async {
+    Map<String, dynamic> novelMeta = novel.toJson();
+    novelMeta['source'] = source;
+    final response = await http.post(
+      Uri.parse('$baseUrl/history/insertBulk'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+      },
+      body:
+          jsonEncode({'novel': novelMeta, 'chapters': ChapterListItem.toJsonList(chapters), 'page': page, 'position': position}),
+    );
+    if (response.statusCode == 200) {
+      // Handle the response as needed
+
+      return History.fromJsonList(jsonDecode(response.body));
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
         authController.logout();

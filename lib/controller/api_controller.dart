@@ -133,6 +133,11 @@ class ApiController extends GetxController {
         }
         if (lastChapterUrl != null && lastChapterUrl.isNotEmpty) {
           // Fetch chapters only if lastChapterUrl is provided
+          await historyController.getNovelHistory(
+            details!.url!,
+            source ?? currentSource,
+          );
+          lastChapterUrl = historyController.getLatestChapterHistory()?.url;
           isChapterLoading = true;
         }
         fetchChapters(
@@ -188,16 +193,16 @@ class ApiController extends GetxController {
       }
       isChapterLoading = true;
       _chapter.value = await client.getChapter(url, source ?? currentSource);
-      ChapterListItem? chapterMeta = chapters?.firstWhereOrNull((chapter) => chapter.url == url);
-      if (chapterMeta != null && addToHistory) {
-        historyController.addToHistory(
-          novel: details!,
-          chapter: chapterMeta,
-          source: source ?? currentSource,
-          page: 0,
-          position: 0,
-        );
-      }
+      // ChapterListItem? chapterMeta = chapters?.firstWhereOrNull((chapter) => chapter.url == url);
+      // if (chapterMeta != null && addToHistory) {
+      //   historyController.addToHistory(
+      //     novel: details!,
+      //     chapter: chapterMeta,
+      //     source: source ?? currentSource,
+      //     page: 0,
+      //     position: 0,
+      //   );
+      // }
     } catch (e) {
       print('Error: Failed to fetch chapter: $e');
     } finally {

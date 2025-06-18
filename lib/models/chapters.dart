@@ -46,6 +46,10 @@ class ChapterListItem {
     };
   }
 
+  static List<Map<String, dynamic>> toJsonList(List<ChapterListItem> items) {
+    return items.map((item) => item.toJson()).toList();
+  }
+
   factory ChapterListItem.fromJson(Map<String, dynamic> json) {
     return ChapterListItem(
       url: json['url'] as String,

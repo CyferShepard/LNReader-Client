@@ -8,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UIController extends GetxController {
   final navController = SideNavBarController();
+  final RxSet<int> selectedChapters = <int>{}.obs;
+  final _multiSelectMode = false.obs;
+  bool get multiSelectMode => _multiSelectMode.value;
 
   final _fontSize = 18.0.obs;
   double get fontSize => _fontSize.value;
@@ -74,5 +77,24 @@ class UIController extends GetxController {
       fontSize = 18.0;
       lineHeight = 1.5;
     }
+  }
+
+  void toggleChapterSelection(int index, int totalChapters) {
+    if (selectedChapters.contains(index)) {
+      selectedChapters.remove(index);
+    } else {
+      selectedChapters.add(index);
+    }
+    _multiSelectMode.value = selectedChapters.isNotEmpty;
+  }
+
+  void clearChapterSelection() {
+    selectedChapters.clear();
+    _multiSelectMode.value = false;
+  }
+
+  void selectAllChapters(int totalChapters) {
+    selectedChapters.addAll(List.generate(totalChapters, (i) => i));
+    _multiSelectMode.value = true;
   }
 }

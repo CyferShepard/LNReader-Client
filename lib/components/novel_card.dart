@@ -61,6 +61,7 @@ class NovelCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Stack(
                   alignment: Alignment.topLeft,

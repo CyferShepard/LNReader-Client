@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 
 class ChapterListItemTile extends StatelessWidget {
   final String title;
+
+  final double? position;
   final bool selected;
   final VoidCallback? onTap;
 
   const ChapterListItemTile({
     super.key,
     required this.title,
+    this.position,
     this.selected = false,
     this.onTap,
   });
@@ -41,10 +44,20 @@ class ChapterListItemTile extends StatelessWidget {
           title: Text(
             title,
             style: TextStyle(
-              color: selected ? Color(0xFFBCA6FF) : Colors.grey[400],
+              color: selected ? Color(0xFFBCA6FF) : (position != null && position == 1 ? Colors.grey[500] : Colors.grey[100]),
               fontSize: 14,
             ),
           ),
+          subtitle: position != null
+              ? Text(
+                  '${(position! * 100).toStringAsFixed(2)}%',
+                  style: TextStyle(
+                    color: selected ? Color(0xFFBCA6FF) : Colors.grey[500],
+                    fontSize: 12,
+                  ),
+                )
+              : null,
+          trailing: position != null && position == 1 ? const Icon(Icons.check_circle) : null,
           contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
           onTap: onTap,
         ),

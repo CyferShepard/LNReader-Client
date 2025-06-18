@@ -44,6 +44,7 @@ dependencies:
   badges: ^3.1.2
   intl: ^0.20.2
   auto_size_text: ^3.0.0
+  tab_container: ^3.5.3
 
 dev_dependencies:
   flutter_test:

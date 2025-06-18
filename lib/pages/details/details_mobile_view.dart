@@ -22,7 +22,10 @@ class DetailsMobilePage extends StatelessWidget {
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
           print('Details page popped');
-          Future.delayed(Duration(milliseconds: 100), () => apiController.clearDetails());
+          Future.delayed(Duration(milliseconds: 100), () {
+            apiController.clearDetails();
+            historyController.clearNovelHistory();
+          });
         }
       },
       child: Obx(
@@ -266,6 +269,12 @@ class DetailsMobilePage extends StatelessWidget {
                         return Obx(
                           () => ChapterListItemTile(
                             title: apiController.chapters![index].title,
+                            position: historyController.novelhistory
+                                .firstWhereOrNull((historyItem) =>
+                                    historyItem.novel.url == apiController.details?.url &&
+                                    historyItem.chapter.url == apiController.chapters![index].url &&
+                                    historyItem.source == source)
+                                ?.position,
                             selected: apiController.chapters![index].url == apiController.chapter?.url,
                             onTap: () {
                               print('Chapter Selected: You selected ${apiController.chapters![index].title}');
