@@ -47,3 +47,4 @@ app.*.map.json
 #Project files
 upload-keystore.jks
 upload-keystore.jks.base64
+keystore.jks.base64
