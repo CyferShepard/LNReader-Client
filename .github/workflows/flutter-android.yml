@@ -50,7 +50,7 @@ jobs:
       - name: Rename APKs
         run: |
           for file in build/app/outputs/flutter-apk/app-*; do
-            mv "$file" "${file/app-/lit-app-${{ env.VERSION }}-}"
+            mv "$file" "${file/app-/light-novel-reader-${{ env.VERSION }}-}"
           done
 
       - name: Upload Artifacts
