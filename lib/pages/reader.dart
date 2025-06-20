@@ -96,7 +96,7 @@ class _ReaderPageState extends State<ReaderPage> {
     return Scaffold(
       appBar: widget.showHeader
           ? AppBar(
-              title: Text(apiController.chapter?.title ?? 'Reader'),
+              title: Obx(() => Text(apiController.chapter?.title ?? 'Reader')),
               actions: [
                 Obx(() {
                   if (!apiController.isChapterLoading &&

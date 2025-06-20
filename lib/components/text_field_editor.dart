@@ -11,6 +11,7 @@ class TextFieldEditor extends StatefulWidget {
   final String? Function(String value)? validator;
   final bool readOnly;
   final bool obscureText;
+  final TextInputType? keyboardType;
 
   const TextFieldEditor({
     super.key,
@@ -24,6 +25,7 @@ class TextFieldEditor extends StatefulWidget {
     this.validator,
     this.readOnly = false,
     this.obscureText = false,
+    this.keyboardType,
   });
 
   @override
@@ -102,6 +104,7 @@ class TextFieldEditorState extends State<TextFieldEditor> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       spacing: 8,
       children: [
         if (widget.label != null)
@@ -115,6 +118,7 @@ class TextFieldEditorState extends State<TextFieldEditor> {
           maxLines: widget.maxLines,
           readOnly: widget.readOnly,
           obscureText: _obscure,
+          keyboardType: widget.keyboardType,
           decoration: (widget.decoration != null
                   ? widget.decoration!
                   : InputDecoration(
@@ -130,6 +134,19 @@ class TextFieldEditorState extends State<TextFieldEditor> {
                     ))
               .copyWith(
             errorText: _errorText,
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red),
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+            ),
+            errorStyle: const TextStyle(color: Colors.red),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: const Color.fromARGB(255, 187, 61, 52)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+            ),
             suffixIcon: widget.obscureText
                 ? IconButton(
                     icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility),

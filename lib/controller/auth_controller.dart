@@ -57,7 +57,7 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<bool> login() async {
+  Future<bool> login({bool newUser = true}) async {
     if (auth.username.isEmpty || auth.password.isEmpty) {
       auth = auth.copyWith(
         status: false,
@@ -79,8 +79,9 @@ class AuthController extends GetxController {
       );
     });
     isLoading = false;
-    reinitUser();
-
+    if (newUser) {
+      reinitUser();
+    }
     return auth.isAuthenticated;
   }
 
@@ -148,7 +149,13 @@ class AuthController extends GetxController {
     secondaryPassword = '';
   }
 
-  void logout() {
+  void logout({bool refreshLogin = false}) async {
+    if (refreshLogin) {
+      bool loggedIn = await login(newUser: false);
+      if (loggedIn) {
+        return;
+      }
+    }
     auth = auth.clear();
     SharedPreferences.getInstance().then((prefs) => prefs.remove('auth'));
 

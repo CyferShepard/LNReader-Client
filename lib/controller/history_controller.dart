@@ -92,11 +92,13 @@ class HistoryController extends GetxController {
   Future<void> markAsRead(
     List<ChapterListItem> chapters,
     Details novel,
-    String source,
-  ) async {
+    String source, {
+    bool isRead = true,
+  }) async {
     try {
       print('Marking chapters as read: ${novel.title}');
-      List<History>? history = await client.markAsRead(novel: novel, chapters: chapters, source: source, page: 0, position: 1);
+      List<History>? history =
+          await client.markAsRead(novel: novel, chapters: chapters, source: source, page: 0, position: isRead ? 1 : 0);
 
       if (history != null && history.isNotEmpty) {
         updateNovelHistoryList(history);

@@ -7,6 +7,7 @@ import 'package:light_novel_reader_client/components/label_text.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/details/chapter_list_view.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:tab_container/tab_container.dart';
 
 class DetailsDesktopPage extends StatefulWidget {
@@ -22,7 +23,7 @@ class DetailsDesktopPage extends StatefulWidget {
 
 class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProviderStateMixin {
   bool showChapters = false;
-  late final ScrollController _chaptersScrollController;
+  late final ItemScrollController _chaptersScrollController;
   late TabController _tabController;
 
   bool loaded = false;
@@ -30,7 +31,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
   @override
   void initState() {
     super.initState();
-    _chaptersScrollController = ScrollController();
+    _chaptersScrollController = ItemScrollController();
     _tabController = TabController(length: 2, vsync: this);
 
     _tabController.addListener(() {
@@ -50,8 +51,10 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
     );
     if (selectedIndex == null || selectedIndex < 0) return;
 
-    if (_chaptersScrollController.hasClients) {
-      _chaptersScrollController.jumpTo(selectedIndex * 60.0);
+    if (_chaptersScrollController.isAttached) {
+      _chaptersScrollController.jumpTo(
+        index: selectedIndex,
+      );
       setState(() {
         loaded = true; // <-- Set loaded to true after scrolling
       });
@@ -61,7 +64,6 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
 
   @override
   void dispose() {
-    _chaptersScrollController.dispose();
     _tabController.dispose();
     super.dispose();
   }
@@ -113,6 +115,20 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                 if (uiController.multiSelectMode)
                   Row(
                     children: [
+                      if (historyController.novelhistory.isNotEmpty)
+                        IconButton(
+                          icon: const Icon(Icons.check_circle_outline),
+                          tooltip: 'Mark as Unread',
+                          onPressed: () {
+                            historyController.markAsRead(
+                              apiController.chapters!.where((c) => uiController.selectedChapters.contains(c.index - 1)).toList(),
+                              apiController.details!,
+                              widget.source ?? apiController.currentSource,
+                              isRead: false,
+                            );
+                            Get.toNamed('/history');
+                          },
+                        ),
                       if (historyController.novelhistory.isNotEmpty)
                         IconButton(
                           icon: const Icon(Icons.check_circle),

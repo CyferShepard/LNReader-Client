@@ -58,11 +58,11 @@ class FavouritesView extends StatelessWidget {
                 maxCrossAxisExtent: 200, // Each item's max width
                 mainAxisSpacing: 2,
                 crossAxisSpacing: 2,
-                childAspectRatio: 200 / 340, // width / height
+                childAspectRatio: 200 / 320, // width / height
               ),
               itemBuilder: (context, index) {
                 return NovelCard(
-                  maxHeight: 340,
+                  maxHeight: 320,
                   novelCardData: NovelCardData(
                     title: items[index].title,
                     cover: items[index].cover,

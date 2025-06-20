@@ -124,7 +124,7 @@ class ApiClient {
       return User.fromJsonList(jsonDecode(response.body));
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       print('Failed to fetch users: ${response.body}');
       return [];
@@ -138,7 +138,7 @@ class ApiClient {
       return jsonDecode(response.body);
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to update sources: ${response.body}');
     }
@@ -151,7 +151,7 @@ class ApiClient {
       return (jsonDecode(response.body) as List<dynamic>).cast<String>();
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to fetch sources: ${response.body}');
     }
@@ -168,7 +168,7 @@ class ApiClient {
       return SearchResult.fromJsonList(jsonDecode(response.body));
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to search: ${response.body}');
     }
@@ -191,7 +191,7 @@ class ApiClient {
       throw Exception('Details not found.');
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to fetch details: ${response.body}');
     }
@@ -222,7 +222,7 @@ class ApiClient {
       throw Exception('Chapters not found.');
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to fetch chapters: ${response.body}');
     }
@@ -238,7 +238,7 @@ class ApiClient {
       throw Exception('Chapter not found.');
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to fetch chapter: ${response.body}');
     }
@@ -257,7 +257,7 @@ class ApiClient {
       return FavouriteWithNovelMeta.fromJsonList(jsonDecode(response.body));
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to fetch favourites: ${response.body}');
     }
@@ -280,7 +280,7 @@ class ApiClient {
       return true;
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       print(Exception('Failed to add to favourites: ${response.body}'));
       return false;
@@ -299,7 +299,7 @@ class ApiClient {
       return true;
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       print(Exception('Failed to remove from favourites: ${response.body}'));
       return false;
@@ -324,7 +324,7 @@ class ApiClient {
       return History.fromJsonList(jsonDecode(response.body));
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to search: ${response.body}');
     }
@@ -352,7 +352,7 @@ class ApiClient {
       return History.fromJson(jsonDecode(response.body));
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       print(Exception('Failed to add to history: ${response.body}'));
       return null;
@@ -382,7 +382,7 @@ class ApiClient {
       return History.fromJsonList(jsonDecode(response.body));
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       print(Exception('Failed to add to history: ${response.body}'));
       return null;
@@ -403,7 +403,7 @@ class ApiClient {
       return;
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout();
+        authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to fetch source icon: ${response.body}');
     }
