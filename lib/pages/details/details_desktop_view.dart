@@ -108,6 +108,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
         child: Obx(
           () => Scaffold(
             appBar: AppBar(
+              scrolledUnderElevation: 0,
               title: Text(apiController.details?.title != null
                   ? (apiController.chapter?.title != null ? apiController.chapter!.title : apiController.details!.title)
                   : 'Novel Details'),

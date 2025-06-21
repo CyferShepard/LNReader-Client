@@ -15,6 +15,7 @@ class RegisterPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register'),
+        scrolledUnderElevation: 0,
       ),
       body: Obx(() {
         // if (authController.isLoading) {

@@ -90,7 +90,7 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
-              iconColor: Theme.of(context).colorScheme.primary,
+              iconColor: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ),

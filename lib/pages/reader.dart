@@ -96,6 +96,7 @@ class _ReaderPageState extends State<ReaderPage> {
     return Scaffold(
       appBar: widget.showHeader
           ? AppBar(
+              scrolledUnderElevation: 0,
               title: Obx(() => Text(apiController.chapter?.title ?? 'Reader')),
               actions: [
                 Obx(() {

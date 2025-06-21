@@ -109,6 +109,16 @@ class HistoryController extends GetxController {
     uiController.clearChapterSelection();
   }
 
+  Future<void> removeFromHistory(String url, String source) async {
+    try {
+      print('Removing from history: $url');
+      await client.removeFromHistory(url, source);
+      await getHistory();
+    } catch (error) {
+      print('Error removing from history: $error');
+    }
+  }
+
   void updateNovelHistoryList(List<History> newItems) {
     final current = [...novelhistory];
     for (final item in newItems) {

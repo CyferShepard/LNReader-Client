@@ -140,8 +140,7 @@ class _HoverableListTileState extends State<_HoverableListTile> {
           leading: Icon(
             widget.item.icon,
             size: 24,
-            color:
-                widget.selected ? widget.navBarStyle.selectedItemStyle?.textStyle?.color : widget.navBarStyle.unselectedIconColor,
+            color: widget.selected ? widget.navBarStyle.selectedItemStyle?.iconColor : widget.navBarStyle.unselectedIconColor,
           ),
           title: widget.isCollapsed
               ? null

@@ -4,6 +4,7 @@ import 'package:light_novel_reader_client/models/chapter.dart';
 import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/models/details.dart';
 import 'package:light_novel_reader_client/models/history.dart';
+import 'package:light_novel_reader_client/models/latest.dart';
 import 'package:light_novel_reader_client/models/search_result.dart';
 
 class ApiController extends GetxController {
@@ -20,6 +21,10 @@ class ApiController extends GetxController {
   List<SearchResult> get searchResults => _searchResults.toList();
   set searchResults(List<SearchResult> value) => _searchResults.value = value;
 
+  final _latestResults = <SearchResult>[].obs;
+  List<SearchResult> get latestResults => _latestResults.toList();
+  set latestResults(List<SearchResult> value) => _latestResults.value = value;
+
   final _details = Rxn<Details>();
   Details? get details => _details.value;
   set details(Details? value) => _details.value = value;
@@ -27,6 +32,10 @@ class ApiController extends GetxController {
   final _chapters = Rxn<List<ChapterListItem>>();
   List<ChapterListItem>? get chapters => _chapters.value;
   set chapters(List<ChapterListItem>? value) => _chapters.value = value;
+
+  final _latest = Rxn<Latest>();
+  Latest? get latest => _latest.value;
+  set latest(Latest? value) => _latest.value = value;
 
   // final _selectedChapter = Rxn<ChapterListItem>();
   // ChapterListItem? get selectedChapter => _selectedChapter.value;
@@ -40,6 +49,10 @@ class ApiController extends GetxController {
   final _isLoading = false.obs;
   bool get isLoading => _isLoading.value;
   set isLoading(bool value) => _isLoading.value = value;
+
+  final _isLatestLoading = false.obs;
+  bool get isLatestLoading => _isLatestLoading.value;
+  set isLatestLoading(bool value) => _isLatestLoading.value = value;
 
   final _isChapterLoading = false.obs;
   bool get isChapterLoading => _isChapterLoading.value;
@@ -109,6 +122,25 @@ class ApiController extends GetxController {
     } finally {
       isLoading = false;
     }
+  }
+
+  Future<Latest?> fetchLatest({String? source, int page = 1}) async {
+    try {
+      isLatestLoading = page == 1;
+      latest = await client.getLatest(source ?? currentSource, page: page);
+      if (latest != null && latest!.results.isNotEmpty) {
+        if (page == 1) {
+          latestResults = latest!.results;
+        } else {
+          latestResults = [...latestResults, ...latest!.results];
+        }
+      }
+    } catch (e) {
+      print('Error: Failed to fetch latest: $e');
+    } finally {
+      isLatestLoading = false;
+    }
+    return null;
   }
 
   Future<Details?> fetchDetails(

@@ -4,9 +4,16 @@ import 'package:light_novel_reader_client/components/novel_card.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/details/details_view.dart';
 
-class SearchPage extends StatelessWidget {
-  const SearchPage({super.key});
+class SearchView extends StatefulWidget {
+  const SearchView({super.key});
 
+  @override
+  State<SearchView> createState() => _SearchViewState();
+}
+
+class _SearchViewState extends State<SearchView> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   Future<void> beginSearch(String searchTerm) async {
     //  final searchTerm = searchController.text.trim();
     if (searchTerm.isNotEmpty) {
@@ -18,20 +25,10 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final TextEditingController searchController = TextEditingController();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // uiController.selectedIndex = 2; // Navigate back to the previous page
-            apiController.currentSource = '';
-          },
-        ),
-      ),
-      body: Column(
+    return Obx(
+      () => Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),

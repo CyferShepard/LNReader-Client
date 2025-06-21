@@ -13,6 +13,7 @@ class LoginPage extends StatelessWidget {
     final GlobalKey<TextFieldEditorState> passwordFieldKey = GlobalKey<TextFieldEditorState>();
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text('Login'),
       ),
       body: Obx(() {

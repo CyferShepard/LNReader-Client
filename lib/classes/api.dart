@@ -9,6 +9,7 @@ import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/models/details.dart';
 import 'package:light_novel_reader_client/models/favouriteWithNovelMeta.dart';
 import 'package:light_novel_reader_client/models/history.dart';
+import 'package:light_novel_reader_client/models/latest.dart';
 import 'package:light_novel_reader_client/models/search_result.dart';
 import 'package:light_novel_reader_client/models/user.dart';
 
@@ -186,7 +187,8 @@ class ApiClient {
       body: jsonEncode({'source': source, 'url': url, 'clearCache': refresh, "cacheData": canCacheNovel}),
     );
     if (response.statusCode == 200) {
-      return Details.fromJson(jsonDecode(response.body));
+      final details = Details.fromJson(jsonDecode(response.body));
+      return details;
     } else if (response.statusCode == 404) {
       throw Exception('Details not found.');
     } else {
@@ -241,6 +243,22 @@ class ApiClient {
         authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to fetch chapter: ${response.body}');
+    }
+  }
+
+  Future<Latest?> getLatest(String source, {int page = 1}) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/latest?source=$source&page=$page'),
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
+    );
+    if (response.statusCode == 200) {
+      return Latest.fromJson(jsonDecode(response.body));
+    } else {
+      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
+        authController.logout(refreshLogin: true);
+      }
+      print('Failed to fetch latest: ${response.body}');
+      return null;
     }
   }
 
@@ -386,6 +404,27 @@ class ApiClient {
       }
       print(Exception('Failed to add to history: ${response.body}'));
       return null;
+    }
+  }
+
+  Future<bool> removeFromHistory(String url, String source) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/history/delete'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+      },
+      body: jsonEncode({'url': url, 'source': source}),
+    );
+    if (response.statusCode == 200) {
+      // Handle the response as needed
+      return true;
+    } else {
+      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
+        authController.logout(refreshLogin: true);
+      }
+      print(Exception('Failed to remove from history: ${response.body}'));
+      return false;
     }
   }
 

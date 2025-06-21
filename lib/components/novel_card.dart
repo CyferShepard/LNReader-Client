@@ -1,30 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:light_novel_reader_client/components/default_placeholder_image.dart';
 import 'package:light_novel_reader_client/components/genre_chip.dart';
 import 'package:light_novel_reader_client/globals.dart';
-
-class _DefaultPlaceholderImage extends StatelessWidget {
-  const _DefaultPlaceholderImage({super.key, this.imageHeight = 230, this.maxWidth = 200});
-  final double imageHeight; // Default image height
-  final double maxWidth;
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: maxWidth / imageHeight,
-      child: Container(
-        color: Colors.grey[300],
-        child: Center(
-            child: SizedBox(
-          height: imageHeight,
-          width: maxWidth,
-          child: const Icon(Icons.book, size: 50),
-        )),
-      ),
-    );
-  }
-}
 
 class NovelCard extends StatelessWidget {
   const NovelCard(
@@ -46,7 +25,7 @@ class NovelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget placeHolderImage = _DefaultPlaceholderImage(
+    final Widget placeHolderImage = DefaultPlaceholderImage(
       maxWidth: maxWidth,
       imageHeight: imageHeight,
     );

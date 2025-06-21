@@ -7,7 +7,7 @@ import 'package:light_novel_reader_client/pages/auth/login.dart';
 import 'package:light_novel_reader_client/pages/auth/register.dart';
 import 'package:light_novel_reader_client/pages/favourites_view.dart';
 import 'package:light_novel_reader_client/pages/history.dart';
-import 'package:light_novel_reader_client/pages/search.dart';
+import 'package:light_novel_reader_client/pages/search/search.dart';
 import 'package:light_novel_reader_client/pages/settings/settings.dart';
 import 'package:light_novel_reader_client/pages/sources.dart';
 
@@ -110,56 +110,58 @@ class _HomePageState extends State<HomePage> {
       }
 
       return Scaffold(
-        body: MainNavigationBar(navItems: [
-          NavBarItem(
-            label: 'History',
-            icon: Icons.timer_outlined,
-            child: History(),
-          ),
-          NavBarItem(
-            label: 'Favourites',
-            icon: Icons.favorite,
-            child: FavouritesView(),
-          ),
-          NavBarItem(
-            label: 'Search',
-            icon: Icons.search,
-            child: (apiController.currentSource != "") ? SearchPage() : SourcesPage(),
-          ),
-          NavBarItem(
-            label: 'Settings',
-            icon: Icons.settings,
-            child: SettingsPage(),
-          ),
-          NavBarItem(
-            label: 'Logout',
-            icon: Icons.logout,
-            child: Container(),
-            showInMobile: false,
-            onTap: () async {
-              final shouldLogout = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Confirm Logout'),
-                  content: const Text('Are you sure you want to log out?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      child: const Text('Logout'),
-                    ),
-                  ],
-                ),
-              );
-              if (shouldLogout == true) {
-                authController.logout();
-              }
-            },
-          ),
-        ]),
+        body: MainNavigationBar(
+          navItems: [
+            NavBarItem(
+              label: 'Favourites',
+              icon: Icons.favorite,
+              child: FavouritesView(),
+            ),
+            NavBarItem(
+              label: 'History',
+              icon: Icons.timer_outlined,
+              child: History(),
+            ),
+            NavBarItem(
+              label: 'Search',
+              icon: Icons.search,
+              child: (apiController.currentSource != "") ? SearchPage() : SourcesPage(),
+            ),
+            NavBarItem(
+              label: 'Settings',
+              icon: Icons.settings,
+              child: SettingsPage(),
+            ),
+            NavBarItem(
+              label: 'Logout',
+              icon: Icons.logout,
+              child: Container(),
+              showInMobile: false,
+              onTap: () async {
+                final shouldLogout = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Confirm Logout'),
+                    content: const Text('Are you sure you want to log out?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: const Text('Logout'),
+                      ),
+                    ],
+                  ),
+                );
+                if (shouldLogout == true) {
+                  authController.logout();
+                }
+              },
+            ),
+          ],
+        ),
       );
     });
   }

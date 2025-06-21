@@ -10,7 +10,17 @@ class SourcesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text('Sources'),
+        actions: [
+          if (context.isTabletOrDesktop)
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () async {
+                await apiController.fetchSources();
+              },
+            ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -42,6 +52,7 @@ class SourcesPage extends StatelessWidget {
                   onTap: () {
                     print('Source Selected: You selected $source');
                     apiController.setSource(source);
+                    apiController.fetchLatest(source: source);
                   },
                 ),
               );
@@ -49,14 +60,6 @@ class SourcesPage extends StatelessWidget {
           );
         }),
       ),
-      floatingActionButton: context.isTabletOrDesktop
-          ? FloatingActionButton(
-              onPressed: () async {
-                await apiController.fetchSources();
-              },
-              child: const Icon(Icons.refresh),
-            )
-          : null,
     );
   }
 }
