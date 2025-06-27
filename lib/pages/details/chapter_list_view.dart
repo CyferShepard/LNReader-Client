@@ -63,16 +63,31 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
         ),
         child: Column(
           children: [
-            TextFieldEditor(
-              key: chapterNumberFieldKey,
-              initialValue: '',
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(8),
-                labelText: 'Go to chapter number',
-                border: UnderlineInputBorder(),
-              ),
-              onSubmitted: (value) => _scrollToChapterNumber(value.trim()),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFieldEditor(
+                    key: chapterNumberFieldKey,
+                    initialValue: '',
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.all(8),
+                      labelText: 'Go to chapter number',
+                      border: UnderlineInputBorder(),
+                    ),
+                    onSubmitted: (value) => _scrollToChapterNumber(value.trim()),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.sort_by_alpha),
+                  tooltip: 'Sort Chapters',
+                  onPressed: () {
+                    apiController.sortAsc = !apiController.sortAsc; // Toggle sort direction
+                    apiController.chapters = List.from(apiController.chapters ?? [])
+                      ..sort((a, b) => apiController.sortAsc ? a.index.compareTo(b.index) : b.index.compareTo(a.index));
+                  },
+                ),
+              ],
             ),
             const SizedBox(width: 8),
             Expanded(

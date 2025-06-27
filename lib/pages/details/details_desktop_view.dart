@@ -158,61 +158,52 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                     ],
                   ),
                 if (apiController.chapter?.previousPage != null && apiController.chapter!.previousPage!.isNotEmpty)
-                  Tooltip(
-                    message: 'Previous Chapter',
-                    child: IconButton(
-                      icon: const Icon(Icons.navigate_before),
-                      onPressed: () {
-                        apiController.fetchChapter(apiController.chapter!.previousPage!, source: widget.source);
-                      },
-                    ),
+                  IconButton(
+                    icon: const Icon(Icons.navigate_before),
+                    tooltip: 'Previous Chapter',
+                    onPressed: () {
+                      apiController.fetchChapter(apiController.chapter!.previousPage!, source: widget.source);
+                    },
                   ),
                 if (apiController.chapter?.nextPage != null && apiController.chapter!.nextPage!.isNotEmpty)
-                  Tooltip(
-                    message: 'Next Chapter',
-                    child: IconButton(
-                      icon: const Icon(Icons.navigate_next),
-                      onPressed: () {
-                        apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
-                      },
-                    ),
+                  IconButton(
+                    icon: const Icon(Icons.navigate_next),
+                    tooltip: 'Next Chapter',
+                    onPressed: () {
+                      apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
+                    },
                   ),
                 if (apiController.details != null && favouritesController.favourites.isNotEmpty)
-                  Tooltip(
-                    message: favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
+                  IconButton(
+                    tooltip: favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
                         ? 'Remove from Favourites'
                         : 'Add to Favourites',
-                    child: IconButton(
-                      icon: Icon(
-                        favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
-                            ? Icons.favorite
-                            : Icons.favorite_outline,
-                        color: favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
-                            ? Colors.red
-                            : null,
-                      ),
-                      onPressed: () {
-                        if (apiController.details?.url != null) {
-                          favouritesController.addToFavourites(
-                              apiController.details!.url!, widget.source ?? apiController.currentSource);
-                        }
-                      },
+                    icon: Icon(
+                      favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
+                          ? Icons.favorite
+                          : Icons.favorite_outline,
+                      color:
+                          favouritesController.favourites.any((fav) => fav.url == apiController.details?.url) ? Colors.red : null,
                     ),
+                    onPressed: () {
+                      if (apiController.details?.url != null) {
+                        favouritesController.addToFavourites(
+                            apiController.details!.url!, widget.source ?? apiController.currentSource);
+                      }
+                    },
                   ),
                 FontSettingsButton(),
                 if (apiController.details != null && apiController.details!.url != null)
-                  Tooltip(
-                    message: 'Refresh Details',
-                    child: IconButton(
-                      icon: const Icon(Icons.refresh),
-                      onPressed: () {
-                        apiController.fetchDetails(apiController.details!.url!,
-                            source: widget.source,
-                            refresh: true,
-                            canCacheChapters: widget.canCacheChapters,
-                            canCacheNovel: widget.canCacheNovel);
-                      },
-                    ),
+                  IconButton(
+                    icon: const Icon(Icons.refresh),
+                    tooltip: 'Refresh Details',
+                    onPressed: () {
+                      apiController.fetchDetails(apiController.details!.url!,
+                          source: widget.source,
+                          refresh: true,
+                          canCacheChapters: widget.canCacheChapters,
+                          canCacheNovel: widget.canCacheNovel);
+                    },
                   ),
               ],
             ),

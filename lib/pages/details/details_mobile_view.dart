@@ -34,35 +34,31 @@ class DetailsMobilePage extends StatelessWidget {
             scrolledUnderElevation: 0,
             actions: [
               if (apiController.details != null && favouritesController.favourites.isNotEmpty)
-                Tooltip(
-                  message: favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
+                IconButton(
+                  icon: Icon(
+                    favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
+                        ? Icons.favorite
+                        : Icons.favorite_outline,
+                    color:
+                        favouritesController.favourites.any((fav) => fav.url == apiController.details?.url) ? Colors.red : null,
+                  ),
+                  tooltip: favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
                       ? 'Remove from Favourites'
                       : 'Add to Favourites',
-                  child: IconButton(
-                    icon: Icon(
-                      favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
-                          ? Icons.favorite
-                          : Icons.favorite_outline,
-                      color:
-                          favouritesController.favourites.any((fav) => fav.url == apiController.details?.url) ? Colors.red : null,
-                    ),
-                    onPressed: () {
-                      if (apiController.details?.url != null) {
-                        favouritesController.addToFavourites(apiController.details!.url!, source ?? apiController.currentSource);
-                      }
-                    },
-                  ),
+                  onPressed: () {
+                    if (apiController.details?.url != null) {
+                      favouritesController.addToFavourites(apiController.details!.url!, source ?? apiController.currentSource);
+                    }
+                  },
                 ),
               if (context.isTabletOrDesktop)
-                Tooltip(
-                  message: 'Refresh Details',
-                  child: IconButton(
-                    icon: const Icon(Icons.refresh),
-                    onPressed: () {
-                      apiController.fetchDetails(apiController.details?.url ?? '',
-                          source: source, refresh: true, canCacheChapters: canCacheChapters, canCacheNovel: canCacheNovel);
-                    },
-                  ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  tooltip: 'Refresh Details',
+                  onPressed: () {
+                    apiController.fetchDetails(apiController.details?.url ?? '',
+                        source: source, refresh: true, canCacheChapters: canCacheChapters, canCacheNovel: canCacheNovel);
+                  },
                 ),
             ],
           ),
@@ -252,10 +248,27 @@ class DetailsMobilePage extends StatelessWidget {
           ),
           SliverToBoxAdapter(child: const SizedBox(height: 16)),
           SliverToBoxAdapter(
-            child: Center(
-              child: Text(
-                'Chapters: (${apiController.chapters?.length ?? 0})',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Chapters: (${apiController.chapters?.length ?? 0})',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.sort_by_alpha),
+                    tooltip: 'Sort Chapters',
+                    onPressed: () {
+                      apiController.sortAsc = !apiController.sortAsc; // Toggle sort direction
+                      apiController.chapters = List.from(apiController.chapters ?? [])
+                        ..sort((a, b) => apiController.sortAsc ? a.index.compareTo(b.index) : b.index.compareTo(a.index));
+                    },
+                  ),
+                ],
               ),
             ),
           ),

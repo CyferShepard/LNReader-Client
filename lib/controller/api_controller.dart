@@ -62,6 +62,10 @@ class ApiController extends GetxController {
   bool get isChaptersLoading => _isChaptersLoading.value;
   set isChaptersLoading(bool value) => _isChaptersLoading.value = value;
 
+  final _sortAsc = true.obs;
+  bool get sortAsc => _sortAsc.value;
+  set sortAsc(bool value) => _sortAsc.value = value;
+
   // Methods
   Future<void> fetchSources() async {
     try {
