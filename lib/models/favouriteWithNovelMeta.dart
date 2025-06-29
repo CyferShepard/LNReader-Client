@@ -10,6 +10,8 @@ class FavouriteWithNovelMeta {
   final List<String> genres;
   final String? lastUpdate;
   final Map<String, dynamic>? additionalProps;
+  final int chapterCount;
+  final int readCount;
 
   FavouriteWithNovelMeta({
     required this.dateAdded,
@@ -23,6 +25,8 @@ class FavouriteWithNovelMeta {
     required this.genres,
     this.lastUpdate,
     this.additionalProps,
+    this.chapterCount = 0,
+    this.readCount = 0,
   });
 
   Map<String, dynamic> toJson() {
@@ -38,6 +42,8 @@ class FavouriteWithNovelMeta {
       'genres': genres,
       'lastUpdate': lastUpdate ?? 'Unknown',
       'additionalProps': additionalProps ?? {},
+      'chapterCount': chapterCount,
+      'readCount': readCount,
     };
   }
 
@@ -64,6 +70,8 @@ class FavouriteWithNovelMeta {
       genres: genres,
       lastUpdate: json['last_update'] as String? ?? 'Unknown',
       additionalProps: json['additionalProps'] != null ? Map<String, dynamic>.from(json['additionalProps'] as Map) : null,
+      chapterCount: json['chapterCount'] as int? ?? 0,
+      readCount: json['readCount'] as int? ?? 0,
     );
   }
 

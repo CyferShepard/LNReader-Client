@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:light_novel_reader_client/components/default_placeholder_image.dart';
 import 'package:light_novel_reader_client/components/genre_chip.dart';
+import 'package:light_novel_reader_client/components/segmented_badge_row.dart';
 import 'package:light_novel_reader_client/globals.dart';
 
 class NovelCard extends StatelessWidget {
@@ -55,19 +56,34 @@ class NovelCard extends StatelessWidget {
                             ),
                           )
                         : placeHolderImage,
-                    if (novelCardData.chapterCount != null) ...[
+                    if (novelCardData.chapterCount != null ||
+                        (novelCardData.readCount != null && novelCardData.readCount! > 0)) ...[
                       Positioned(
                         top: 4,
                         left: 4,
-                        child: Badge(
-                          label: Text(
-                            novelCardData.chapterCount.toString(),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  fontSize: 12,
-                                ),
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          backgroundColor: Theme.of(context).colorScheme.primary,
+                        child: SegmentedBadgeRow(
+                          items: [
+                            if (novelCardData.readCount != null && novelCardData.readCount! > 0)
+                              BadgeData(
+                                label: '${novelCardData.readCount}',
+                                toolTip: 'Read',
+                                backgroundColor: Theme.of(context).colorScheme.tertiary.withBlue(100).withGreen(200).withRed(200),
+                                textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Theme.of(context).colorScheme.secondary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            if (novelCardData.chapterCount != null)
+                              BadgeData(
+                                label: '${novelCardData.chapterCount}',
+                                toolTip: 'Chapters',
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Theme.of(context).colorScheme.onSecondary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                          ],
                         ),
                       ),
                     ],
@@ -155,6 +171,7 @@ class NovelCardData {
   final String url;
   final String source;
   final int? chapterCount;
+  final int? readCount;
   final List<String> genres;
 
   NovelCardData({
@@ -163,6 +180,7 @@ class NovelCardData {
     required this.url,
     required this.source,
     this.chapterCount,
+    this.readCount,
     this.genres = const [],
   });
 }

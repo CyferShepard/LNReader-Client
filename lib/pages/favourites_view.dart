@@ -77,6 +77,8 @@ class FavouritesView extends StatelessWidget {
                       cover: items[index].cover,
                       url: items[index].url,
                       source: items[index].source,
+                      chapterCount: items[index].chapterCount,
+                      readCount: items[index].readCount,
                     ),
                     onTap: () {
                       apiController.fetchDetails(
