@@ -58,7 +58,7 @@ class NovelCard extends StatelessWidget {
                         ? AspectRatio(
                             aspectRatio: maxWidth / imageHeight,
                             child: Image.network(
-                              '${client.baseUrl}/proxy/imageProxy?imageUrl=${novelCardData.cover}',
+                              '${client.baseUrl}/proxy/imageProxy?imageUrl=${novelCardData.cover}&cacheImage=${novelCardData.cacheImage}',
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) => placeHolderImage,
                             ),
@@ -175,6 +175,7 @@ class NovelCard extends StatelessWidget {
 class NovelCardData {
   final String title;
   final String cover;
+  final bool cacheImage;
   final String url;
   final String source;
   final int? chapterCount;
@@ -184,6 +185,7 @@ class NovelCardData {
   NovelCardData({
     required this.title,
     required this.cover,
+    this.cacheImage = true,
     required this.url,
     required this.source,
     this.chapterCount,

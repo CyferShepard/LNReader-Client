@@ -102,6 +102,7 @@ class _LatestViewState extends State<LatestView> with AutomaticKeepAliveClientMi
                 novelCardData: NovelCardData(
                   title: item.title,
                   cover: item.cover,
+                  cacheImage: false,
                   url: item.url,
                   source: apiController.currentSource,
                   chapterCount: item.chapterCount,

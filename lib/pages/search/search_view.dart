@@ -82,6 +82,7 @@ class _SearchViewState extends State<SearchView> with AutomaticKeepAliveClientMi
                       novelCardData: NovelCardData(
                         title: items[index].title,
                         cover: items[index].cover,
+                        cacheImage: false,
                         url: items[index].url,
                         source: apiController.currentSource,
                         chapterCount: items[index].chapterCount,
