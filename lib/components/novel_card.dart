@@ -30,6 +30,14 @@ class NovelCard extends StatelessWidget {
       maxWidth: maxWidth,
       imageHeight: imageHeight,
     );
+
+    bool showReadCount = novelCardData.readCount != null && novelCardData.readCount! > 0;
+
+    bool readCountMatchesChapterCount = novelCardData.chapterCount != null &&
+        novelCardData.readCount != null &&
+        novelCardData.readCount! >= novelCardData.chapterCount!;
+
+    bool showChapterCount = novelCardData.chapterCount != null && !readCountMatchesChapterCount;
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight), // Set your max width here
       child: Card(
@@ -56,14 +64,13 @@ class NovelCard extends StatelessWidget {
                             ),
                           )
                         : placeHolderImage,
-                    if (novelCardData.chapterCount != null ||
-                        (novelCardData.readCount != null && novelCardData.readCount! > 0)) ...[
+                    if (showReadCount || showChapterCount) ...[
                       Positioned(
                         top: 4,
                         left: 4,
                         child: SegmentedBadgeRow(
                           items: [
-                            if (novelCardData.readCount != null && novelCardData.readCount! > 0)
+                            if (showReadCount)
                               BadgeData(
                                 label: '${novelCardData.readCount}',
                                 toolTip: 'Read',
@@ -73,7 +80,7 @@ class NovelCard extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
-                            if (novelCardData.chapterCount != null)
+                            if (showChapterCount)
                               BadgeData(
                                 label: '${novelCardData.chapterCount}',
                                 toolTip: 'Chapters',
