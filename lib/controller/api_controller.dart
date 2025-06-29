@@ -66,6 +66,10 @@ class ApiController extends GetxController {
   bool get sortAsc => _sortAsc.value;
   set sortAsc(bool value) => _sortAsc.value = value;
 
+  final _currentLatestPage = 1.obs;
+  int get currentLatestPage => _currentLatestPage.value;
+  set currentLatestPage(int value) => _currentLatestPage.value = value;
+
   // Methods
   Future<void> fetchSources() async {
     try {
@@ -89,6 +93,18 @@ class ApiController extends GetxController {
     searchResults = [];
     sources = [];
     currentSource = "";
+    latestResults = [];
+    latest = null;
+    currentLatestPage = 1;
+  }
+
+  clearSearch() {
+    searchResults = [];
+    currentSource = "";
+    clearDetails();
+    latestResults = [];
+    latest = null;
+    currentLatestPage = 1;
   }
 
   Future<void> updateSources() async {
@@ -130,6 +146,12 @@ class ApiController extends GetxController {
 
   Future<Latest?> fetchLatest({String? source, int page = 1}) async {
     try {
+      if (page == currentLatestPage && page != 1) {
+        print('Skipping fetch for latest page $page as it is already loaded.');
+        return null; // No need to fetch if already at or beyond current page
+      }
+      currentLatestPage = page;
+      print('Fetching latest for source: $source, page: $page, latestPage: $currentLatestPage');
       isLatestLoading = page == 1;
       latest = await client.getLatest(source ?? currentSource, page: page);
       if (latest != null && latest!.results.isNotEmpty) {

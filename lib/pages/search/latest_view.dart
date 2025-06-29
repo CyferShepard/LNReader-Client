@@ -43,6 +43,7 @@ class _LatestViewState extends State<LatestView> with AutomaticKeepAliveClientMi
   @override
   void dispose() {
     widget.scrollController.dispose();
+    apiController.clearSearch();
     print('LatestView disposed');
 
     super.dispose();
