@@ -34,8 +34,14 @@ class SourcesPage extends StatelessWidget {
           }
 
           if (apiController.sources.isEmpty) {
-            return const Center(
-              child: Text('No sources available.'),
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                SizedBox(
+                  height: context.height / 1.25,
+                  child: const Center(child: Text('No Sources found.')),
+                ),
+              ],
             );
           }
 

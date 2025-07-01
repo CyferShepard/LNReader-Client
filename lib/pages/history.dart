@@ -45,9 +45,6 @@ class History extends StatelessWidget {
             if (historyController.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (historyController.history.isEmpty) {
-              return const Center(child: Text('No history found.'));
-            }
 
             final items = historyController.history.where((historyItem) {
               final searchQuery = historyController.searchQuery.toLowerCase();
@@ -55,11 +52,16 @@ class History extends StatelessWidget {
             }).toList();
 
             if (items.isEmpty) {
-              return const Center(
-                child: Text('No history found'),
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(
+                    height: context.height / 1.25,
+                    child: const Center(child: Text('No History found.')),
+                  ),
+                ],
               );
             }
-
             // --- Group items by date ---
             final Map<String, List<dynamic>> grouped = {};
             final dateFormat = DateFormat('yyyy-MM-dd');

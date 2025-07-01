@@ -44,9 +44,6 @@ class FavouritesView extends StatelessWidget {
             if (favouritesController.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (favouritesController.favourites.isEmpty) {
-              return const Center(child: Text('No Favourites found.'));
-            }
 
             final items = favouritesController.favourites.where((novel) {
               final searchQuery = favouritesController.searchQuery.toLowerCase();
@@ -54,8 +51,14 @@ class FavouritesView extends StatelessWidget {
             }).toList();
 
             if (items.isEmpty) {
-              return const Center(
-                child: Text('No Favourites found'),
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(
+                    height: context.height / 1.25,
+                    child: const Center(child: Text('No Favourites found.')),
+                  ),
+                ],
               );
             }
 
