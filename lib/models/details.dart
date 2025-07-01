@@ -1,5 +1,6 @@
 class Details {
   String? url;
+  String? fullUrl;
   String? cover;
   String title;
   String summary;
@@ -13,6 +14,7 @@ class Details {
 
   Details({
     this.url,
+    this.fullUrl,
     this.cover,
     required this.title,
     required this.summary,
@@ -28,6 +30,7 @@ class Details {
   Map<String, dynamic> toJson() {
     return {
       'url': url,
+      'fullUrl': fullUrl,
       'cover': cover,
       'title': title,
       'summary': summary,
@@ -63,6 +66,7 @@ class Details {
 
     return Details(
       url: json['url'] as String?,
+      fullUrl: json['fullUrl'] as String?,
       cover: json['cover'] as String? ?? "",
       title: json['title'] as String,
       summary: summary,
@@ -79,6 +83,7 @@ class Details {
 
   Details copyWith({
     String? url,
+    String? fullUrl,
     String? cover,
     String? title,
     String? summary,
@@ -92,6 +97,7 @@ class Details {
   }) {
     return Details(
       url: url ?? this.url,
+      fullUrl: fullUrl ?? this.fullUrl,
       cover: cover ?? this.cover,
       title: title ?? this.title,
       summary: summary ?? this.summary,

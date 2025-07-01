@@ -9,6 +9,7 @@ import 'package:light_novel_reader_client/pages/details/chapter_list_view.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:tab_container/tab_container.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailsDesktopPage extends StatefulWidget {
   final String? source;
@@ -63,12 +64,6 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
   }
 
   @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final focusNode = FocusNode();
 
@@ -79,6 +74,11 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
           print('Details page popped');
 
           Future.delayed(Duration(milliseconds: 100), () {
+            if (apiController.details?.url != null) {
+              int readCount = historyController.novelhistory.length;
+              favouritesController.updateReadCount(
+                  readCount, apiController.details?.url ?? '', widget.source ?? apiController.currentSource);
+            }
             apiController.clearDetails();
             historyController.clearNovelHistory();
             uiController.clearChapterSelection();
@@ -116,7 +116,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                 if (uiController.multiSelectMode)
                   Row(
                     children: [
-                      if (historyController.novelhistory.isNotEmpty)
+                      if (uiController.selectedChapters.isNotEmpty)
                         IconButton(
                           icon: const Icon(Icons.check_circle_outline),
                           tooltip: 'Mark as Unread',
@@ -130,7 +130,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                             Get.toNamed('/history');
                           },
                         ),
-                      if (historyController.novelhistory.isNotEmpty)
+                      if (uiController.selectedChapters.isNotEmpty)
                         IconButton(
                           icon: const Icon(Icons.check_circle),
                           tooltip: 'Mark as Read',
@@ -203,6 +203,23 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                           refresh: true,
                           canCacheChapters: widget.canCacheChapters,
                           canCacheNovel: widget.canCacheNovel);
+                    },
+                  ),
+                if ((apiController.details != null && apiController.details!.fullUrl != null) ||
+                    (apiController.chapter != null && apiController.chapter!.fullUrl != null))
+                  IconButton(
+                    icon: const Icon(Icons.open_in_new),
+                    tooltip: 'Open in Browser',
+                    onPressed: () async {
+                      final url = apiController.chapter?.fullUrl ?? apiController.details?.fullUrl;
+                      if (url != null) {
+                        try {
+                          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                        } catch (e) {
+                          // Optionally show an error to the user
+                          print('Could not launch $url: $e');
+                        }
+                      }
                     },
                   ),
               ],

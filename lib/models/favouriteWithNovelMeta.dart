@@ -75,6 +75,38 @@ class FavouriteWithNovelMeta {
     );
   }
 
+  copyWith({
+    DateTime? dateAdded,
+    String? source,
+    String? url,
+    String? cover,
+    String? title,
+    String? summary,
+    String? author,
+    String? status,
+    List<String>? genres,
+    String? lastUpdate,
+    Map<String, dynamic>? additionalProps,
+    int? chapterCount,
+    int? readCount,
+  }) {
+    return FavouriteWithNovelMeta(
+      dateAdded: dateAdded ?? this.dateAdded,
+      source: source ?? this.source,
+      url: url ?? this.url,
+      cover: cover ?? this.cover,
+      title: title ?? this.title,
+      summary: summary ?? this.summary,
+      author: author ?? this.author,
+      status: status ?? this.status,
+      genres: genres ?? this.genres,
+      lastUpdate: lastUpdate ?? this.lastUpdate,
+      additionalProps: additionalProps ?? this.additionalProps,
+      chapterCount: chapterCount ?? this.chapterCount,
+      readCount: readCount ?? this.readCount,
+    );
+  }
+
   static List<FavouriteWithNovelMeta> fromJsonList(List<dynamic> json) {
     return json.map((e) => FavouriteWithNovelMeta.fromJson(e as Map<String, dynamic>)).toList();
   }

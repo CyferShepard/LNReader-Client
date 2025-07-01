@@ -48,4 +48,14 @@ class FavouritesController extends GetxController {
   bool isFavourite(String url, String source) {
     return favouritesController.favourites.isNotEmpty && favourites.any((f) => f.url == url && f.source == source);
   }
+
+  void updateReadCount(int read, String url, String source) async {
+    FavouriteWithNovelMeta? favourite = favourites.firstWhereOrNull((f) => f.url == url && f.source == source);
+    if (favourite != null) {
+      favourite = favourite.copyWith(readCount: read);
+      List<FavouriteWithNovelMeta> favouritesList =
+          favourites.map((f) => f.url == url && f.source == source ? favourite! : f).toList();
+      favourites = favouritesList;
+    }
+  }
 }

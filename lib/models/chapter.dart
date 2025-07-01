@@ -8,6 +8,7 @@ class Chapter extends Equatable {
   final String? previousPage;
   final String? nextPage;
   final String? url;
+  final String? fullUrl;
 
   const Chapter({
     required this.novelTitle,
@@ -17,6 +18,7 @@ class Chapter extends Equatable {
     this.previousPage,
     this.nextPage,
     this.url,
+    this.fullUrl,
   });
 
   Map<String, dynamic> toJson() {
@@ -28,6 +30,7 @@ class Chapter extends Equatable {
       'previousPage': previousPage,
       'nextPage': nextPage,
       'url': url,
+      'fullUrl': fullUrl,
     };
   }
 
@@ -50,6 +53,7 @@ class Chapter extends Equatable {
       previousPage: json['previousPage'],
       nextPage: json['nextPage'],
       url: json['url'],
+      fullUrl: json['fullUrl'],
     );
   }
 

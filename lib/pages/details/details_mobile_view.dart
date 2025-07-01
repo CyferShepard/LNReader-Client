@@ -23,6 +23,11 @@ class DetailsMobilePage extends StatelessWidget {
         if (didPop) {
           print('Details page popped');
           Future.delayed(Duration(milliseconds: 100), () {
+            if (apiController.details?.url != null) {
+              int readCount = historyController.novelhistory.length;
+              favouritesController.updateReadCount(
+                  readCount, apiController.details?.url ?? '', source ?? apiController.currentSource);
+            }
             apiController.clearDetails();
             historyController.clearNovelHistory();
           });

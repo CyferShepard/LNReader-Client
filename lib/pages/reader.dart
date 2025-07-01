@@ -8,6 +8,7 @@ import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/models/history.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ReaderPage extends StatefulWidget {
   const ReaderPage({super.key, this.showHeader = true, this.source});
@@ -119,7 +120,10 @@ class _ReaderPageState extends State<ReaderPage> {
                     return const SizedBox.shrink();
                   }
                 }),
-                SizedBox(width: 12),
+                if (!apiController.isChapterLoading &&
+                    apiController.chapter?.nextPage != null &&
+                    apiController.chapter!.nextPage!.isNotEmpty)
+                  SizedBox(width: 12),
                 Obx(() {
                   if (!apiController.isChapterLoading &&
                       apiController.chapter?.nextPage != null &&
@@ -137,9 +141,24 @@ class _ReaderPageState extends State<ReaderPage> {
                     return const SizedBox.shrink();
                   }
                 }),
-                SizedBox(width: 12),
                 FontSettingsButton(),
-                SizedBox(width: 12),
+                if ((apiController.details != null && apiController.details!.fullUrl != null) ||
+                    (apiController.chapter != null && apiController.chapter!.fullUrl != null))
+                  IconButton(
+                    icon: const Icon(Icons.open_in_new),
+                    tooltip: 'Open in Browser',
+                    onPressed: () async {
+                      final url = apiController.chapter?.fullUrl ?? apiController.details?.fullUrl;
+                      if (url != null) {
+                        try {
+                          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                        } catch (e) {
+                          // Optionally show an error to the user
+                          print('Could not launch $url: $e');
+                        }
+                      }
+                    },
+                  ),
               ],
             )
           : null,
@@ -204,7 +223,8 @@ class _ReaderPageState extends State<ReaderPage> {
                                           .bodyLarge!
                                           .copyWith(height: uiController.lineHeight, fontSize: uiController.fontSize),
                                     ),
-                                    if (apiController.chapter!.nextPage != null) ...[
+                                    if (apiController.chapter?.nextPage != null &&
+                                        apiController.chapter!.nextPage!.isNotEmpty) ...[
                                       const SizedBox(height: 50),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
