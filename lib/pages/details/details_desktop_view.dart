@@ -387,6 +387,19 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                     color: Theme.of(context).colorScheme.onSecondary,
                   ),
             ),
+            if (apiController.details?.source != null) const SizedBox(height: 8),
+            if (apiController.details?.source != null)
+              LabeledText(
+                label: 'Source',
+                text: apiController.details!.source!,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+                labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onTertiary,
+                    ),
+              ),
             const SizedBox(height: 8),
             LabeledText(
               label: 'Author',

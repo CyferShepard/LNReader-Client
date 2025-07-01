@@ -1,4 +1,5 @@
 class Details {
+  String? source;
   String? url;
   String? fullUrl;
   String? cover;
@@ -13,6 +14,7 @@ class Details {
   Map<String, String> additionalProps;
 
   Details({
+    this.source,
     this.url,
     this.fullUrl,
     this.cover,
@@ -29,6 +31,7 @@ class Details {
 
   Map<String, dynamic> toJson() {
     return {
+      'source': source,
       'url': url,
       'fullUrl': fullUrl,
       'cover': cover,
@@ -65,6 +68,7 @@ class Details {
     }
 
     return Details(
+      source: json['source'] as String?,
       url: json['url'] as String?,
       fullUrl: json['fullUrl'] as String?,
       cover: json['cover'] as String? ?? "",
@@ -82,6 +86,7 @@ class Details {
   }
 
   Details copyWith({
+    String? source,
     String? url,
     String? fullUrl,
     String? cover,
@@ -96,6 +101,7 @@ class Details {
     Map<String, String>? additionalProps,
   }) {
     return Details(
+      source: source ?? this.source,
       url: url ?? this.url,
       fullUrl: fullUrl ?? this.fullUrl,
       cover: cover ?? this.cover,

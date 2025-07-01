@@ -4,9 +4,9 @@ import 'package:light_novel_reader_client/components/chapter_list_item_tile.dart
 import 'package:light_novel_reader_client/components/expandable.dart';
 import 'package:light_novel_reader_client/components/genre_chip.dart';
 import 'package:light_novel_reader_client/components/label_text.dart';
-import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailsMobilePage extends StatelessWidget {
   final String? source;
@@ -56,13 +56,21 @@ class DetailsMobilePage extends StatelessWidget {
                     }
                   },
                 ),
-              if (context.isTabletOrDesktop)
+              if ((apiController.details != null && apiController.details!.fullUrl != null) ||
+                  (apiController.chapter != null && apiController.chapter!.fullUrl != null))
                 IconButton(
-                  icon: const Icon(Icons.refresh),
-                  tooltip: 'Refresh Details',
-                  onPressed: () {
-                    apiController.fetchDetails(apiController.details?.url ?? '',
-                        source: source, refresh: true, canCacheChapters: canCacheChapters, canCacheNovel: canCacheNovel);
+                  icon: const Icon(Icons.open_in_new),
+                  tooltip: 'Open in Browser',
+                  onPressed: () async {
+                    final url = apiController.details?.fullUrl;
+                    if (url != null) {
+                      try {
+                        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                      } catch (e) {
+                        // Optionally show an error to the user
+                        print('Could not launch $url: $e');
+                      }
+                    }
                   },
                 ),
             ],
@@ -138,6 +146,15 @@ class DetailsMobilePage extends StatelessWidget {
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                   ),
+                  if (apiController.details?.source != null) const SizedBox(height: 8),
+                  if (apiController.details?.source != null)
+                    LabeledText(
+                      label: 'Source',
+                      text: apiController.details!.source!,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                    ),
                   const SizedBox(height: 8),
                   LabeledText(
                     label: 'Author',
