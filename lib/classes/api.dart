@@ -11,6 +11,7 @@ import 'package:light_novel_reader_client/models/favouriteWithNovelMeta.dart';
 import 'package:light_novel_reader_client/models/history.dart';
 import 'package:light_novel_reader_client/models/latest.dart';
 import 'package:light_novel_reader_client/models/search_result.dart';
+import 'package:light_novel_reader_client/models/source.dart';
 import 'package:light_novel_reader_client/models/user.dart';
 
 class ApiClient {
@@ -145,11 +146,12 @@ class ApiClient {
     }
   }
 
-  Future<List<String>> getSources() async {
+  Future<List<Source>> getSources() async {
     final response = await http.get(Uri.parse('$baseUrl/api/sources'),
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'});
     if (response.statusCode == 200) {
-      return (jsonDecode(response.body) as List<dynamic>).cast<String>();
+      return Source.fromJsonList(jsonDecode(response.body));
+      // return (jsonDecode(response.body) as List<dynamic>).cast<String>();
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
         authController.logout(refreshLogin: true);

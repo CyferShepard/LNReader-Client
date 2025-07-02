@@ -6,12 +6,13 @@ import 'package:light_novel_reader_client/models/details.dart';
 import 'package:light_novel_reader_client/models/history.dart';
 import 'package:light_novel_reader_client/models/latest.dart';
 import 'package:light_novel_reader_client/models/search_result.dart';
+import 'package:light_novel_reader_client/models/source.dart';
 
 class ApiController extends GetxController {
   // Observables
-  final _sources = <String>[].obs;
-  List<String> get sources => _sources.toList();
-  set sources(List<String> value) => _sources.value = value;
+  final _sources = <Source>[].obs;
+  List<Source> get sources => _sources.toList();
+  set sources(List<Source> value) => _sources.value = value;
 
   final _currentSource = "".obs;
   String get currentSource => _currentSource.value;

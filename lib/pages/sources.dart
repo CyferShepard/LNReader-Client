@@ -48,7 +48,7 @@ class SourcesPage extends StatelessWidget {
           return ListView.builder(
             itemCount: apiController.sources.length,
             itemBuilder: (context, index) {
-              final source = apiController.sources[index];
+              final source = apiController.sources[index].name;
               final icon = '${client.baseUrl}/proxy/icon?source=$source';
               return Padding(
                 padding: const EdgeInsets.all(4.0),
