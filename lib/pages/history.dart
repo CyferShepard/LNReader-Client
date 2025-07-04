@@ -94,7 +94,7 @@ class History extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 12.0),
                       child: Text(
                         DateFormat.yMMMMd().format(DateTime.parse(entry['date'])),
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     );
                   } else {
@@ -102,58 +102,72 @@ class History extends StatelessWidget {
                     final novelCardData = historyItem.novel;
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        hoverColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () {
-                          apiController.fetchDetails(
-                            historyItem.novel.url,
-                            source: historyItem.source,
-                            lastChapterUrl: historyItem.chapter.url,
-                            canCacheChapters: true,
-                            canCacheNovel: true,
-                          );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailsView(
-                                source: historyItem.source,
-                                canCacheChapters: true,
-                                canCacheNovel: true,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        height: 108,
+                        child: InkWell(
+                          hoverColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            apiController.fetchDetails(
+                              historyItem.novel.url,
+                              source: historyItem.source,
+                              lastChapterUrl: historyItem.chapter.url,
+                              canCacheChapters: true,
+                              canCacheNovel: true,
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailsView(
+                                  source: historyItem.source,
+                                  canCacheChapters: true,
+                                  canCacheNovel: true,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                height: 100,
-                                width: 70,
-                                '${client.baseUrl}/proxy/imageProxy?imageUrl=${novelCardData.cover}',
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) => placeHolderImage,
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  height: 100,
+                                  width: 70,
+                                  '${client.baseUrl}/proxy/imageProxy?imageUrl=${novelCardData.cover}',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => placeHolderImage,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(novelCardData.title),
-                                  Text(
-                                    'Chapter ${historyItem.chapter.index} - ${DateFormat.jm().format(historyItem.lastRead)} - ${((historyItem.position ?? 0) * 100).toStringAsFixed(2)}%',
-                                  ),
-                                ],
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      novelCardData.title,
+                                      style: Theme.of(context).textTheme.headlineSmall,
+                                    ),
+                                    Text(
+                                      'Chapter ${historyItem.chapter.index} - ${DateFormat.jm().format(historyItem.lastRead)} - ${((historyItem.position ?? 0) * 100).toStringAsFixed(2)}%',
+                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            IconButton(
-                                onPressed: () {
-                                  historyController.removeFromHistory(historyItem.chapter.url, historyItem.source);
-                                },
-                                icon: Icon(Icons.delete)),
-                          ],
+                              IconButton(
+                                  onPressed: () {
+                                    historyController.removeFromHistory(historyItem.chapter.url, historyItem.source);
+                                  },
+                                  icon: Icon(Icons.delete)),
+                            ],
+                          ),
                         ),
                       ),
                     );

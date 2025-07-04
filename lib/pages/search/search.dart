@@ -9,14 +9,24 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollController scrollController = ScrollController();
+    final ScrollController latestScrollController = ScrollController();
+    final ScrollController searchScrollController = ScrollController();
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            scrollController.jumpTo(0); // Reset scroll position to top
+            try {
+              latestScrollController.jumpTo(0); // Reset scroll position to top
+            } catch (e) {
+              print('Error resetting latest scroll position: $e');
+            }
+            try {
+              searchScrollController.jumpTo(0); // Reset scroll position to top
+            } catch (e) {
+              print('Error resetting search scroll position: $e');
+            }
             // uiController.selectedIndex = 2; // Navigate back to the previous page
             apiController.currentSource = '';
           },
@@ -55,8 +65,8 @@ class SearchPage extends StatelessWidget {
           ),
         ],
         children: [
-          LatestView(scrollController: scrollController),
-          SearchView(),
+          LatestView(scrollController: latestScrollController),
+          SearchView(scrollController: searchScrollController),
         ],
       ),
     );

@@ -5,6 +5,7 @@ import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/models/details.dart';
 import 'package:light_novel_reader_client/models/history.dart';
 import 'package:light_novel_reader_client/models/latest.dart';
+import 'package:light_novel_reader_client/models/search.dart';
 import 'package:light_novel_reader_client/models/search_result.dart';
 import 'package:light_novel_reader_client/models/source.dart';
 
@@ -17,6 +18,10 @@ class ApiController extends GetxController {
   final _currentSource = "".obs;
   String get currentSource => _currentSource.value;
   set currentSource(String value) => _currentSource.value = value;
+
+  final _search = Rxn<Search>();
+  Search? get search => _search.value;
+  set search(Search? value) => _search.value = value;
 
   final _searchResults = <SearchResult>[].obs;
   List<SearchResult> get searchResults => _searchResults.toList();
@@ -71,6 +76,18 @@ class ApiController extends GetxController {
   int get currentLatestPage => _currentLatestPage.value;
   set currentLatestPage(int value) => _currentLatestPage.value = value;
 
+  final _currentSearchPage = 1.obs;
+  int get currentSearchPage => _currentSearchPage.value;
+  set currentSearchPage(int value) => _currentSearchPage.value = value;
+
+  final _searchTerm = ''.obs;
+  String get searchTerm => _searchTerm.value;
+  set searchTerm(String value) => _searchTerm.value = value;
+
+  final _filters = Rx<Map<String, dynamic>>({});
+  Map<String, dynamic> get filters => _filters.value;
+  set filters(Map<String, dynamic> value) => _filters.value = value;
+
   // Methods
   Future<void> fetchSources() async {
     try {
@@ -106,6 +123,8 @@ class ApiController extends GetxController {
     latestResults = [];
     latest = null;
     currentLatestPage = 1;
+    filters = {};
+    searchTerm = '';
   }
 
   Future<void> updateSources() async {
@@ -134,15 +153,88 @@ class ApiController extends GetxController {
     }
   }
 
-  Future<void> search(String searchTerm) async {
+  Future<void> searchNovel({int page = 1}) async {
     try {
-      isLoading = true;
-      searchResults = await client.search(searchTerm, currentSource);
+      if (page == currentSearchPage && page != 1) {
+        print('Skipping fetch for search page $page as it is already loaded.');
+        return; // No need to fetch if already at or beyond current page
+      }
+      currentSearchPage = page;
+      var csource = sources.firstWhereOrNull((s) => s.name == currentSource);
+      String? searchParams = getFilters();
+
+      if (csource == null) {
+        print('Error: Current source not found in sources list.');
+        return;
+      }
+      var mainSearchField = csource.filters.firstWhereOrNull((f) => f.isMainSearchField);
+      if (searchTerm.isNotEmpty && mainSearchField != null) {
+        searchParams ??= '';
+        searchParams += '&${mainSearchField.fieldVar}=$searchTerm';
+      }
+      isLoading = page == 1;
+      search = await client.search(
+        currentSource,
+        searchParams: searchParams,
+        page: page,
+      );
+      if (search != null && search!.results.isNotEmpty) {
+        if (page == 1) {
+          searchResults = search!.results;
+        } else {
+          searchResults = [...searchResults, ...search!.results];
+        }
+      }
     } catch (e) {
       print('Error: Failed to search: $e');
     } finally {
       isLoading = false;
     }
+  }
+
+  getFilters() {
+    var csource = sources.firstWhereOrNull((s) => s.name == currentSource);
+    if (csource == null) {
+      print('Error: Current source not found in sources list.');
+      return;
+    }
+
+    if (csource.filters.isEmpty) {
+      print('Error: No filters available for the current source.');
+      return;
+    }
+
+    if (filters.isEmpty) {
+      print('Error: No filter values provided.');
+      return '';
+    }
+
+    String additionalParams = '';
+
+    for (var filter in csource.filters) {
+      if (filters.containsKey(filter.fieldName)) {
+        var value = filters[filter.fieldName];
+        if (value == null || (value is Set && value.isEmpty) || value.toString().isEmpty) {
+          // print('Warning: Filter ${filter.fieldName} has no value.');
+          continue; // Skip empty values
+        }
+        if (value is Set) {
+          if (filter.isMultiVar) {
+            for (var v in value) {
+              additionalParams += '&${filter.fieldVar}=$v';
+            }
+          } else {
+            additionalParams += '&${filter.fieldVar}=${value.join(',')}';
+          }
+        } else {
+          additionalParams += '&${filter.fieldVar}=$value';
+        }
+      } else {
+        // print('Warning: Filter ${filter.fieldName} not found in provided values.');
+      }
+    }
+
+    return additionalParams == '' ? null : additionalParams;
   }
 
   Future<Latest?> fetchLatest({String? source, int page = 1}) async {
@@ -229,6 +321,9 @@ class ApiController extends GetxController {
               refresh: refresh, canCacheChapters: canCacheChapters))
           .chapters;
       if (chapters != null) {
+        if (refresh) {
+          updatesController.getUpdates();
+        }
         chapters!.sort((a, b) => a.index.compareTo(b.index));
         if (lastChapterUrl != null) {
           ChapterListItem? lastReadChapter = chapters!.firstWhereOrNull((chapter) => chapter.url == lastChapterUrl);

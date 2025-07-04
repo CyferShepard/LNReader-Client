@@ -30,12 +30,36 @@ String sourceFilterFieldTypeToString(SourceFilterFieldType type) {
   return type.toString().split('.').last;
 }
 
+class FieldOptions {
+  final String name;
+  final String value;
+
+  FieldOptions({
+    required this.name,
+    required this.value,
+  });
+
+  factory FieldOptions.fromJson(Map<String, dynamic> json) {
+    return FieldOptions(
+      name: json['name'] as String,
+      value: json['value'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'value': value,
+      };
+}
+
 class SourceFilterField {
-  final SourceFilterFieldType type;
+  final FilterType type; // "text" | "numeric" | "dropdown" | "multiSelect" | "singleSelect" | "slider"
   final bool isParameter;
   final String fieldName;
   final String fieldVar;
   final bool isMultiVar;
+
+  bool get isMainSearchField => type.type == 'main';
 
   SourceFilterField({
     required this.type,
@@ -47,7 +71,9 @@ class SourceFilterField {
 
   factory SourceFilterField.fromJson(Map<String, dynamic> json) {
     return SourceFilterField(
-      type: sourceFilterFieldTypeFromString(json['type'] as String),
+      type: json['type'] != null
+          ? FilterType.fromJson(json['type'] as Map<String, dynamic>)
+          : FilterType(type: 'text'), // Default to 'text' if not provided
       isParameter: json['isParameter'] ?? true,
       fieldName: json['fieldName'] as String,
       fieldVar: json['fieldVar'] as String,
@@ -56,10 +82,54 @@ class SourceFilterField {
   }
 
   Map<String, dynamic> toJson() => {
-        'type': sourceFilterFieldTypeToString(type),
+        'type': type,
         'isParameter': isParameter,
         'fieldName': fieldName,
         'fieldVar': fieldVar,
         'isMultiVar': isMultiVar,
+      };
+}
+
+class FilterType {
+  final String type; // "text" | "numeric" | "dropdown" | "multiSelect" | "singleSelect" | "slider"
+  final List<FieldOptions> fieldOptions;
+  final num? minValue;
+  final num? maxValue;
+  final dynamic defaultValue; // String | FieldOptions | num
+
+  FilterType({
+    required this.type,
+    this.fieldOptions = const [],
+    this.minValue,
+    this.maxValue,
+    this.defaultValue,
+  });
+
+  factory FilterType.fromJson(Map<String, dynamic> json) {
+    bool isNumeric(dynamic s) {
+      if (s == null) return false;
+      return int.tryParse(s.toString()) != null;
+    }
+
+    return FilterType(
+      type: json['type'] as String,
+      fieldOptions:
+          (json['fieldOptions'] as List<dynamic>?)?.map((e) => FieldOptions.fromJson(e as Map<String, dynamic>)).toList() ?? [],
+      minValue: json['minValue'],
+      maxValue: json['maxValue'],
+      defaultValue: json['defaultValue'] is Map<String, dynamic>
+          ? FieldOptions.fromJson(json['defaultValue'] as Map<String, dynamic>)
+          : isNumeric(json['defaultValue'])
+              ? int.parse(json['defaultValue'].toString())
+              : json['defaultValue'], // Handle both FieldOptions and num
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'type': type,
+        'fieldOptions': fieldOptions.map((e) => e.toJson()).toList(),
+        if (minValue != null) 'minValue': minValue,
+        if (maxValue != null) 'maxValue': maxValue,
+        if (defaultValue != null) 'defaultValue': defaultValue,
       };
 }

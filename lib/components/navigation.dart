@@ -67,7 +67,17 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
 
             return NavigationBar(
               selectedIndex: navController.selectedIndex,
-              onDestinationSelected: (index) => navController.select(index),
+              onDestinationSelected: (index) {
+                var item = navItems[index];
+                if (item.onTap != null) {
+                  item.onTap!();
+                  if (item.navigateWithOnTap) {
+                    navController.select(index);
+                  }
+                } else {
+                  navController.select(index);
+                }
+              },
               destinations: destinations,
             );
           },

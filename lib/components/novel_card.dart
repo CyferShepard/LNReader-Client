@@ -143,7 +143,7 @@ class NovelCard extends StatelessWidget {
                           Wrap(
                             spacing: 4,
                             runSpacing: 2,
-                            children: novelCardData.genres.map((genre) {
+                            children: novelCardData.genres.take(2).map((genre) {
                               return GenreChip(
                                 genre: genre,
                                 textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(

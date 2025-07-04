@@ -8,9 +8,10 @@ import 'package:light_novel_reader_client/models/chapter.dart';
 import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/models/details.dart';
 import 'package:light_novel_reader_client/models/favouriteWithNovelMeta.dart';
+import 'package:light_novel_reader_client/models/favouritesWithChapterMeta.dart';
 import 'package:light_novel_reader_client/models/history.dart';
 import 'package:light_novel_reader_client/models/latest.dart';
-import 'package:light_novel_reader_client/models/search_result.dart';
+import 'package:light_novel_reader_client/models/search.dart';
 import 'package:light_novel_reader_client/models/source.dart';
 import 'package:light_novel_reader_client/models/user.dart';
 
@@ -52,7 +53,11 @@ class ApiClient {
   Future<bool?> toggleRegistration(bool enable) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/canRegister'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      },
       body: jsonEncode({'canRegister': enable}),
     );
     if (response.statusCode == 200) {
@@ -65,7 +70,7 @@ class ApiClient {
   Future<Auth> login(Auth auth) async {
     final response = await http.post(
       Uri.parse('$baseUrl/auth/login'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, br'},
       body: jsonEncode({'username': auth.username, 'password': auth.password}),
     );
     if (response.statusCode == 200) {
@@ -88,7 +93,7 @@ class ApiClient {
   Future<Auth> register(Auth auth) async {
     final response = await http.post(
       Uri.parse('$baseUrl/auth/register'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, br'},
       body: jsonEncode({'username': auth.username, 'password': auth.password}),
     );
     if (response.statusCode == 200) {
@@ -105,7 +110,11 @@ class ApiClient {
   Future<Auth> resetPassword(Auth auth, {String? username}) async {
     final response = await http.post(
       Uri.parse('$baseUrl/auth/resetPassword'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      },
       body: jsonEncode({'password': auth.password, 'username': username}),
     );
     if (response.statusCode == 200) {
@@ -120,8 +129,11 @@ class ApiClient {
   }
 
   Future<List<User>> getUsers() async {
-    final response = await http.get(Uri.parse('$baseUrl/api/users'),
-        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'});
+    final response = await http.get(Uri.parse('$baseUrl/api/users'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${authController.auth.token}',
+      'Accept-Encoding': 'gzip, br'
+    });
     if (response.statusCode == 200) {
       return User.fromJsonList(jsonDecode(response.body));
     } else {
@@ -134,8 +146,11 @@ class ApiClient {
   }
 
   Future<Map<String, dynamic>> updateSources() async {
-    final response = await http.get(Uri.parse('$baseUrl/api/updatePlugins'),
-        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'});
+    final response = await http.get(Uri.parse('$baseUrl/api/updatePlugins'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${authController.auth.token}',
+      'Accept-Encoding': 'gzip, br'
+    });
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -147,10 +162,15 @@ class ApiClient {
   }
 
   Future<List<Source>> getSources() async {
-    final response = await http.get(Uri.parse('$baseUrl/api/sources'),
-        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'});
+    final response = await http.get(Uri.parse('$baseUrl/api/sources'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${authController.auth.token}',
+      'Accept-Encoding': 'gzip, br'
+    });
     if (response.statusCode == 200) {
-      return Source.fromJsonList(jsonDecode(response.body));
+      List<Source> sources = Source.fromJsonList(jsonDecode(response.body));
+
+      return sources;
       // return (jsonDecode(response.body) as List<dynamic>).cast<String>();
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
@@ -160,15 +180,19 @@ class ApiClient {
     }
   }
 
-  Future<List<SearchResult>> search(String searchTerm, String source) async {
-    if (searchTerm.length < 3) {
-      return [];
-    }
+  Future<Search?> search(String source, {String? searchParams, int page = 1}) async {
+    // if (searchTerm.length < 3) {
+    //   return [];
+    // }
     final response = await http.post(Uri.parse('$baseUrl/api/search'),
-        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
-        body: jsonEncode({'searchTerm': searchTerm, 'source': source}));
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode({'source': source, 'searchParams': searchParams, "page": page}));
     if (response.statusCode == 200) {
-      return SearchResult.fromJsonList(jsonDecode(response.body));
+      return Search.fromJson(jsonDecode(response.body));
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
         authController.logout(refreshLogin: true);
@@ -185,7 +209,11 @@ class ApiClient {
   }) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/novel'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      },
       body: jsonEncode({'source': source, 'url': url, 'clearCache': refresh, "cacheData": canCacheNovel}),
     );
     if (response.statusCode == 200) {
@@ -210,7 +238,11 @@ class ApiClient {
   }) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/chapters'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      },
       body: jsonEncode({
         'source': source,
         'url': url,
@@ -234,7 +266,11 @@ class ApiClient {
 
   Future<Chapter> getChapter(String url, String source) async {
     final response = await http.post(Uri.parse('$baseUrl/api/chapter'),
-        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
         body: jsonEncode({'url': url, 'source': source}));
     if (response.statusCode == 200) {
       return Chapter.fromJson(jsonDecode(response.body));
@@ -251,10 +287,34 @@ class ApiClient {
   Future<Latest?> getLatest(String source, {int page = 1}) async {
     final response = await http.get(
       Uri.parse('$baseUrl/api/latest?source=$source&page=$page'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${authController.auth.token}'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      },
     );
     if (response.statusCode == 200) {
       return Latest.fromJson(jsonDecode(response.body));
+    } else {
+      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
+        authController.logout(refreshLogin: true);
+      }
+      print('Failed to fetch latest: ${response.body}');
+      return null;
+    }
+  }
+
+  Future<List<FavouriteWitChapterMeta>?> getLatestChapters() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/updates'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      },
+    );
+    if (response.statusCode == 200) {
+      return FavouriteWitChapterMeta.fromJsonList(jsonDecode(response.body));
     } else {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
         authController.logout(refreshLogin: true);
@@ -272,6 +332,7 @@ class ApiClient {
     final response = await http.get(Uri.parse(apiUrl), headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${authController.auth.token}',
+      'Accept-Encoding': 'gzip, br'
     });
     if (response.statusCode == 200) {
       return FavouriteWithNovelMeta.fromJsonList(jsonDecode(response.body));
@@ -293,6 +354,7 @@ class ApiClient {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
         },
         body: jsonEncode({'novelMeta': novelMeta}));
     if (response.statusCode == 200) {
@@ -312,6 +374,7 @@ class ApiClient {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
         },
         body: jsonEncode({'url': url, 'source': source}));
     if (response.statusCode == 200) {
@@ -338,6 +401,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
       },
     );
     if (response.statusCode == 200) {
@@ -363,6 +427,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
       },
       body: jsonEncode({'novel': novelMeta, 'chapter': chapter.toJson(), 'page': page, 'position': position}),
     );
@@ -392,6 +457,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
       },
       body:
           jsonEncode({'novel': novelMeta, 'chapters': ChapterListItem.toJsonList(chapters), 'page': page, 'position': position}),
@@ -415,6 +481,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
       },
       body: jsonEncode({'url': url, 'source': source}),
     );
@@ -436,6 +503,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
       },
     );
     if (response.statusCode == 200) {

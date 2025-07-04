@@ -154,6 +154,9 @@ class _HoverableListTileState extends State<_HoverableListTile> {
           onTap: () {
             if (widget.item.onTap != null) {
               widget.item.onTap!();
+              if (widget.item.navigateWithOnTap) {
+                widget.onTap();
+              }
             } else {
               widget.onTap();
             }
@@ -172,8 +175,15 @@ class NavBarItem {
   final Widget child;
   final VoidCallback? onTap;
   final bool showInMobile;
+  final bool navigateWithOnTap;
 
-  NavBarItem({required this.label, required this.icon, required this.child, this.onTap, this.showInMobile = true});
+  NavBarItem(
+      {required this.label,
+      required this.icon,
+      required this.child,
+      this.onTap,
+      this.showInMobile = true,
+      this.navigateWithOnTap = false});
 }
 
 class SelectedItemStyle {

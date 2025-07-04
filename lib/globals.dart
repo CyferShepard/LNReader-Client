@@ -9,6 +9,7 @@ import 'package:light_novel_reader_client/controller/favourites_controller.dart'
 import 'package:light_novel_reader_client/controller/history_controller.dart';
 import 'package:light_novel_reader_client/controller/server_controller.dart';
 import 'package:light_novel_reader_client/controller/ui_controller.dart';
+import 'package:light_novel_reader_client/controller/updates_controller.dart';
 import 'package:light_novel_reader_client/controller/user_controller.dart';
 
 final ioc = GetIt.instance;
@@ -24,5 +25,6 @@ AuthController get authController => Get.put(AuthController());
 
 UIController get uiController => Get.put(UIController());
 UserController get userController => Get.put(UserController());
+UpdatesController get updatesController => Get.put(UpdatesController());
 final GlobalKey<TextFieldEditorState> serverUrlFieldKey = GlobalKey<TextFieldEditorState>();
 final themeMode = ThemeMode.system.obs;

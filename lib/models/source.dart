@@ -9,6 +9,8 @@ class Source {
     this.filters = const [],
   });
 
+  bool get hasFilters => filters.isNotEmpty && filters.where((f) => !f.isMainSearchField).isNotEmpty;
+
   factory Source.fromJson(Map<String, dynamic> json) {
     return Source(
       name: json['name'] as String,

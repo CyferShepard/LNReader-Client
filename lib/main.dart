@@ -10,6 +10,7 @@ import 'package:light_novel_reader_client/pages/history.dart';
 import 'package:light_novel_reader_client/pages/search/search.dart';
 import 'package:light_novel_reader_client/pages/settings/settings.dart';
 import 'package:light_novel_reader_client/pages/sources.dart';
+import 'package:light_novel_reader_client/pages/updates.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       apiController.fetchSources();
       historyController.getHistory();
       favouritesController.getFavourites();
+      updatesController.getUpdates();
     }
 
     return Obx(
@@ -116,6 +118,11 @@ class _HomePageState extends State<HomePage> {
               label: 'Favourites',
               icon: Icons.favorite,
               child: FavouritesView(),
+            ),
+            NavBarItem(
+              label: 'Updates',
+              icon: Icons.new_releases,
+              child: UpdatesPage(),
             ),
             NavBarItem(
               label: 'History',
