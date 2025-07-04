@@ -56,8 +56,14 @@ class UpdatesPage extends StatelessWidget {
             }).toList();
 
             if (items.isEmpty) {
-              return const Center(
-                child: Text('No Chapters found'),
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(
+                    height: context.height / 1.25,
+                    child: const Center(child: Text('No Chapters found.')),
+                  ),
+                ],
               );
             }
 
@@ -149,13 +155,20 @@ class UpdatesPage extends StatelessWidget {
                                   children: [
                                     Text(
                                       novelCardData.title,
-                                      style: Theme.of(context).textTheme.headlineSmall,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: context.isTabletOrDesktop
+                                          ? Theme.of(context).textTheme.headlineSmall
+                                          : Theme.of(context).textTheme.bodyLarge,
                                     ),
                                     Text(
                                       'Chapter ${updateItem.chapter.chapterIndex} - ${DateFormat.jm().format(updateItem.chapter.dateAdded)}',
-                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                                          ),
+                                      style: (context.isTabletOrDesktop
+                                              ? Theme.of(context).textTheme.bodyLarge
+                                              : Theme.of(context).textTheme.bodyMedium)
+                                          ?.copyWith(
+                                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                      ),
                                     ),
                                   ],
                                 ),

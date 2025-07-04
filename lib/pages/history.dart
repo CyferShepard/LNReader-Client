@@ -150,13 +150,20 @@ class History extends StatelessWidget {
                                   children: [
                                     Text(
                                       novelCardData.title,
-                                      style: Theme.of(context).textTheme.headlineSmall,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: context.isTabletOrDesktop
+                                          ? Theme.of(context).textTheme.headlineSmall
+                                          : Theme.of(context).textTheme.bodyLarge,
                                     ),
                                     Text(
                                       'Chapter ${historyItem.chapter.index} - ${DateFormat.jm().format(historyItem.lastRead)} - ${((historyItem.position ?? 0) * 100).toStringAsFixed(2)}%',
-                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                                          ),
+                                      style: (context.isTabletOrDesktop
+                                              ? Theme.of(context).textTheme.bodyLarge
+                                              : Theme.of(context).textTheme.bodyMedium)
+                                          ?.copyWith(
+                                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                      ),
                                     ),
                                   ],
                                 ),
