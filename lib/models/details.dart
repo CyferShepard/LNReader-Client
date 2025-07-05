@@ -12,6 +12,7 @@ class Details {
   String chapters;
   String lastUpdate;
   Map<String, String> additionalProps;
+  List<String> categories = [];
 
   Details({
     this.source,
@@ -27,6 +28,7 @@ class Details {
     this.chapters = "0",
     this.lastUpdate = "Unknown",
     this.additionalProps = const {},
+    this.categories = const [],
   });
 
   Map<String, dynamic> toJson() {
@@ -99,6 +101,7 @@ class Details {
     String? chapters,
     String? lastUpdate,
     Map<String, String>? additionalProps,
+    List<String>? categories,
   }) {
     return Details(
       source: source ?? this.source,
@@ -114,6 +117,7 @@ class Details {
       chapters: chapters ?? this.chapters,
       lastUpdate: lastUpdate ?? this.lastUpdate,
       additionalProps: additionalProps ?? this.additionalProps,
+      categories: categories ?? this.categories,
     );
   }
 }

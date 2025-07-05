@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:light_novel_reader_client/controller/server_controller.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/auth.dart';
+import 'package:light_novel_reader_client/models/categories.dart';
 import 'package:light_novel_reader_client/models/chapter.dart';
 import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/models/details.dart';
@@ -341,6 +342,44 @@ class ApiClient {
         authController.logout(refreshLogin: true);
       }
       throw Exception('Failed to fetch favourites: ${response.body}');
+    }
+  }
+
+  Future<List<Categories>> getCategories() async {
+    final response = await http.get(Uri.parse('$baseUrl/api/categories'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${authController.auth.token}',
+      'Accept-Encoding': 'gzip, br'
+    });
+    if (response.statusCode == 200) {
+      return Categories.fromJsonList(jsonDecode(response.body));
+    } else {
+      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
+        authController.logout(refreshLogin: true);
+      }
+      throw Exception('Failed to fetch categories: ${response.body}');
+    }
+  }
+
+  Future<bool> updateFavouriteCategory(String url, String source, List<String> category) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/favourites/setCategories'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      },
+      body: jsonEncode({'url': url, 'source': source, 'categories': category}),
+    );
+    if (response.statusCode == 200) {
+      // Handle the response as needed
+      return true;
+    } else {
+      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
+        authController.logout(refreshLogin: true);
+      }
+      print(Exception('Failed to update favourite category: ${response.body}'));
+      return false;
     }
   }
 

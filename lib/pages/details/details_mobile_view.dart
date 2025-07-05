@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:light_novel_reader_client/components/categories_dropdown.dart';
 import 'package:light_novel_reader_client/components/chapter_list_item_tile.dart';
 import 'package:light_novel_reader_client/components/expandable.dart';
 import 'package:light_novel_reader_client/components/genre_chip.dart';
@@ -56,6 +57,11 @@ class DetailsMobilePage extends StatelessWidget {
                     }
                   },
                 ),
+              CategoriesDropdownButton(
+                onChanged: (p0) {
+                  apiController.setCategories(p0, novelDetails: apiController.details);
+                },
+              ),
               if ((apiController.details != null && apiController.details!.fullUrl != null) ||
                   (apiController.chapter != null && apiController.chapter!.fullUrl != null))
                 IconButton(

@@ -80,7 +80,7 @@ class _SearchViewState extends State<SearchView> with AutomaticKeepAliveClientMi
             children: [
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(top: 8.0, left: 8, right: 8),
                   child: TextField(
                     controller: searchController,
                     onSubmitted: (value) async {

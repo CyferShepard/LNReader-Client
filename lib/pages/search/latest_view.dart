@@ -84,7 +84,7 @@ class _LatestViewState extends State<LatestView> with AutomaticKeepAliveClientMi
         }
 
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(top: 8.0, left: 8, right: 8),
           child: GridView.builder(
             key: const PageStorageKey('latestGridView'),
             controller: widget.scrollController,

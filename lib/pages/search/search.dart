@@ -38,7 +38,7 @@ class SearchPage extends StatelessWidget {
         tabEdge: TabEdge.top,
         borderRadius: BorderRadius.circular(10),
         tabBorderRadius: BorderRadius.circular(10),
-        childPadding: const EdgeInsets.only(top: 8),
+        // childPadding: const EdgeInsets.only(top: 8),
         selectedTextStyle: const TextStyle(
           fontSize: 15.0,
         ),

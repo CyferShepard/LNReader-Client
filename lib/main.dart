@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     if (authController.auth.isAuthenticated) {
       // If the user is authenticated, fetch the sources and history
+      uiController.getCategories();
       apiController.fetchSources();
       historyController.getHistory();
       favouritesController.getFavourites();

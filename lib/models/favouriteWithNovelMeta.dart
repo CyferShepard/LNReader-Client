@@ -12,6 +12,7 @@ class FavouriteWithNovelMeta {
   final Map<String, dynamic>? additionalProps;
   final int chapterCount;
   final int readCount;
+  final List<String> categories;
 
   FavouriteWithNovelMeta({
     required this.dateAdded,
@@ -27,6 +28,7 @@ class FavouriteWithNovelMeta {
     this.additionalProps,
     this.chapterCount = 0,
     this.readCount = 0,
+    required this.categories,
   });
 
   Map<String, dynamic> toJson() {
@@ -44,6 +46,7 @@ class FavouriteWithNovelMeta {
       'additionalProps': additionalProps ?? {},
       'chapterCount': chapterCount,
       'readCount': readCount,
+      'category': categories,
     };
   }
 
@@ -59,20 +62,20 @@ class FavouriteWithNovelMeta {
     }
 
     return FavouriteWithNovelMeta(
-      dateAdded: DateTime.parse(json['date_added'] as String),
-      source: json['source'] as String? ?? '',
-      url: json['url'] as String? ?? '',
-      cover: json['cover'] as String? ?? '',
-      title: json['title'] as String? ?? 'Unknown Title',
-      summary: json['summary'] as String? ?? 'No summary available.',
-      author: json['author'] as String? ?? 'Unknown Author',
-      status: json['status'] as String? ?? 'Unknown',
-      genres: genres,
-      lastUpdate: json['last_update'] as String? ?? 'Unknown',
-      additionalProps: json['additionalProps'] != null ? Map<String, dynamic>.from(json['additionalProps'] as Map) : null,
-      chapterCount: json['chapterCount'] as int? ?? 0,
-      readCount: json['readCount'] as int? ?? 0,
-    );
+        dateAdded: DateTime.parse(json['date_added'] as String),
+        source: json['source'] as String? ?? '',
+        url: json['url'] as String? ?? '',
+        cover: json['cover'] as String? ?? '',
+        title: json['title'] as String? ?? 'Unknown Title',
+        summary: json['summary'] as String? ?? 'No summary available.',
+        author: json['author'] as String? ?? 'Unknown Author',
+        status: json['status'] as String? ?? 'Unknown',
+        genres: genres,
+        lastUpdate: json['last_update'] as String? ?? 'Unknown',
+        additionalProps: json['additionalProps'] != null ? Map<String, dynamic>.from(json['additionalProps'] as Map) : null,
+        chapterCount: json['chapterCount'] as int? ?? 0,
+        readCount: json['readCount'] as int? ?? 0,
+        categories: (json['categories'] as List<dynamic>).cast<String>().toList());
   }
 
   copyWith({
@@ -89,6 +92,7 @@ class FavouriteWithNovelMeta {
     Map<String, dynamic>? additionalProps,
     int? chapterCount,
     int? readCount,
+    List<String>? categories,
   }) {
     return FavouriteWithNovelMeta(
       dateAdded: dateAdded ?? this.dateAdded,
@@ -104,6 +108,7 @@ class FavouriteWithNovelMeta {
       additionalProps: additionalProps ?? this.additionalProps,
       chapterCount: chapterCount ?? this.chapterCount,
       readCount: readCount ?? this.readCount,
+      categories: categories ?? this.categories,
     );
   }
 

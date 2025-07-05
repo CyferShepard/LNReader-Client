@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:light_novel_reader_client/components/categories_dropdown.dart';
 import 'package:light_novel_reader_client/components/font_settings.dart';
 import 'package:light_novel_reader_client/components/genre_chip.dart';
 import 'package:light_novel_reader_client/components/label_text.dart';
@@ -192,6 +193,11 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                       }
                     },
                   ),
+                CategoriesDropdownButton(
+                  onChanged: (p0) {
+                    apiController.setCategories(p0, novelDetails: apiController.details);
+                  },
+                ),
                 FontSettingsButton(),
                 if (apiController.details != null && apiController.details!.url != null)
                   IconButton(

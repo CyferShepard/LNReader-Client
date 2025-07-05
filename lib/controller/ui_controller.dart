@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/nav_bar.dart';
 import 'package:light_novel_reader_client/globals.dart';
+import 'package:light_novel_reader_client/models/categories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UIController extends GetxController {
@@ -11,6 +12,12 @@ class UIController extends GetxController {
   final RxSet<int> selectedChapters = <int>{}.obs;
   final _multiSelectMode = false.obs;
   bool get multiSelectMode => _multiSelectMode.value;
+
+  final _categories = <Categories>[].obs;
+  List<Categories> get categories => _categories.toList();
+  set categories(List<Categories> value) {
+    _categories.value = value;
+  }
 
   final _fontSize = 18.0.obs;
   double get fontSize => _fontSize.value;
@@ -57,6 +64,14 @@ class UIController extends GetxController {
       themeMode.value = ThemeMode.dark;
     }
     saveUISettings();
+  }
+
+  Future<void> getCategories() async {
+    await client.getCategories().then((value) {
+      _categories.value = value;
+    }).catchError((error) {
+      print('Error fetching categories: $error');
+    });
   }
 
   Future<void> loadUISettings() async {

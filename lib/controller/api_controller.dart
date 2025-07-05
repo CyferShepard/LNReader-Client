@@ -3,6 +3,7 @@ import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/chapter.dart';
 import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/models/details.dart';
+import 'package:light_novel_reader_client/models/favouriteWithNovelMeta.dart';
 import 'package:light_novel_reader_client/models/history.dart';
 import 'package:light_novel_reader_client/models/latest.dart';
 import 'package:light_novel_reader_client/models/search.dart';
@@ -262,11 +263,29 @@ class ApiController extends GetxController {
     return null;
   }
 
+  setCategories(List<String> categories, {Details? novelDetails}) async {
+    if (details != null) {
+      await client.updateFavouriteCategory((novelDetails ?? details!).url!, (novelDetails ?? details!).source!, categories);
+      details = details!.copyWith(categories: categories);
+      final updatedFavs = favouritesController.favourites
+          .map((favourite) {
+            if (favourite.url == details!.url && favourite.source == currentSource) {
+              return favourite.copyWith(categories: categories);
+            }
+            return favourite;
+          })
+          .toList(growable: true)
+          .cast<FavouriteWithNovelMeta>();
+      favouritesController.favourites = updatedFavs;
+    }
+  }
+
   Future<Details?> fetchDetails(
     String url, {
     String? source,
     String? lastChapterUrl,
     bool refresh = false,
+    List<String>? categories,
     required bool canCacheNovel,
     required bool canCacheChapters,
   }) async {
@@ -274,6 +293,9 @@ class ApiController extends GetxController {
       isLoading = true;
       details = await client.getDetails(url, source ?? currentSource, refresh: refresh, canCacheNovel: canCacheNovel);
       if (details != null) {
+        if (categories != null && categories.isNotEmpty) {
+          details = details!.copyWith(categories: categories);
+        }
         if (details!.url == null) {
           details = details!.copyWith(url: url);
         }

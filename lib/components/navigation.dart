@@ -43,44 +43,49 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
             children: widget.navItems.where((item) => item.showInMobile).map((item) => item.child).toList(),
           ),
         ),
-        AnimatedBuilder(
-          animation: navController,
-          builder: (context, _) {
-            final navItems = widget.navItems.where((item) => item.showInMobile).toList();
-            final destinations = navItems
-                .map(
-                  (item) => NavigationDestination(
-                    icon: Icon(item.icon),
-                    label: item.label,
-                    selectedIcon: Icon(
-                      item.icon,
-                      color: Theme.of(context).colorScheme.primary,
+        MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          removeBottom: true,
+          child: AnimatedBuilder(
+            animation: navController,
+            builder: (context, _) {
+              final navItems = widget.navItems.where((item) => item.showInMobile).toList();
+              final destinations = navItems
+                  .map(
+                    (item) => NavigationDestination(
+                      icon: Icon(item.icon),
+                      label: item.label,
+                      selectedIcon: Icon(
+                        item.icon,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
-                  ),
-                )
-                .toList();
+                  )
+                  .toList();
 
-            // Check and reset selectedIndex if out of bounds
-            if (navController.selectedIndex >= destinations.length) {
-              navController.select(0);
-            }
+              // Check and reset selectedIndex if out of bounds
+              if (navController.selectedIndex >= destinations.length) {
+                navController.select(0);
+              }
 
-            return NavigationBar(
-              selectedIndex: navController.selectedIndex,
-              onDestinationSelected: (index) {
-                var item = navItems[index];
-                if (item.onTap != null) {
-                  item.onTap!();
-                  if (item.navigateWithOnTap) {
+              return NavigationBar(
+                selectedIndex: navController.selectedIndex,
+                onDestinationSelected: (index) {
+                  var item = navItems[index];
+                  if (item.onTap != null) {
+                    item.onTap!();
+                    if (item.navigateWithOnTap) {
+                      navController.select(index);
+                    }
+                  } else {
                     navController.select(index);
                   }
-                } else {
-                  navController.select(index);
-                }
-              },
-              destinations: destinations,
-            );
-          },
+                },
+                destinations: destinations,
+              );
+            },
+          ),
         ),
       ],
     );
