@@ -383,6 +383,50 @@ class ApiClient {
     }
   }
 
+  Future<bool> addCategory(String name) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/categories'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      },
+      body: jsonEncode({'name': name}),
+    );
+    if (response.statusCode == 200) {
+      // Handle the response as needed
+      return true;
+    } else {
+      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
+        authController.logout(refreshLogin: true);
+      }
+      print(Exception('Failed to create category: ${response.body}'));
+      return false;
+    }
+  }
+
+  Future<bool> deleteCategory(String name) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/api/categories'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      },
+      body: jsonEncode({'name': name}),
+    );
+    if (response.statusCode == 200) {
+      // Handle the response as needed
+      return true;
+    } else {
+      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
+        authController.logout(refreshLogin: true);
+      }
+      print(Exception('Failed to delete category: ${response.body}'));
+      return false;
+    }
+  }
+
   Future<bool> addToFavourites(String source, Details novel) async {
     Map<String, dynamic> novelMeta = novel.toJson();
     novelMeta['source'] = source;

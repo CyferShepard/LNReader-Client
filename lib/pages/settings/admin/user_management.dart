@@ -18,58 +18,52 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        title: const Text('User Management'),
-      ),
-      body: Obx(
-        () => RefreshIndicator(
-          onRefresh: () async {
-            await userController.getUsers();
-          },
-          child: userController.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  itemCount: userController.users.length,
-                  itemBuilder: (context, index) {
-                    final user = userController.users[index];
-                    return ListTile(
-                      title: Text(user.username),
-                      subtitle: Text('Username: ${user.username}'),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.password),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Change Password'),
-                                content: TextField(
-                                  obscureText: true,
-                                  decoration: const InputDecoration(
-                                    labelText: 'New Password',
-                                  ),
-                                  onSubmitted: (newPassword) {
-                                    userController.resetUserPassword(user.username, newPassword);
-                                    Navigator.of(context).pop();
-                                  },
+    return Obx(
+      () => RefreshIndicator(
+        onRefresh: () async {
+          await userController.getUsers();
+        },
+        child: userController.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                itemCount: userController.users.length,
+                itemBuilder: (context, index) {
+                  final user = userController.users[index];
+                  return ListTile(
+                    title: Text(user.username),
+                    subtitle: Text('Username: ${user.username}'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.password),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Change Password'),
+                              content: TextField(
+                                obscureText: true,
+                                decoration: const InputDecoration(
+                                  labelText: 'New Password',
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.of(context).pop(),
-                                    child: const Text('Cancel'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-        ),
+                                onSubmitted: (newPassword) {
+                                  userController.resetUserPassword(user.username, newPassword);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('Cancel'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
       ),
     );
   }

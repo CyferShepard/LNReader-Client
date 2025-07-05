@@ -19,6 +19,18 @@ class UIController extends GetxController {
     _categories.value = value;
   }
 
+  final _isCategoriesLoading = false.obs;
+  bool get isCategoriesLoading => _isCategoriesLoading.value;
+  set isCategoriesLoading(bool value) {
+    _isCategoriesLoading.value = value;
+  }
+
+  final _settingsPage = 'main'.obs;
+  String get settingsPage => _settingsPage.value;
+  set settingsPage(String value) {
+    _settingsPage.value = value;
+  }
+
   final _fontSize = 18.0.obs;
   double get fontSize => _fontSize.value;
   set fontSize(double value) {
@@ -67,11 +79,38 @@ class UIController extends GetxController {
   }
 
   Future<void> getCategories() async {
+    isCategoriesLoading = true;
     await client.getCategories().then((value) {
       _categories.value = value;
     }).catchError((error) {
       print('Error fetching categories: $error');
     });
+    isCategoriesLoading = false;
+  }
+
+  Future<void> addCategory(String name) async {
+    isCategoriesLoading = true;
+    await client.addCategory(name).then((value) {
+      if (value == true) {
+        getCategories(); // Refresh categories after adding
+      }
+    }).catchError((error) {
+      print('Error adding category: $error');
+    });
+    isCategoriesLoading = false;
+  }
+
+  Future<void> deleteCategory(String name) async {
+    isCategoriesLoading = true;
+    await client.deleteCategory(name).then((value) async {
+      if (value == true) {
+        await getCategories(); // Refresh categories after deletion
+        await favouritesController.getFavourites(); // Refresh favourites after deletion
+      }
+    }).catchError((error) {
+      print('Error deleting category: $error');
+    });
+    isCategoriesLoading = false;
   }
 
   Future<void> loadUISettings() async {
