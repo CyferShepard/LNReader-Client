@@ -270,8 +270,8 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
               fontSize: 13.0,
             ),
             colors: [
-              Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.tertiary,
+              Theme.of(context).colorScheme.tertiary,
             ],
             tabs: [
               Text(
@@ -318,7 +318,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
     return SingleChildScrollView(
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.tertiary,
         ),
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 
 class ChapterListItemTile extends StatelessWidget {
   final String title;
@@ -18,7 +19,7 @@ class ChapterListItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).colorScheme.surface,
+      color: context.isTabletOrDesktop ? Theme.of(context).colorScheme.tertiary : null,
       child: Container(
         margin: const EdgeInsets.all(2),
         decoration: BoxDecoration(

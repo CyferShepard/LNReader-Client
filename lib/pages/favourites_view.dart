@@ -59,7 +59,7 @@ class FavouritesView extends StatelessWidget {
             ),
             colors: uiController.categories
                 .map(
-                  (c) => Theme.of(context).colorScheme.surface,
+                  (c) => Theme.of(context).colorScheme.tertiary,
                 )
                 .toList(),
             tabs: uiController.categories

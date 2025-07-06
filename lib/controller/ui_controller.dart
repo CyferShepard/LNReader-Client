@@ -41,6 +41,13 @@ class UIController extends GetxController {
     saveUISettings();
   }
 
+  final _fontColor = 0.obs;
+  int get fontColor => _fontColor.value;
+  set fontColor(int value) {
+    _fontColor.value = value;
+    saveUISettings();
+  }
+
   final _lineHeight = 1.5.obs;
   double get lineHeight => _lineHeight.value;
   set lineHeight(double value) {
@@ -65,6 +72,7 @@ class UIController extends GetxController {
         jsonEncode({
           'fontSize': fontSize,
           'lineHeight': lineHeight,
+          'fontColor': fontColor,
           'darkMode': themeMode.value == ThemeMode.dark,
         }));
   }
@@ -121,6 +129,7 @@ class UIController extends GetxController {
       final data = jsonDecode(settings);
       fontSize = data['fontSize']?.toDouble() ?? 18.0;
       lineHeight = data['lineHeight']?.toDouble() ?? 1.5;
+      fontColor = data['fontColor'] ?? 0; // Default to 0 if not set
       if (data['darkMode'] != null) {
         themeMode.value = data['darkMode'] ? ThemeMode.dark : ThemeMode.light;
       } else {
@@ -130,6 +139,7 @@ class UIController extends GetxController {
       // Set default values if no settings are found
       fontSize = 18.0;
       lineHeight = 1.5;
+      fontColor = 0; // Default to 0 if not set
     }
   }
 

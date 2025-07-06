@@ -28,6 +28,11 @@ class _FontSettingsButtonState extends State<FontSettingsButton> {
           left = screenWidth - dropdownWidth - 8; // 8px margin from right
           if (left < 8) left = 8; // 8px margin from left
         }
+        List colourOptions = [
+          Theme.of(context).colorScheme.onSurfaceVariant,
+          Theme.of(context).colorScheme.onSurface,
+          Theme.of(context).colorScheme.secondary,
+        ];
         return GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: _hideDropdown,
@@ -79,6 +84,47 @@ class _FontSettingsButtonState extends State<FontSettingsButton> {
                                 Text(uiController.lineHeight.toStringAsFixed(2)),
                               ],
                             ),
+                            Row(
+                              children: [
+                                const Icon(Icons.format_color_text),
+                                const SizedBox(width: 8),
+                                const Text('Font Colour'),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: List.generate(colourOptions.length, (index) {
+                                      final color = colourOptions[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            // Store the index of the selected color
+                                            uiController.fontColor = index;
+
+                                            setState(() {});
+                                          },
+                                          child: Container(
+                                            width: 28,
+                                            height: 28,
+                                            decoration: BoxDecoration(
+                                              color: color,
+                                              shape: BoxShape.circle,
+                                              border: uiController.fontColor == index
+                                                  ? Border.all(
+                                                      color: Theme.of(context).colorScheme.primary,
+                                                      width: 3,
+                                                    )
+                                                  : null,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8),
                             Row(
                               children: [
                                 const Icon(Icons.brightness_6),

@@ -58,7 +58,7 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
 
       return Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.tertiary,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(

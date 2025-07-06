@@ -182,6 +182,11 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   Padding mainReaderView(BuildContext context) {
+    List colourOptions = [
+      Theme.of(context).colorScheme.onSurfaceVariant,
+      Theme.of(context).colorScheme.onSurface,
+      Theme.of(context).colorScheme.secondary,
+    ];
     return Padding(
       padding: context.isMobile ? EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 8) : EdgeInsets.all(16.0),
       child: Row(
@@ -206,10 +211,11 @@ class _ReaderPageState extends State<ReaderPage> {
                                   children: [
                                     Text(
                                       '\n${apiController.chapter!.content}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(height: uiController.lineHeight, fontSize: uiController.fontSize),
+                                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                            height: uiController.lineHeight,
+                                            fontSize: uiController.fontSize,
+                                            color: colourOptions[uiController.fontColor],
+                                          ),
                                     ),
                                     if (apiController.chapter?.nextPage != null &&
                                         apiController.chapter!.nextPage!.isNotEmpty) ...[

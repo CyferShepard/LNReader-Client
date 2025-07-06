@@ -42,22 +42,25 @@ class MyApp extends StatelessWidget {
       () => MaterialApp(
         title: 'Light Novel Reader',
         theme: FlexThemeData.light(
-          scheme: scheme,
-          surfaceMode: FlexSurfaceMode.highBackgroundLowScaffold,
-          blendLevel: 20,
+          // scheme: scheme,
+          colorScheme: const ColorScheme.light(
+              primary: Color(0xFF375778),
+              secondary: Color.fromARGB(255, 139, 139, 139),
+              tertiary: Color.fromARGB(230, 204, 204, 202),
+              surface: Color(0xFFEEEEEE),
+              onSurfaceVariant: Color(0xFF4F4F4F)),
           appBarElevation: 0,
-          appBarBackground: Color(0xFFD6DBE0),
+          appBarBackground: Color(0xFFEEEEEE),
         ),
         darkTheme: FlexThemeData.dark(
           // scheme: ,
           colorScheme: const ColorScheme.dark(
             primary: Color(0xFFC90F4D),
             secondary: Color(0xFFEBD4CB),
-            tertiary: Color(0xFF313638),
+            tertiary: Color.fromARGB(255, 46, 46, 46),
             surface: Color(0xFF1E1E1E),
+            onSurfaceVariant: Color(0xFFA8A8A8),
           ),
-          surfaceMode: FlexSurfaceMode.highBackgroundLowScaffold,
-          blendLevel: 20,
           appBarElevation: 0,
           appBarBackground: Color(0xFF1E1E1E),
         ),

@@ -48,8 +48,8 @@ class SearchPage extends StatelessWidget {
           fontSize: 13.0,
         ),
         colors: [
-          Theme.of(context).colorScheme.surface,
-          Theme.of(context).colorScheme.surface,
+          Theme.of(context).colorScheme.tertiary,
+          Theme.of(context).colorScheme.tertiary,
         ],
         tabs: [
           Text(
