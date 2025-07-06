@@ -36,6 +36,7 @@ class DetailsMobilePage extends StatelessWidget {
       },
       child: Obx(
         () => Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
           appBar: AppBar(
             scrolledUnderElevation: 0,
             actions: [
@@ -264,7 +265,11 @@ class DetailsMobilePage extends StatelessWidget {
   }
 
   Widget detailsView(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+      ),
       padding: const EdgeInsets.all(8.0),
       child: CustomScrollView(
         slivers: [

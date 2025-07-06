@@ -83,6 +83,7 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
                   }
                 },
                 destinations: destinations,
+                indicatorColor: Theme.of(context).colorScheme.surface,
               );
             },
           ),
@@ -99,13 +100,17 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
           items: widget.navItems,
           controller: navController,
           style: SideNavBarStyle(
-            backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             selectedItemStyle: SelectedItemStyle(
               textStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(220),
                 fontWeight: FontWeight.bold,
               ),
-              iconColor: Theme.of(context).colorScheme.secondary,
+              iconColor: Theme.of(context).colorScheme.onSurface.withAlpha(220),
+            ),
+            unselectedIconColor: Theme.of(context).colorScheme.onPrimary,
+            textStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
         ),

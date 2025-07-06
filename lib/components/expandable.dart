@@ -53,12 +53,16 @@ class _ExpandableTextState extends State<ExpandableText> {
             Center(
                 child: Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary.withAlpha(125),
-                borderRadius: BorderRadius.circular(16.0),
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(8.0),
+                shape: BoxShape.rectangle,
               ),
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 expanded ? widget.collapseText : widget.expandText,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
               ),
             )),
         ],

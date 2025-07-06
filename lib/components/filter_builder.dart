@@ -48,7 +48,7 @@ class _FilterBuilderState extends State<FilterBuilder> {
     return AlertDialog(
       title: const Text('Filters'),
       content: SizedBox(
-        width: 600,
+        // width: context.isTabletOrDesktop ? 600 : double.infinity,
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(right: 16.0),
@@ -139,30 +139,28 @@ class _FilterBuilderState extends State<FilterBuilder> {
             items: filter.type.fieldOptions.map((option) {
               var selectedOptions = _values[filter.fieldName] as Set<String>? ?? <String>{};
               bool isSelected = selectedOptions.contains(option.value);
-              if (isSelected) {
-                print('FilterBuilder _buildField: ${filter.fieldName} contains ${option.value}');
-              }
               return DropdownItem<FieldOptions>(
                 value: option,
                 label: option.name,
                 selected: isSelected,
-                // selected: widget.searchController.selectedCategory.contains(category.id.toString()) ||
-                //     (widget.searchController.selectedCategory.isEmpty && category.id == 1),
               );
             }).toList(),
             dropdownItemDecoration: DropdownItemDecoration(
               selectedIcon: const Icon(Icons.check_circle),
-              selectedTextColor: Colors.white,
+              selectedTextColor: Theme.of(context).colorScheme.onPrimary,
               selectedBackgroundColor: Theme.of(context).colorScheme.primary,
-              backgroundColor: Colors.black87,
+              backgroundColor: Theme.of(context).colorScheme.surface,
             ),
             dropdownDecoration: DropdownDecoration(
-              backgroundColor: Colors.transparent,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
               maxHeight: 300,
               borderRadius: BorderRadius.circular(10),
             ),
 
             chipDecoration: ChipDecoration(
+              labelStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
               backgroundColor: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(10),
             ),
@@ -172,69 +170,6 @@ class _FilterBuilderState extends State<FilterBuilder> {
       default:
         return const SizedBox.shrink();
     }
-  }
-}
-
-class _MultiSelectChip extends StatefulWidget {
-  final String label;
-  final List<FieldOptions> options;
-  final Set<String> initial;
-  final ValueChanged<Set<String>> onChanged;
-
-  const _MultiSelectChip({
-    required this.label,
-    required this.options,
-    required this.initial,
-    required this.onChanged,
-  });
-
-  @override
-  State<_MultiSelectChip> createState() => _MultiSelectChipState();
-}
-
-class _MultiSelectChipState extends State<_MultiSelectChip> {
-  late Set<String> selected;
-
-  @override
-  void initState() {
-    super.initState();
-    selected = Set<String>.from(widget.initial);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(widget.label, style: Theme.of(context).textTheme.bodyLarge),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          children: widget.options.map((opt) {
-            final isSelected = selected.contains(opt.value);
-            return FilterChip(
-              label: Text(opt.name),
-              side: BorderSide(
-                color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey,
-                width: 0.5,
-              ),
-              selected: isSelected,
-              onSelected: (val) {
-                setState(() {
-                  if (val) {
-                    selected.add(opt.value);
-                  } else {
-                    selected.remove(opt.value);
-                  }
-                  widget.onChanged(selected);
-                });
-              },
-            );
-          }).toList(),
-        ),
-      ],
-    );
   }
 }
 

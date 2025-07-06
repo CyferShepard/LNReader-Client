@@ -1,3 +1,4 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/nav_bar.dart';
@@ -35,26 +36,30 @@ class MyApp extends StatelessWidget {
       favouritesController.getFavourites();
       updatesController.getUpdates();
     }
+    const FlexScheme scheme = FlexScheme.sanJuanBlue;
 
     return Obx(
       () => MaterialApp(
         title: 'Light Novel Reader',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 82, 122, 255)).copyWith(
-            secondary: const Color.fromARGB(255, 53, 51, 51),
-            onSecondary: Colors.white,
-            surface: Color.fromARGB(255, 195, 198, 202),
-          ),
-          useMaterial3: true,
+        theme: FlexThemeData.light(
+          scheme: scheme,
+          surfaceMode: FlexSurfaceMode.highBackgroundLowScaffold,
+          blendLevel: 20,
+          appBarElevation: 0,
+          appBarBackground: Color(0xFFD6DBE0),
         ),
-        darkTheme: ThemeData.dark().copyWith(
+        darkTheme: FlexThemeData.dark(
+          // scheme: ,
           colorScheme: const ColorScheme.dark(
-            primary: Color.fromARGB(255, 201, 15, 77),
-            secondary: Color(0xFF1E1E1E),
-            tertiary: Color.fromARGB(255, 53, 52, 51),
-            onPrimary: Colors.white,
-            onSecondary: Colors.white,
+            primary: Color(0xFFC90F4D),
+            secondary: Color(0xFFEBD4CB),
+            tertiary: Color(0xFF313638),
+            surface: Color(0xFF1E1E1E),
           ),
+          surfaceMode: FlexSurfaceMode.highBackgroundLowScaffold,
+          blendLevel: 20,
+          appBarElevation: 0,
+          appBarBackground: Color(0xFF1E1E1E),
         ),
         themeMode: themeMode.value,
         debugShowCheckedModeBanner: false,

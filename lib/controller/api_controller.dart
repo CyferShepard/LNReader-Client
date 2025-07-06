@@ -228,7 +228,7 @@ class ApiController extends GetxController {
             additionalParams += '&${filter.fieldVar}=${value.join(',')}';
           }
         } else {
-          additionalParams += '&${filter.fieldVar}=$value';
+          additionalParams += '&${filter.fieldVar}=${Uri.encodeComponent(value)}';
         }
       } else {
         // print('Warning: Filter ${filter.fieldName} not found in provided values.');

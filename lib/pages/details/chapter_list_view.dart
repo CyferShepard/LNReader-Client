@@ -58,38 +58,41 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
 
       return Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextFieldEditor(
-                    key: chapterNumberFieldKey,
-                    initialValue: '',
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.all(8),
-                      labelText: 'Go to chapter number',
-                      border: UnderlineInputBorder(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFieldEditor(
+                      key: chapterNumberFieldKey,
+                      initialValue: '',
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.all(8),
+                        labelText: 'Go to chapter number',
+                        border: OutlineInputBorder(),
+                      ),
+                      onSubmitted: (value) => _scrollToChapterNumber(value.trim()),
                     ),
-                    onSubmitted: (value) => _scrollToChapterNumber(value.trim()),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.sort_by_alpha),
-                  tooltip: 'Sort Chapters',
-                  onPressed: () {
-                    apiController.sortAsc = !apiController.sortAsc; // Toggle sort direction
-                    apiController.chapters = List.from(apiController.chapters ?? [])
-                      ..sort((a, b) => apiController.sortAsc ? a.index.compareTo(b.index) : b.index.compareTo(a.index));
-                  },
-                ),
-              ],
+                  IconButton(
+                    icon: const Icon(Icons.sort_by_alpha),
+                    tooltip: 'Sort Chapters',
+                    onPressed: () {
+                      apiController.sortAsc = !apiController.sortAsc; // Toggle sort direction
+                      apiController.chapters = List.from(apiController.chapters ?? [])
+                        ..sort((a, b) => apiController.sortAsc ? a.index.compareTo(b.index) : b.index.compareTo(a.index));
+                    },
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(height: 8),
             Expanded(
               child: ScrollablePositionedList.builder(
                 itemScrollController: widget._chaptersScrollController,
@@ -117,7 +120,7 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
                         }
                       },
                       child: Container(
-                        color: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.2) : null,
+                        color: isSelected ? Theme.of(context).colorScheme.primary : null,
                         child: ChapterListItemTile(
                           title: chapter.title,
                           position: position,

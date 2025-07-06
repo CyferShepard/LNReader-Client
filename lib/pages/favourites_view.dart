@@ -14,6 +14,7 @@ class FavouritesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         appBar: AppBar(
           scrolledUnderElevation: 0,
           title: Text('Favourites (${favouritesController.favourites.length})'),
@@ -58,7 +59,7 @@ class FavouritesView extends StatelessWidget {
             ),
             colors: uiController.categories
                 .map(
-                  (c) => Theme.of(context).colorScheme.secondary,
+                  (c) => Theme.of(context).colorScheme.surface,
                 )
                 .toList(),
             tabs: uiController.categories
@@ -66,7 +67,7 @@ class FavouritesView extends StatelessWidget {
                   (c) => Text(
                     c.name,
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.onSecondary,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                   ),
                 )

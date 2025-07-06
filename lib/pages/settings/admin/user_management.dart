@@ -32,6 +32,13 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   return ListTile(
                     title: Text(user.username),
                     subtitle: Text('Username: ${user.username}'),
+                    leading: Tooltip(
+                      message: user.isAdmin ? 'Admin User' : 'Regular User',
+                      child: Icon(
+                        user.isAdmin ? Icons.admin_panel_settings : Icons.person,
+                        color: user.isAdmin ? Colors.green : Colors.blue,
+                      ),
+                    ),
                     trailing: IconButton(
                       icon: const Icon(Icons.password),
                       onPressed: () {

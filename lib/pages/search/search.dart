@@ -12,6 +12,7 @@ class SearchPage extends StatelessWidget {
     final ScrollController latestScrollController = ScrollController();
     final ScrollController searchScrollController = ScrollController();
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       appBar: AppBar(
         scrolledUnderElevation: 0,
         leading: IconButton(
@@ -47,20 +48,20 @@ class SearchPage extends StatelessWidget {
           fontSize: 13.0,
         ),
         colors: [
-          Theme.of(context).colorScheme.secondary,
-          Theme.of(context).colorScheme.secondary,
+          Theme.of(context).colorScheme.surface,
+          Theme.of(context).colorScheme.surface,
         ],
         tabs: [
           Text(
             'Latest',
             style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
           ),
           Text(
             'Search',
             style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
           ),
         ],

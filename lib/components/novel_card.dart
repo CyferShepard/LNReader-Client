@@ -41,7 +41,7 @@ class NovelCard extends StatelessWidget {
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight), // Set your max width here
       child: Card(
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         elevation: 2,
         child: InkWell(
           onTap: onTap,
@@ -76,7 +76,7 @@ class NovelCard extends StatelessWidget {
                                 toolTip: 'Read',
                                 backgroundColor: Theme.of(context).colorScheme.tertiary.withBlue(100).withGreen(200).withRed(200),
                                 textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context).colorScheme.secondary,
+                                      color: Theme.of(context).colorScheme.onTertiary,
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -86,7 +86,7 @@ class NovelCard extends StatelessWidget {
                                 toolTip: 'Chapters',
                                 backgroundColor: Theme.of(context).colorScheme.primary,
                                 textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSecondary,
+                                      color: Theme.of(context).colorScheme.onPrimary,
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -112,7 +112,7 @@ class NovelCard extends StatelessWidget {
                             minFontSize: 12,
                             maxFontSize: 16,
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSecondary,
+                                  color: Theme.of(context).colorScheme.onSurface.withAlpha(230),
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
@@ -147,7 +147,8 @@ class NovelCard extends StatelessWidget {
                               return GenreChip(
                                 genre: genre,
                                 textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSecondary,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).colorScheme.onPrimary,
                                     ),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).colorScheme.primary,

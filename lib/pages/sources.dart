@@ -9,6 +9,7 @@ class SourcesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: const Text('Sources'),

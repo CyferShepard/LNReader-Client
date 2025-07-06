@@ -67,7 +67,10 @@ class SideNavBar extends StatelessWidget {
                 duration: animationDuration,
                 curve: animationCurve,
                 child: IconButton(
-                  icon: Icon(isCollapsed ? Icons.menu : Icons.menu_open),
+                  icon: Icon(
+                    isCollapsed ? Icons.menu : Icons.menu_open,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                   onPressed: controller.toggleCollapse,
                   tooltip: isCollapsed ? 'Expand' : 'Collapse',
                 ),

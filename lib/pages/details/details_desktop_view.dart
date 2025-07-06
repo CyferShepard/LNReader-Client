@@ -108,6 +108,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
         },
         child: Obx(
           () => Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
             appBar: AppBar(
               scrolledUnderElevation: 0,
               title: Text(apiController.details?.title != null
@@ -269,20 +270,20 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
               fontSize: 13.0,
             ),
             colors: [
-              Theme.of(context).colorScheme.secondary,
-              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.surface,
             ],
             tabs: [
               Text(
                 'Details',
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.onSecondary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
               ),
               Text(
                 'Chapters (${apiController.chapters?.length ?? 0})',
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.onSecondary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
               ),
             ],
@@ -317,7 +318,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
     return SingleChildScrollView(
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.surface,
         ),
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -359,10 +360,20 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                 ],
               ),
             const SizedBox(height: 8),
-            SingleChildScrollView(
-              child: Text(
-                apiController.details!.summary,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey[400], fontSize: 14),
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Text(
+                  apiController.details!.summary,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 14,
+                      ),
+                ),
               ),
             ),
           ],
@@ -377,7 +388,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
       // height: 350,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.tertiary.withAlpha(102),
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(8),
         ),
         padding: const EdgeInsets.all(16.0),
@@ -390,7 +401,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
               softWrap: true,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
             if (apiController.details?.source != null) const SizedBox(height: 8),
@@ -399,11 +410,11 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                 label: 'Source',
                 text: apiController.details!.source!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSecondary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                 labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onTertiary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
               ),
             const SizedBox(height: 8),
@@ -411,11 +422,11 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
               label: 'Author',
               text: apiController.details!.author,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
               labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onTertiary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
             const SizedBox(height: 8),
@@ -423,11 +434,11 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
               label: 'Status',
               text: ' ${apiController.details!.status}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
               labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onTertiary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
             const SizedBox(height: 8),
@@ -437,11 +448,11 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
               softWrap: true,
               maxLines: 3,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
               labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onTertiary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
             const SizedBox(height: 8),
@@ -449,11 +460,11 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
               label: 'Last Updated',
               text: apiController.details!.lastUpdate,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
               labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onTertiary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
           ],

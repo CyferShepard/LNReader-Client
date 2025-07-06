@@ -14,6 +14,7 @@ class History extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         appBar: AppBar(
           scrolledUnderElevation: 0,
           title: Text('History (${historyController.history.length})'),
@@ -104,12 +105,10 @@ class History extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         height: 108,
                         child: InkWell(
-                          hoverColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
                           onTap: () {
                             apiController.fetchDetails(

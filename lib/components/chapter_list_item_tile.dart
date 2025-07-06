@@ -18,9 +18,9 @@ class ChapterListItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: Theme.of(context).colorScheme.surface,
       child: Container(
-        margin: const EdgeInsets.all(4),
+        margin: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(12),
@@ -30,30 +30,29 @@ class ChapterListItemTile extends StatelessWidget {
           ),
           border: Border(
             left: BorderSide(
-              color: selected ? Color(0xFF9B6AFF) : Colors.transparent,
+              color: selected ? Theme.of(context).colorScheme.primary : Colors.transparent,
               width: 3,
             ),
           ),
         ),
         child: ListTile(
+          style: Theme.of(context).listTileTheme.style,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          tileColor: selected ? Color(0xFF232227) : Colors.transparent,
-          hoverColor: const Color(0xFF2D2836),
+          tileColor:
+              selected ? Theme.of(context).colorScheme.inversePrimary : Theme.of(context).colorScheme.surfaceContainerHighest,
           title: Text(
             title,
             style: TextStyle(
-              color: selected ? Color(0xFFBCA6FF) : (position != null && position == 1 ? Colors.grey[500] : Colors.grey[100]),
-              fontSize: 14,
+              fontSize: 16,
             ),
           ),
           subtitle: position != null
               ? Text(
                   '${(position! * 100).toStringAsFixed(2)}%',
                   style: TextStyle(
-                    color: selected ? Color(0xFFBCA6FF) : Colors.grey[500],
-                    fontSize: 12,
+                    fontSize: 14,
                   ),
                 )
               : null,

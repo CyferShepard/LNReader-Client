@@ -15,6 +15,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         appBar: AppBar(
           scrolledUnderElevation: 0,
           title: const Text('Settings'),

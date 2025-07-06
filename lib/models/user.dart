@@ -7,6 +7,8 @@ class User {
     required this.userlevel,
   });
 
+  bool get isAdmin => userlevel == 0;
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       username: json['username'] as String,

@@ -95,6 +95,7 @@ class _ReaderPageState extends State<ReaderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       appBar: widget.showHeader
           ? AppBar(
               scrolledUnderElevation: 0,
@@ -189,19 +190,6 @@ class _ReaderPageState extends State<ReaderPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // if (!widget.showHeader) ...[
-                //   Text(
-                //     apiController.chapter!.title,
-                //     style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                //           fontWeight: FontWeight.bold,
-                //         ),
-                //   ),
-                //   const SizedBox(height: 8),
-                //   Divider(
-                //     color: Theme.of(context).colorScheme.secondary,
-                //     thickness: 1,
-                //   ),
-                // ],
                 Expanded(
                   child: Row(
                     children: [
