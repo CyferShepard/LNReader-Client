@@ -77,7 +77,7 @@ class NovelCard extends StatelessWidget {
                                 backgroundColor: Theme.of(context).colorScheme.tertiary.withBlue(100).withGreen(200).withRed(200),
                                 textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                                       color: Theme.of(context).colorScheme.onTertiary,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w600,
                                     ),
                               ),
                             if (showChapterCount)
@@ -86,8 +86,10 @@ class NovelCard extends StatelessWidget {
                                 toolTip: 'Chapters',
                                 backgroundColor: Theme.of(context).colorScheme.primary,
                                 textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context).colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
+                                      color: themeMode.value == ThemeMode.dark
+                                          ? Theme.of(context).colorScheme.onSurface.withAlpha(230)
+                                          : Theme.of(context).colorScheme.onPrimary.withAlpha(230),
+                                      fontWeight: FontWeight.w400,
                                     ),
                               ),
                           ],
@@ -147,8 +149,10 @@ class NovelCard extends StatelessWidget {
                               return GenreChip(
                                 genre: genre,
                                 textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).colorScheme.onPrimary,
+                                      fontWeight: FontWeight.w400,
+                                      color: themeMode.value == ThemeMode.dark
+                                          ? Theme.of(context).colorScheme.onSurface.withAlpha(230)
+                                          : Theme.of(context).colorScheme.onPrimary.withAlpha(230),
                                     ),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).colorScheme.primary,

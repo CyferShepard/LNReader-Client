@@ -339,7 +339,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                 : placeHolderImage,
             const SizedBox(height: 8),
             metaDetails(context),
-            const SizedBox(height: 8),
+            if (apiController.details!.tags.isNotEmpty) const SizedBox(height: 8),
             if (apiController.details!.tags.isNotEmpty)
               Wrap(
                 spacing: 8,
