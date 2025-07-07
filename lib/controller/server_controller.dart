@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/classes/api.dart';
 import 'package:light_novel_reader_client/globals.dart';
+import 'package:light_novel_reader_client/utils/env_loader.dart'
+    if (dart.library.js_interop) 'package:light_novel_reader_client/utils/env_loader_web.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServerController extends GetxController {
@@ -31,7 +33,7 @@ class ServerController extends GetxController {
 
   Future<void> loadServerUrl() async {
     final prefs = await SharedPreferences.getInstance();
-    serverUrl = prefs.getString('serverUrl') ?? 'http://127.0.0.1:8000';
+    serverUrl = prefs.getString('serverUrl') ?? getApiUrlFromEnv() ?? 'http://127.0.0.1:8000';
 
     await connect();
   }
