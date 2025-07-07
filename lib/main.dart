@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,13 +16,35 @@ import 'package:light_novel_reader_client/pages/sources.dart';
 import 'package:light_novel_reader_client/pages/updates.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await serverController.loadServerUrl();
-  await authController.loadAuth();
-  await uiController.loadUISettings();
-  // ioc.registerSingleton<LayoutService>(LayoutService());
+  try {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      logger.error('Flutter Error: ${details.exceptionAsString()}');
+      FlutterError.dumpErrorToConsole(details); // Optionally log the error to the console
+    };
+    runZoned(
+      () async {
+        WidgetsFlutterBinding.ensureInitialized();
+        await serverController.loadServerUrl();
+        await authController.loadAuth();
+        await uiController.loadUISettings();
 
-  runApp(const MyApp());
+        runApp(const MyApp());
+      },
+      zoneSpecification: ZoneSpecification(
+        print: (self, parent, zone, line) {
+          logger.log(line);
+          parent.print(zone, line);
+        },
+        errorCallback: (self, parent, zone, error, stackTrace) {
+          logger.error(error.toString());
+          parent.errorCallback(zone, error, stackTrace);
+          return null;
+        },
+      ),
+    );
+  } catch (e, st) {
+    print('Error in main(): $e\n$st');
+  }
 }
 
 class MyApp extends StatelessWidget {

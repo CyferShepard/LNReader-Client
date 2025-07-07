@@ -6,6 +6,7 @@ import 'package:light_novel_reader_client/pages/settings/account_page.dart';
 import 'package:light_novel_reader_client/pages/settings/admin/server_page.dart';
 import 'package:light_novel_reader_client/pages/settings/admin/user_management.dart';
 import 'package:light_novel_reader_client/pages/settings/categories_page.dart';
+import 'package:light_novel_reader_client/pages/settings/logs.dart';
 import 'package:light_novel_reader_client/pages/settings/theme_page.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -90,6 +91,17 @@ class SettingsPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
+            ListTile(
+              title: const Text('Logs'),
+              leading: const Icon(Icons.notes),
+              onTap: () {
+                uiController.settingsPage = 'logs';
+              },
+              contentPadding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
             if (authController.auth.isAuthenticated && context.isMobile)
               ListTile(
                 title: const Text('Logout'),
@@ -141,6 +153,9 @@ class SettingsPage extends StatelessWidget {
           }
           if (uiController.settingsPage == 'users') {
             return UserManagementPage();
+          }
+          if (uiController.settingsPage == 'logs') {
+            return LogScreen();
           }
           return Padding(
             padding: const EdgeInsets.all(16.0),

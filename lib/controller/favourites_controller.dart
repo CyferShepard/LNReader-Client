@@ -33,11 +33,20 @@ class FavouritesController extends GetxController {
   }
 
   Future<void> addToFavourites(String url, String source) async {
-    List<FavouriteWithNovelMeta> favs = await client.getFavourites(url: url, source: source);
-    bool alreadyExists = favs.isNotEmpty;
-    bool success = alreadyExists ? await apiController.removeFromFavourites(source) : await apiController.addToFavourites(source);
-    if (success) {
-      getFavourites(suppressLoader: true);
+    try {
+      print('Adding to favourites: $url from source: $source');
+      List<FavouriteWithNovelMeta> favs = await client.getFavourites(url: url, source: source);
+      bool alreadyExists = favs.isNotEmpty;
+      print('Already exists: $alreadyExists');
+      bool success =
+          alreadyExists ? await apiController.removeFromFavourites(source) : await apiController.addToFavourites(source);
+      print(alreadyExists ? 'Removed from favourites: $success' : 'Added to favourites: $success');
+      if (success) {
+        getFavourites(suppressLoader: true);
+        print('Favourites updated successfully');
+      }
+    } catch (e) {
+      print('Error adding to favourites: $e');
     }
   }
 
