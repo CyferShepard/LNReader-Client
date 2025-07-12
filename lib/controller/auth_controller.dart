@@ -78,6 +78,8 @@ class AuthController extends GetxController {
         errorMessage: 'Login failed: $error',
       );
     });
+
+    serverController.connectWebSocket();
     isLoading = false;
     if (newUser) {
       reinitUser();
@@ -160,5 +162,6 @@ class AuthController extends GetxController {
     SharedPreferences.getInstance().then((prefs) => prefs.remove('auth'));
 
     uiController.setPage(0);
+    serverController.endWsConnection();
   }
 }

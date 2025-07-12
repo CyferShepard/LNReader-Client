@@ -234,7 +234,7 @@ class _ReaderPageState extends State<ReaderPage> {
                                         child: Text(
                                           'Next Chapter',
                                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                                color: Theme.of(context).colorScheme.onPrimary,
+                                                color: Colors.white,
                                               ),
                                         ),
                                       ),

@@ -60,8 +60,6 @@ class MyApp extends StatelessWidget {
       favouritesController.getFavourites();
       updatesController.getUpdates();
     }
-    const FlexScheme scheme = FlexScheme.sanJuanBlue;
-
     return Obx(
       () => MaterialApp(
         title: 'Light Novel Reader',
@@ -106,6 +104,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    if (authController.auth.isAuthenticated) {
+      // If the user is authenticated, fetch the sources and history
+      serverController.connectWebSocket(context: context);
+    }
+
     return Obx(() {
       if (!serverController.serverResponse.success && !authController.auth.isAuthenticated) {
         return Scaffold(
