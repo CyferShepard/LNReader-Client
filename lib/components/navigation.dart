@@ -32,63 +32,80 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
   }
 
   Widget buildMobileNavigationBar(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: PageView(
-            controller: pageController,
-            onPageChanged: (index) {
-              navController.select(index);
-            },
-            children: widget.navItems.where((item) => item.showInMobile).map((item) => item.child).toList(),
+    return PopScope(
+      canPop: pageController.hasClients && pageController.page == 0, // Disable pop if not on the first page
+      onPopInvokedWithResult: (didPop, result) {
+        print('Pop invoked with canPop: $didPop, result: $result, index: ${pageController.page}');
+        if (apiController.currentSource == "" && uiController.settingsPage == "main") {
+          try {
+            pageController.jumpToPage(0);
+            navController.select(0); // Reset the selected index
+          } catch (e) {
+            print('Error resetting page controller: $e');
+          }
+        }
+      },
+      child: Column(
+        children: [
+          Expanded(
+            child: PageView(
+              controller: pageController,
+              physics: const NeverScrollableScrollPhysics(), // <-- Disable swipe
+
+              onPageChanged: (index) {
+                navController.select(index);
+                setState(() {});
+              },
+              children: widget.navItems.where((item) => item.showInMobile).map((item) => item.child).toList(),
+            ),
           ),
-        ),
-        MediaQuery.removePadding(
-          context: context,
-          removeTop: true,
-          removeBottom: true,
-          child: AnimatedBuilder(
-            animation: navController,
-            builder: (context, _) {
-              final navItems = widget.navItems.where((item) => item.showInMobile).toList();
-              final destinations = navItems
-                  .map(
-                    (item) => NavigationDestination(
-                      icon: Icon(item.icon),
-                      label: item.label,
-                      selectedIcon: Icon(
-                        item.icon,
-                        color: Theme.of(context).colorScheme.primary,
+          MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            removeBottom: true,
+            child: AnimatedBuilder(
+              animation: navController,
+              builder: (context, _) {
+                final navItems = widget.navItems.where((item) => item.showInMobile).toList();
+                final destinations = navItems
+                    .map(
+                      (item) => NavigationDestination(
+                        icon: Icon(item.icon),
+                        label: item.label,
+                        selectedIcon: Icon(
+                          item.icon,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
-                    ),
-                  )
-                  .toList();
+                    )
+                    .toList();
 
-              // Check and reset selectedIndex if out of bounds
-              if (navController.selectedIndex >= destinations.length) {
-                navController.select(0);
-              }
+                // Check and reset selectedIndex if out of bounds
+                if (navController.selectedIndex >= destinations.length) {
+                  navController.select(0);
+                }
 
-              return NavigationBar(
-                selectedIndex: navController.selectedIndex,
-                onDestinationSelected: (index) {
-                  var item = navItems[index];
-                  if (item.onTap != null) {
-                    item.onTap!();
-                    if (item.navigateWithOnTap) {
+                return NavigationBar(
+                  selectedIndex: navController.selectedIndex,
+                  onDestinationSelected: (index) {
+                    var item = navItems[index];
+                    if (item.onTap != null) {
+                      item.onTap!();
+                      if (item.navigateWithOnTap) {
+                        navController.select(index);
+                      }
+                    } else {
                       navController.select(index);
                     }
-                  } else {
-                    navController.select(index);
-                  }
-                },
-                destinations: destinations,
-                indicatorColor: Theme.of(context).colorScheme.surface,
-              );
-            },
+                  },
+                  destinations: destinations,
+                  indicatorColor: Theme.of(context).colorScheme.surface,
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

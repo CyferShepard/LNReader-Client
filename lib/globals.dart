@@ -30,3 +30,4 @@ UpdatesController get updatesController => Get.put(UpdatesController());
 LoggerController get logger => Get.put(LoggerController());
 final GlobalKey<TextFieldEditorState> serverUrlFieldKey = GlobalKey<TextFieldEditorState>();
 final themeMode = ThemeMode.dark.obs;
+String appVersion = '1.0.0'; // Default version, will be updated later

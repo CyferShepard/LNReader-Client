@@ -14,6 +14,7 @@ import 'package:light_novel_reader_client/pages/search/search.dart';
 import 'package:light_novel_reader_client/pages/settings/settings.dart';
 import 'package:light_novel_reader_client/pages/sources.dart';
 import 'package:light_novel_reader_client/pages/updates.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 Future<void> main() async {
   try {
@@ -27,6 +28,15 @@ Future<void> main() async {
         await serverController.loadServerUrl();
         await authController.loadAuth();
         await uiController.loadUISettings();
+        try {
+          if (appVersion == '1.0.0') {
+            PackageInfo packageInfo = await PackageInfo.fromPlatform();
+            appVersion = packageInfo.version;
+            print('App version: $appVersion');
+          }
+        } catch (e) {
+          print('Error fetching app version: $e');
+        }
 
         runApp(const MyApp());
       },
@@ -106,7 +116,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     if (authController.auth.isAuthenticated) {
       // If the user is authenticated, fetch the sources and history
-      serverController.connectWebSocket(context: context);
+      // serverController.connectWebSocket(context: context);
     }
 
     return Obx(() {
