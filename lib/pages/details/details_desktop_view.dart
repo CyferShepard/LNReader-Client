@@ -308,9 +308,10 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
     Widget placeHolderImage = Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12), // Adjust the radius as needed
-        color: Colors.grey,
+        color: Theme.of(context).colorScheme.surfaceContainer,
       ),
       height: 310,
+      width: 310,
       child: const Icon(
         Icons.image,
         size: 50,
@@ -334,6 +335,24 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                       // height: 350,
                       width: 310,
                       fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          width: 310,
+                          height: 310,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12), // Adjust the radius as needed
+                            color: Theme.of(context).colorScheme.surfaceContainer,
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
                       errorBuilder: (context, error, stackTrace) => placeHolderImage,
                     ),
                   )

@@ -114,9 +114,10 @@ class DetailsMobilePage extends StatelessWidget {
       Widget placeHolderImage = Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12), // Adjust the radius as needed
-          color: Colors.grey,
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
         ),
-        height: 300,
+        height: 200,
+        width: 150,
         child: const Icon(
           Icons.image,
           size: 50,
@@ -135,6 +136,16 @@ class DetailsMobilePage extends StatelessWidget {
                       // width: 100,
                       height: 200,
                       fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                : null,
+                          ),
+                        );
+                      },
                       errorBuilder: (context, error, stackTrace) => placeHolderImage,
                     ),
                   )

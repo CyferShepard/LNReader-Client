@@ -10,12 +10,12 @@ class DefaultPlaceholderImage extends StatelessWidget {
     return AspectRatio(
       aspectRatio: maxWidth / imageHeight,
       child: Container(
-        color: Colors.grey[300],
+        color: Theme.of(context).colorScheme.surfaceContainer,
         child: Center(
             child: SizedBox(
           height: imageHeight,
           width: maxWidth,
-          child: const Icon(Icons.book, size: 50),
+          child: const Icon(Icons.image, size: 50),
         )),
       ),
     );
