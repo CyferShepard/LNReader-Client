@@ -175,7 +175,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                       apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
                     },
                   ),
-                if (apiController.details != null && favouritesController.favourites.isNotEmpty)
+                if (apiController.details != null)
                   IconButton(
                     tooltip: favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
                         ? 'Remove from Favourites'
@@ -194,11 +194,12 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                       }
                     },
                   ),
-                CategoriesDropdownButton(
-                  onChanged: (p0) {
-                    apiController.setCategories(p0, novelDetails: apiController.details);
-                  },
-                ),
+                if (favouritesController.favourites.any((fav) => fav.url == apiController.details?.url))
+                  CategoriesDropdownButton(
+                    onChanged: (p0) {
+                      apiController.setCategories(p0, novelDetails: apiController.details);
+                    },
+                  ),
                 FontSettingsButton(),
                 if (apiController.details != null && apiController.details!.url != null)
                   IconButton(

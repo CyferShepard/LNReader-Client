@@ -296,6 +296,15 @@ class ApiController extends GetxController {
         if (categories != null && categories.isNotEmpty) {
           details = details!.copyWith(categories: categories);
         }
+
+        if (categories == null || categories.isEmpty) {
+          FavouriteWithNovelMeta? favouritedNovel =
+              favouritesController.favourites.firstWhereOrNull((f) => f.url == url && f.source == (source ?? currentSource));
+          if (favouritedNovel != null && favouritedNovel.categories.isNotEmpty) {
+            categories = favouritedNovel.categories;
+          }
+          details = details!.copyWith(categories: categories);
+        }
         if (details!.url == null) {
           details = details!.copyWith(url: url);
         }

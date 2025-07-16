@@ -29,4 +29,4 @@ UserController get userController => Get.put(UserController());
 UpdatesController get updatesController => Get.put(UpdatesController());
 LoggerController get logger => Get.put(LoggerController());
 final GlobalKey<TextFieldEditorState> serverUrlFieldKey = GlobalKey<TextFieldEditorState>();
-final themeMode = ThemeMode.system.obs;
+final themeMode = ThemeMode.dark.obs;

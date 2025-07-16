@@ -42,7 +42,14 @@ class FavouritesController extends GetxController {
           alreadyExists ? await apiController.removeFromFavourites(source) : await apiController.addToFavourites(source);
       print(alreadyExists ? 'Removed from favourites: $success' : 'Added to favourites: $success');
       if (success) {
-        getFavourites(suppressLoader: true);
+        getFavourites(suppressLoader: true).then((_) {
+          if (apiController.details != null && apiController.details!.categories.isEmpty) {
+            FavouriteWithNovelMeta? favouritedNovel = favourites.firstWhereOrNull((f) => f.url == url && f.source == source);
+            if (favouritedNovel != null && favouritedNovel.categories.isNotEmpty) {
+              apiController.details = apiController.details!.copyWith(categories: favouritedNovel.categories);
+            }
+          }
+        });
         print('Favourites updated successfully');
       }
     } catch (e) {

@@ -209,6 +209,7 @@ class DetailsMobilePage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               backgroundColor: Theme.of(context).colorScheme.primary,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             ),
             onPressed: () {
               Navigator.push(
@@ -223,7 +224,7 @@ class DetailsMobilePage extends StatelessWidget {
             child: Text(
               'Resume: ${apiController.chapter!.title} (${((historyController.novelhistory.firstWhereOrNull((historyItem) => historyItem.novel.url == apiController.details?.url && historyItem.chapter.url == apiController.chapter!.url && historyItem.source == source)?.position ?? 0) * 100).toStringAsFixed(2)}%)',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Colors.white,
                   ),
             ),
           ),

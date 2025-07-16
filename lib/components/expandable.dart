@@ -61,7 +61,7 @@ class _ExpandableTextState extends State<ExpandableText> {
               child: Text(
                 expanded ? widget.collapseText : widget.expandText,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: Colors.white,
                     ),
               ),
             )),
