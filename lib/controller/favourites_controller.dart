@@ -21,7 +21,13 @@ class FavouritesController extends GetxController {
     }
 
     await client.getFavourites().then((value) {
-      value.sort((a, b) => b.dateAdded.compareTo(a.dateAdded));
+      value.sort((a, b) {
+        if (b.chapterDateAdded != null && a.chapterDateAdded != null) {
+          return b.chapterDateAdded!.compareTo(a.chapterDateAdded!);
+        }
+        if (b.chapterDateAdded == null) return -1; // b at end
+        return 1;
+      });
       favourites = value;
     }).catchError((error) {
       print('Error fetching favourites: $error');
