@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/favouriteWithNovelMeta.dart';
 
+enum SortBy { dateAdded, lastUpdated, title, author }
+
 class FavouritesController extends GetxController {
   final _favourites = List<FavouriteWithNovelMeta>.empty(growable: true).obs;
   List<FavouriteWithNovelMeta> get favourites => _favourites.toList();
@@ -15,20 +17,53 @@ class FavouritesController extends GetxController {
   String get searchQuery => _searchQuery.value;
   set searchQuery(String value) => _searchQuery.value = value;
 
+  final _sortOrder = SortBy.lastUpdated.obs;
+  SortBy get sortOrder => _sortOrder.value;
+  set sortOrder(SortBy value) {
+    _sortOrder.value = value;
+    sortFavourites();
+  }
+
+  final _sortAsc = false.obs;
+  bool get sortAsc => _sortAsc.value;
+  set sortAsc(bool value) {
+    _sortAsc.value = value;
+    sortFavourites();
+  }
+
+  sortFavourites() {
+    List<FavouriteWithNovelMeta> tempFavourites = favourites;
+    tempFavourites.sort((a, b) {
+      switch (sortOrder) {
+        case SortBy.dateAdded:
+          return sortAsc ? a.dateAdded.compareTo(b.dateAdded) : b.dateAdded.compareTo(a.dateAdded);
+        case SortBy.lastUpdated:
+          if (a.chapterDateAdded != null && b.chapterDateAdded != null) {
+            return sortAsc
+                ? a.chapterDateAdded!.compareTo(b.chapterDateAdded!)
+                : b.chapterDateAdded!.compareTo(a.chapterDateAdded!);
+          }
+
+          if (a.chapterDateAdded == null) return 1; // a at end
+          return -1;
+        case SortBy.title:
+          return sortAsc ? a.title.compareTo(b.title) : b.title.compareTo(a.title);
+        case SortBy.author:
+          return sortAsc ? a.author.compareTo(b.author) : b.author.compareTo(a.author);
+      }
+    });
+
+    favourites = tempFavourites;
+  }
+
   Future<void> getFavourites({bool suppressLoader = false}) async {
     if (suppressLoader == false) {
       isLoading = true;
     }
 
     await client.getFavourites().then((value) {
-      value.sort((a, b) {
-        if (b.chapterDateAdded != null && a.chapterDateAdded != null) {
-          return b.chapterDateAdded!.compareTo(a.chapterDateAdded!);
-        }
-        if (b.chapterDateAdded == null) return -1; // b at end
-        return 1;
-      });
       favourites = value;
+      sortFavourites();
     }).catchError((error) {
       print('Error fetching favourites: $error');
     });

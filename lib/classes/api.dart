@@ -357,7 +357,8 @@ class ApiClient {
       if (response.statusCode == 401 && authController.auth.isAuthenticated) {
         authController.logout(refreshLogin: true);
       }
-      throw Exception('Failed to fetch categories: ${response.body}');
+      Categories defaultCategory = Categories(name: "All", position: -999, username: authController.auth.username);
+      return [defaultCategory];
     }
   }
 

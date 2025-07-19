@@ -56,6 +56,9 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
         );
       }
 
+//for some reason, printing this allows the sort to refresh and show in the ui, without it, the sort works but the ui doesnt reflect the new state
+      print('building ChapterListView with ${apiController.chapters!.length} chapters');
+
       return Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.tertiary,
@@ -85,8 +88,6 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
                     tooltip: 'Sort Chapters',
                     onPressed: () {
                       apiController.sortAsc = !apiController.sortAsc; // Toggle sort direction
-                      apiController.chapters = List.from(apiController.chapters ?? [])
-                        ..sort((a, b) => apiController.sortAsc ? a.index.compareTo(b.index) : b.index.compareTo(a.index));
                     },
                   ),
                 ],

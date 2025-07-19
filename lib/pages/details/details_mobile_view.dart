@@ -58,11 +58,14 @@ class DetailsMobilePage extends StatelessWidget {
                     }
                   },
                 ),
-              CategoriesDropdownButton(
-                onChanged: (p0) {
-                  apiController.setCategories(p0, novelDetails: apiController.details);
-                },
-              ),
+              if (favouritesController.favourites.any((fav) => fav.url == apiController.details?.url) &&
+                  uiController.categories.isNotEmpty &&
+                  uiController.categories[0].position != -999)
+                CategoriesDropdownButton(
+                  onChanged: (p0) {
+                    apiController.setCategories(p0, novelDetails: apiController.details);
+                  },
+                ),
               if ((apiController.details != null && apiController.details!.fullUrl != null) ||
                   (apiController.chapter != null && apiController.chapter!.fullUrl != null))
                 IconButton(

@@ -71,7 +71,10 @@ class ApiController extends GetxController {
 
   final _sortAsc = true.obs;
   bool get sortAsc => _sortAsc.value;
-  set sortAsc(bool value) => _sortAsc.value = value;
+  set sortAsc(bool value) {
+    _sortAsc.value = value;
+    sortChapters();
+  }
 
   final _currentLatestPage = 1.obs;
   int get currentLatestPage => _currentLatestPage.value;
@@ -340,6 +343,13 @@ class ApiController extends GetxController {
     return null;
   }
 
+  sortChapters() {
+    print('Sorting chapters: ${sortAsc ? "Ascending" : "Descending"}');
+    List<ChapterListItem> tempChapters = chapters ?? [];
+    tempChapters.sort((a, b) => sortAsc ? a.index.compareTo(b.index) : b.index.compareTo(a.index));
+    chapters = tempChapters;
+  }
+
   Future<Chapters?> fetchChapters(String url,
       {String? source,
       Map<String, String>? additionalProps,
@@ -355,7 +365,8 @@ class ApiController extends GetxController {
         if (refresh) {
           updatesController.getUpdates();
         }
-        chapters!.sort((a, b) => a.index.compareTo(b.index));
+
+        sortChapters();
         if (lastChapterUrl != null) {
           ChapterListItem? lastReadChapter = chapters!.firstWhereOrNull((chapter) => chapter.url == lastChapterUrl);
           if (lastReadChapter != null) {

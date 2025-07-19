@@ -194,7 +194,9 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                       }
                     },
                   ),
-                if (favouritesController.favourites.any((fav) => fav.url == apiController.details?.url))
+                if (favouritesController.favourites.any((fav) => fav.url == apiController.details?.url) &&
+                    uiController.categories.isNotEmpty &&
+                    uiController.categories[0].position != -999)
                   CategoriesDropdownButton(
                     onChanged: (p0) {
                       apiController.setCategories(p0, novelDetails: apiController.details);

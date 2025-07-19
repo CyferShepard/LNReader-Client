@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:light_novel_reader_client/components/favourites_sort_options.dart';
 import 'package:light_novel_reader_client/components/novel_card.dart';
 import 'package:light_novel_reader_client/components/search_bar.dart';
 import 'package:light_novel_reader_client/extensions/context_extensions.dart';
@@ -29,6 +30,7 @@ class FavouritesView extends StatelessWidget {
               },
               hintText: 'Search Favourites',
             ),
+            FavouritesSortButton(),
             if (context.isTabletOrDesktop)
               IconButton(
                 icon: const Icon(Icons.refresh),
@@ -93,7 +95,7 @@ class FavouritesView extends StatelessWidget {
         final items = favouritesController.favourites.where((novel) {
           final searchQuery = favouritesController.searchQuery.toLowerCase();
           return (novel.title.toLowerCase().contains(searchQuery) || novel.author.toLowerCase().contains(searchQuery)) &&
-              (novel.categories.contains(category));
+              (novel.categories.contains(category) || category == 'All');
         }).toList();
 
         if (items.isEmpty) {
