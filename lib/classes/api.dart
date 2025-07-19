@@ -21,6 +21,54 @@ class ApiClient {
 
   ApiClient({required this.baseUrl});
 
+  Future<http.Response> _authorizedRequest(
+    Future<http.Response> Function() requestFn,
+  ) async {
+    String? token = authController.auth.token;
+
+    if (token == null) {
+      // If no token is available, return an unauthorized response
+      return http.Response('Unauthorized', 401);
+    }
+    http.Response response = await requestFn();
+
+    if (response.statusCode == 401 && authController.auth.isAuthenticated) {
+      // Try to refresh the token
+      print('Token expired, refreshing...');
+      bool refreshed = await _refreshToken();
+      if (refreshed) {
+        // Retry with new token
+        token = authController.auth.token;
+        response = await requestFn();
+      } else {
+        // If refresh fails, logout
+        authController.logout();
+      }
+    }
+
+    return response;
+  }
+
+  Future<bool> _refreshToken() async {
+    String? refreshToken = authController.auth.refreshToken;
+    if (refreshToken == null) {
+      return false; // No refresh token available
+    }
+    final response = await http.post(
+      Uri.parse('$baseUrl/auth/refresh'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'token': refreshToken}),
+    );
+    if (response.statusCode == 200) {
+      print('Token Refreshed successfully');
+      final data = jsonDecode(response.body);
+      authController.auth.token = data['accessToken'];
+      authController.auth.refreshToken = data['refreshToken'];
+      return true;
+    }
+    return false;
+  }
+
   Future<ServerResponse> ping(Uri uri) async {
     try {
       uri = uri.replace(path: '/ping');
@@ -52,15 +100,18 @@ class ApiClient {
   }
 
   Future<bool?> toggleRegistration(bool enable) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/canRegister'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-      body: jsonEncode({'canRegister': enable}),
-    );
+    final response = await _authorizedRequest(() {
+      return http.post(
+        Uri.parse('$baseUrl/api/canRegister'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode({'canRegister': enable}),
+      );
+    });
+
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['canRegister'] as bool;
     } else {
@@ -80,14 +131,11 @@ class ApiClient {
       return auth.copyWith(
         status: false,
         errorMessage: 'Invalid username or password',
-        token: null,
+        token: 'null',
+        refreshToken: 'null',
       );
     } else {
-      return auth.copyWith(
-        status: false,
-        errorMessage: 'Failed to login: ${response.body}',
-        token: null,
-      );
+      return auth.copyWith(status: false, errorMessage: 'Failed to login: ${response.body}', token: 'null', refreshToken: 'null');
     }
   }
 
@@ -103,101 +151,98 @@ class ApiClient {
       return auth.copyWith(
         status: false,
         errorMessage: 'Error Updating Password',
-        token: null,
+        token: 'null',
+        refreshToken: 'null',
       );
     }
   }
 
   Future<Auth> resetPassword(Auth auth, {String? username}) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/auth/resetPassword'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-      body: jsonEncode({'password': auth.password, 'username': username}),
-    );
+    final response = await _authorizedRequest(() {
+      return http.post(
+        Uri.parse('$baseUrl/auth/resetPassword'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode({'password': auth.password, 'username': username}),
+      );
+    });
     if (response.statusCode == 200) {
       return auth.populateToken(jsonDecode(response.body)).copyWith(status: true, errorMessage: '');
     } else {
       return auth.copyWith(
         status: false,
         errorMessage: response.reasonPhrase ?? 'Error Updating Password',
-        token: null,
       );
     }
   }
 
   Future<List<User>> getUsers() async {
-    final response = await http.get(Uri.parse('$baseUrl/api/users'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${authController.auth.token}',
-      'Accept-Encoding': 'gzip, br'
+    final response = await _authorizedRequest(() {
+      return http.get(
+        Uri.parse('$baseUrl/api/users'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+      );
     });
     if (response.statusCode == 200) {
       return User.fromJsonList(jsonDecode(response.body));
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print('Failed to fetch users: ${response.body}');
       return [];
     }
   }
 
   Future<Map<String, dynamic>> updateSources() async {
-    final response = await http.get(Uri.parse('$baseUrl/api/updatePlugins'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${authController.auth.token}',
-      'Accept-Encoding': 'gzip, br'
+    final response = await _authorizedRequest(() {
+      return http.get(Uri.parse('$baseUrl/api/updatePlugins'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      });
     });
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       throw Exception('Failed to update sources: ${response.body}');
     }
   }
 
   Future<List<Source>> getSources() async {
-    final response = await http.get(Uri.parse('$baseUrl/api/sources'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${authController.auth.token}',
-      'Accept-Encoding': 'gzip, br'
+    final response = await _authorizedRequest(() {
+      return http.get(Uri.parse('$baseUrl/api/sources'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      });
     });
     if (response.statusCode == 200) {
       List<Source> sources = Source.fromJsonList(jsonDecode(response.body));
 
       return sources;
-      // return (jsonDecode(response.body) as List<dynamic>).cast<String>();
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       throw Exception('Failed to fetch sources: ${response.body}');
     }
   }
 
   Future<Search?> search(String source, {String? searchParams, int page = 1}) async {
-    // if (searchTerm.length < 3) {
-    //   return [];
-    // }
-    final response = await http.post(Uri.parse('$baseUrl/api/search'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${authController.auth.token}',
-          'Accept-Encoding': 'gzip, br'
-        },
-        body: jsonEncode({'source': source, 'searchParams': searchParams, "page": page}));
+    final response = await _authorizedRequest(() {
+      return http.post(Uri.parse('$baseUrl/api/search'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${authController.auth.token}',
+            'Accept-Encoding': 'gzip, br'
+          },
+          body: jsonEncode({'source': source, 'searchParams': searchParams, "page": page}));
+    });
     if (response.statusCode == 200) {
       return Search.fromJson(jsonDecode(response.body));
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       throw Exception('Failed to search: ${response.body}');
     }
   }
@@ -208,24 +253,23 @@ class ApiClient {
     bool refresh = false,
     required bool canCacheNovel,
   }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/novel'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-      body: jsonEncode({'source': source, 'url': url, 'clearCache': refresh, "cacheData": canCacheNovel}),
-    );
+    final response = await _authorizedRequest(() {
+      return http.post(
+        Uri.parse('$baseUrl/api/novel'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode({'source': source, 'url': url, 'clearCache': refresh, "cacheData": canCacheNovel}),
+      );
+    });
     if (response.statusCode == 200) {
       final details = Details.fromJson(jsonDecode(response.body));
       return details;
     } else if (response.statusCode == 404) {
       throw Exception('Details not found.');
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       throw Exception('Failed to fetch details: ${response.body}');
     }
   }
@@ -237,89 +281,85 @@ class ApiClient {
     bool refresh = false,
     required bool canCacheChapters,
   }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/chapters'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-      body: jsonEncode({
-        'source': source,
-        'url': url,
-        'additionalProps': additionalProps,
-        "clearCache": refresh,
-        "cacheData": canCacheChapters
-      }),
-    );
+    final response = await _authorizedRequest(() {
+      return http.post(
+        Uri.parse('$baseUrl/api/chapters'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode({
+          'source': source,
+          'url': url,
+          'additionalProps': additionalProps,
+          "clearCache": refresh,
+          "cacheData": canCacheChapters
+        }),
+      );
+    });
     if (response.statusCode == 200) {
       // print(response.body);
       return Chapters.fromJson(jsonDecode(response.body));
     } else if (response.statusCode == 404) {
       throw Exception('Chapters not found.');
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       throw Exception('Failed to fetch chapters: ${response.body}');
     }
   }
 
   Future<Chapter> getChapter(String url, String source) async {
-    final response = await http.post(Uri.parse('$baseUrl/api/chapter'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${authController.auth.token}',
-          'Accept-Encoding': 'gzip, br'
-        },
-        body: jsonEncode({'url': url, 'source': source}));
+    final response = await _authorizedRequest(() {
+      return http.post(Uri.parse('$baseUrl/api/chapter'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${authController.auth.token}',
+            'Accept-Encoding': 'gzip, br'
+          },
+          body: jsonEncode({'url': url, 'source': source}));
+    });
     if (response.statusCode == 200) {
       return Chapter.fromJson(jsonDecode(response.body));
     } else if (response.statusCode == 404) {
       throw Exception('Chapter not found.');
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       throw Exception('Failed to fetch chapter: ${response.body}');
     }
   }
 
   Future<Latest?> getLatest(String source, {int page = 1}) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/latest?source=$source&page=$page'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-    );
+    final response = await _authorizedRequest(() {
+      return http.get(
+        Uri.parse('$baseUrl/api/latest?source=$source&page=$page'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+      );
+    });
     if (response.statusCode == 200) {
       return Latest.fromJson(jsonDecode(response.body));
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print('Failed to fetch latest: ${response.body}');
       return null;
     }
   }
 
   Future<List<FavouriteWitChapterMeta>?> getLatestChapters() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/updates'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-    );
+    final response = await _authorizedRequest(() {
+      return http.get(
+        Uri.parse('$baseUrl/api/updates'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+      );
+    });
     if (response.statusCode == 200) {
       return FavouriteWitChapterMeta.fromJsonList(jsonDecode(response.body));
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print('Failed to fetch latest: ${response.body}');
       return null;
     }
@@ -330,99 +370,91 @@ class ApiClient {
     if (url != null && source != null) {
       apiUrl += '?url=$url&source=$source';
     }
-    final response = await http.get(Uri.parse(apiUrl), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${authController.auth.token}',
-      'Accept-Encoding': 'gzip, br'
+    final response = await _authorizedRequest(() {
+      return http.get(Uri.parse(apiUrl), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      });
     });
     if (response.statusCode == 200) {
       return FavouriteWithNovelMeta.fromJsonList(jsonDecode(response.body));
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       throw Exception('Failed to fetch favourites: ${response.body}');
     }
   }
 
   Future<List<Categories>> getCategories() async {
-    final response = await http.get(Uri.parse('$baseUrl/api/categories'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${authController.auth.token}',
-      'Accept-Encoding': 'gzip, br'
+    final response = await _authorizedRequest(() {
+      return http.get(Uri.parse('$baseUrl/api/categories'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authController.auth.token}',
+        'Accept-Encoding': 'gzip, br'
+      });
     });
     if (response.statusCode == 200) {
       return Categories.fromJsonList(jsonDecode(response.body));
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       Categories defaultCategory = Categories(name: "All", position: -999, username: authController.auth.username);
       return [defaultCategory];
     }
   }
 
   Future<bool> updateFavouriteCategory(String url, String source, List<String> category) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/favourites/setCategories'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-      body: jsonEncode({'url': url, 'source': source, 'categories': category}),
-    );
+    final response = await _authorizedRequest(() {
+      return http.post(
+        Uri.parse('$baseUrl/favourites/setCategories'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode({'url': url, 'source': source, 'categories': category}),
+      );
+    });
     if (response.statusCode == 200) {
-      // Handle the response as needed
       return true;
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print(Exception('Failed to update favourite category: ${response.body}'));
       return false;
     }
   }
 
   Future<bool> addCategory(String name) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/categories'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-      body: jsonEncode({'name': name}),
-    );
+    final response = await _authorizedRequest(() {
+      return http.post(
+        Uri.parse('$baseUrl/api/categories'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode({'name': name}),
+      );
+    });
     if (response.statusCode == 200) {
-      // Handle the response as needed
       return true;
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print(Exception('Failed to create category: ${response.body}'));
       return false;
     }
   }
 
   Future<bool> deleteCategory(String name) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/api/categories'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-      body: jsonEncode({'name': name}),
-    );
+    final response = await _authorizedRequest(() {
+      return http.delete(
+        Uri.parse('$baseUrl/api/categories'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode({'name': name}),
+      );
+    });
     if (response.statusCode == 200) {
-      // Handle the response as needed
       return true;
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print(Exception('Failed to delete category: ${response.body}'));
       return false;
     }
@@ -431,43 +463,39 @@ class ApiClient {
   Future<bool> addToFavourites(String source, Details novel) async {
     Map<String, dynamic> novelMeta = novel.toJson();
     novelMeta['source'] = source;
-    final response = await http.post(
-        Uri.parse(
-          '$baseUrl/favourites/insert',
-        ),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${authController.auth.token}',
-          'Accept-Encoding': 'gzip, br'
-        },
-        body: jsonEncode({'novelMeta': novelMeta}));
+    final response = await _authorizedRequest(() {
+      return http.post(
+          Uri.parse(
+            '$baseUrl/favourites/insert',
+          ),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${authController.auth.token}',
+            'Accept-Encoding': 'gzip, br'
+          },
+          body: jsonEncode({'novelMeta': novelMeta}));
+    });
     if (response.statusCode == 200) {
-      // Handle the response as needed
       return true;
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print(Exception('Failed to add to favourites: ${response.body}'));
       return false;
     }
   }
 
   Future<bool> removeFromFavourites(String url, String source) async {
-    final response = await http.delete(Uri.parse('$baseUrl/favourites/delete'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${authController.auth.token}',
-          'Accept-Encoding': 'gzip, br'
-        },
-        body: jsonEncode({'url': url, 'source': source}));
+    final response = await _authorizedRequest(() {
+      return http.delete(Uri.parse('$baseUrl/favourites/delete'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${authController.auth.token}',
+            'Accept-Encoding': 'gzip, br'
+          },
+          body: jsonEncode({'url': url, 'source': source}));
+    });
     if (response.statusCode == 200) {
-      // Handle the response as needed
       return true;
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print(Exception('Failed to remove from favourites: ${response.body}'));
       return false;
     }
@@ -480,20 +508,19 @@ class ApiClient {
     } else if (novelUrl != null && source != null) {
       uri = uri.replace(queryParameters: {'novelUrl': novelUrl, 'source': source});
     }
-    final response = await http.get(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-    );
+    final response = await _authorizedRequest(() {
+      return http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+      );
+    });
     if (response.statusCode == 200) {
       return History.fromJsonList(jsonDecode(response.body));
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       throw Exception('Failed to search: ${response.body}');
     }
   }
@@ -506,23 +533,20 @@ class ApiClient {
       double position = 0.0}) async {
     Map<String, dynamic> novelMeta = novel.toJson();
     novelMeta['source'] = source;
-    final response = await http.post(
-      Uri.parse('$baseUrl/history/insert'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-      body: jsonEncode({'novel': novelMeta, 'chapter': chapter.toJson(), 'page': page, 'position': position}),
-    );
+    final response = await _authorizedRequest(() {
+      return http.post(
+        Uri.parse('$baseUrl/history/insert'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode({'novel': novelMeta, 'chapter': chapter.toJson(), 'page': page, 'position': position}),
+      );
+    });
     if (response.statusCode == 200) {
-      // Handle the response as needed
-
       return History.fromJson(jsonDecode(response.body));
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print(Exception('Failed to add to history: ${response.body}'));
       return null;
     }
@@ -536,68 +560,60 @@ class ApiClient {
       double position = 0.0}) async {
     Map<String, dynamic> novelMeta = novel.toJson();
     novelMeta['source'] = source;
-    final response = await http.post(
-      Uri.parse('$baseUrl/history/insertBulk'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-      body:
-          jsonEncode({'novel': novelMeta, 'chapters': ChapterListItem.toJsonList(chapters), 'page': page, 'position': position}),
-    );
+    final response = await _authorizedRequest(() {
+      return http.post(
+        Uri.parse('$baseUrl/history/insertBulk'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode(
+            {'novel': novelMeta, 'chapters': ChapterListItem.toJsonList(chapters), 'page': page, 'position': position}),
+      );
+    });
     if (response.statusCode == 200) {
-      // Handle the response as needed
-
       return History.fromJsonList(jsonDecode(response.body));
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print(Exception('Failed to add to history: ${response.body}'));
       return null;
     }
   }
 
   Future<bool> removeFromHistory(String url, String source) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/history/delete'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-      body: jsonEncode({'url': url, 'source': source}),
-    );
+    final response = await _authorizedRequest(() {
+      return http.delete(
+        Uri.parse('$baseUrl/history/delete'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+        body: jsonEncode({'url': url, 'source': source}),
+      );
+    });
     if (response.statusCode == 200) {
-      // Handle the response as needed
       return true;
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       print(Exception('Failed to remove from history: ${response.body}'));
       return false;
     }
   }
 
   Future<void> getSourceIcon(String source) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/proxy/icon?source=$source'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authController.auth.token}',
-        'Accept-Encoding': 'gzip, br'
-      },
-    );
+    final response = await _authorizedRequest(() {
+      return http.get(
+        Uri.parse('$baseUrl/proxy/icon?source=$source'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${authController.auth.token}',
+          'Accept-Encoding': 'gzip, br'
+        },
+      );
+    });
     if (response.statusCode == 200) {
-      // Handle the response as needed
-
       return;
     } else {
-      if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-        authController.logout(refreshLogin: true);
-      }
       throw Exception('Failed to fetch source icon: ${response.body}');
     }
   }

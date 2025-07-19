@@ -2,6 +2,7 @@ import 'dart:convert';
 
 class Auth {
   String? token;
+  String? refreshToken;
   String username;
   String password;
   bool status;
@@ -9,15 +10,16 @@ class Auth {
 
   Auth({
     this.token,
+    this.refreshToken,
     required this.username,
     required this.password,
     this.status = false,
     this.errorMessage = '',
   });
 
-  bool get isAuthenticated => token != null;
+  bool get isAuthenticated => token != null && refreshToken != null;
   bool get isAdmin {
-    if (token == null) return false;
+    if (token == null || refreshToken == null) return false;
     final parts = token!.split('.');
     if (parts.length != 3) {
       throw Exception('Invalid JWT');
@@ -35,6 +37,7 @@ class Auth {
   Auth clear() {
     return Auth(
       token: null,
+      refreshToken: null,
       username: '',
       password: '',
       status: false,
@@ -44,7 +47,8 @@ class Auth {
 
   factory Auth.fromJson(Map<String, dynamic> json) {
     return Auth(
-      token: json['token'] as String?,
+      token: json['accessToken'] as String?,
+      refreshToken: json['refreshToken'] as String?,
       username: json['username'] as String,
       password: json['password'] as String,
       status: json['status'] as bool? ?? false,
@@ -54,7 +58,8 @@ class Auth {
 
   Map<String, dynamic> toJson() {
     return {
-      'token': token,
+      'accessToken': token,
+      'refreshToken': refreshToken,
       'username': username,
       'password': password,
       'status': status,
@@ -64,13 +69,15 @@ class Auth {
 
   Auth copyWith({
     String? token,
+    String? refreshToken,
     String? username,
     String? password,
     bool? status,
     String? errorMessage,
   }) {
     return Auth(
-      token: token ?? this.token,
+      token: token != null ? (token == 'null' ? null : token) : this.token,
+      refreshToken: refreshToken != null ? (refreshToken == 'null' ? null : refreshToken) : this.refreshToken,
       username: username ?? this.username,
       password: password ?? this.password,
       status: status ?? this.status,
@@ -80,7 +87,8 @@ class Auth {
 
   Auth populateToken(Map<String, dynamic> json) {
     return Auth(
-      token: json['token'] as String?,
+      token: json['accessToken'] as String?,
+      refreshToken: json['refreshToken'] as String?,
       username: username,
       password: password,
       status: status,

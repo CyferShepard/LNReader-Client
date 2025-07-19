@@ -151,13 +151,7 @@ class AuthController extends GetxController {
     secondaryPassword = '';
   }
 
-  void logout({bool refreshLogin = false}) async {
-    if (refreshLogin) {
-      bool loggedIn = await login(newUser: false);
-      if (loggedIn) {
-        return;
-      }
-    }
+  void logout() async {
     auth = auth.clear();
     SharedPreferences.getInstance().then((prefs) => prefs.remove('auth'));
 
