@@ -65,6 +65,7 @@ class ApiClient {
       final data = jsonDecode(response.body);
       authController.auth.token = data['accessToken'];
       authController.auth.refreshToken = data['refreshToken'];
+      authController.saveAuth();
       return true;
     }
     return false;
