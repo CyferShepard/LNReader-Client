@@ -36,7 +36,7 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
       canPop: pageController.hasClients && pageController.page == 0, // Disable pop if not on the first page
       onPopInvokedWithResult: (didPop, result) {
         print('Pop invoked with canPop: $didPop, result: $result, index: ${pageController.page}');
-        if (apiController.currentSource == "" && uiController.settingsPage == "main") {
+        if (uiController.searchPage == "sources" && uiController.settingsPage == "main") {
           try {
             pageController.jumpToPage(0);
             navController.select(0); // Reset the selected index

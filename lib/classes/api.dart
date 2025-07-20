@@ -14,6 +14,7 @@ import 'package:light_novel_reader_client/models/history.dart';
 import 'package:light_novel_reader_client/models/latest.dart';
 import 'package:light_novel_reader_client/models/search.dart';
 import 'package:light_novel_reader_client/models/source.dart';
+import 'package:light_novel_reader_client/models/source_search.dart';
 import 'package:light_novel_reader_client/models/user.dart';
 
 class ApiClient {
@@ -242,6 +243,23 @@ class ApiClient {
     });
     if (response.statusCode == 200) {
       return Search.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to search: ${response.body}');
+    }
+  }
+
+  Future<List<SourceSearch>?> searchMultiple(List<SourceSearch> searchPayload) async {
+    final response = await _authorizedRequest(() {
+      return http.post(Uri.parse('$baseUrl/api/searchMultiple'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${authController.auth.token}',
+            'Accept-Encoding': 'gzip, br'
+          },
+          body: jsonEncode({'searchPayload': SourceSearch.toJsonList(searchPayload)}));
+    });
+    if (response.statusCode == 200) {
+      return SourceSearch.fromJsonList(jsonDecode(response.body));
     } else {
       throw Exception('Failed to search: ${response.body}');
     }

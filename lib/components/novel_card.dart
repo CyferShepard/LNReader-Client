@@ -42,7 +42,7 @@ class NovelCard extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight), // Set your max width here
       child: Card(
         color: Theme.of(context).colorScheme.surfaceContainer,
-        elevation: 2,
+        elevation: 8,
         child: InkWell(
           onTap: onTap,
           child: ClipRRect(

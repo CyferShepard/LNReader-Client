@@ -14,9 +14,17 @@ class SourcesPage extends StatelessWidget {
         scrolledUnderElevation: 0,
         title: const Text('Sources'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.travel_explore),
+            tooltip: 'Global Search',
+            onPressed: () async {
+              uiController.searchPage = 'globalSearch'; // Navigate to global search
+            },
+          ),
           if (context.isTabletOrDesktop)
             IconButton(
               icon: const Icon(Icons.refresh),
+              tooltip: 'Refresh Sources',
               onPressed: () async {
                 await apiController.fetchSources();
               },
@@ -58,8 +66,10 @@ class SourcesPage extends StatelessWidget {
                   title: Text(source),
                   onTap: () {
                     print('Source Selected: You selected $source');
+
                     apiController.setSource(source);
                     apiController.fetchLatest(source: source);
+                    uiController.searchPage = 'search';
                   },
                 ),
               );

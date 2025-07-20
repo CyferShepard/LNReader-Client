@@ -9,6 +9,7 @@ import 'package:light_novel_reader_client/models/latest.dart';
 import 'package:light_novel_reader_client/models/search.dart';
 import 'package:light_novel_reader_client/models/search_result.dart';
 import 'package:light_novel_reader_client/models/source.dart';
+import 'package:light_novel_reader_client/models/source_search.dart';
 
 class ApiController extends GetxController {
   // Observables
@@ -27,6 +28,10 @@ class ApiController extends GetxController {
   final _searchResults = <SearchResult>[].obs;
   List<SearchResult> get searchResults => _searchResults.toList();
   set searchResults(List<SearchResult> value) => _searchResults.value = value;
+
+  final _miltipleSourceSearch = <SourceSearch>[].obs;
+  List<SourceSearch> get multipleSourceSearch => _miltipleSourceSearch.toList();
+  set multipleSourceSearch(List<SourceSearch> value) => _miltipleSourceSearch.value = value;
 
   final _latestResults = <SearchResult>[].obs;
   List<SearchResult> get latestResults => _latestResults.toList();
@@ -121,6 +126,7 @@ class ApiController extends GetxController {
   }
 
   clearSearch() {
+    multipleSourceSearch = [];
     searchResults = [];
     currentSource = "";
     clearDetails();
@@ -196,8 +202,43 @@ class ApiController extends GetxController {
     }
   }
 
-  getFilters() {
-    var csource = sources.firstWhereOrNull((s) => s.name == currentSource);
+  searchMultiple() async {
+    List<SourceSearch> searchPayload = [];
+    for (var source in sources) {
+      if (source.filters.isEmpty) {
+        print('Error: No filters available for source ${source.name}.');
+        continue;
+      }
+
+      String? searchParams = getFilters(source: source.name);
+      var mainSearchField = source.filters.firstWhereOrNull((f) => f.isMainSearchField);
+      if (searchTerm.isNotEmpty && mainSearchField != null) {
+        searchParams ??= '';
+        searchParams += '&${mainSearchField.fieldVar}=$searchTerm';
+      }
+      if (searchParams != null && searchParams.isNotEmpty) {
+        searchPayload.add(SourceSearch(source: source.name, searchParams: searchParams));
+      }
+    }
+
+    if (searchPayload.isEmpty) {
+      print('Error: No valid search parameters found for any source.');
+      return;
+    }
+
+    try {
+      isLoading = true;
+      multipleSourceSearch = await client.searchMultiple(searchPayload) ?? [];
+    } catch (e) {
+      multipleSourceSearch = [];
+      print('Error: Failed to search multiple sources: $e');
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  getFilters({String? source}) {
+    var csource = sources.firstWhereOrNull((s) => s.name == (source ?? currentSource));
     if (csource == null) {
       print('Error: Current source not found in sources list.');
       return;

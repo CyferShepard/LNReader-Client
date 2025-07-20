@@ -363,23 +363,31 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
             metaDetails(context),
             if (apiController.details!.tags.isNotEmpty) const SizedBox(height: 8),
             if (apiController.details!.tags.isNotEmpty)
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  for (final genre in apiController.details!.tags)
-                    GenreChip(
-                      genre: genre.trim(),
-                      textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                          ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(4),
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.all(22.0),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    for (final genre in apiController.details!.tags)
+                      GenreChip(
+                        genre: genre.trim(),
+                        textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-                    ),
-                ],
+                  ],
+                ),
               ),
             const SizedBox(height: 8),
             Container(

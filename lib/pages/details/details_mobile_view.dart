@@ -257,6 +257,7 @@ class DetailsMobilePage extends StatelessWidget {
                       genre: tags.trim(),
                       textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context).colorScheme.onSecondary,
+                            fontWeight: FontWeight.bold,
                           ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,

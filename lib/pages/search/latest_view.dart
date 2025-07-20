@@ -43,7 +43,11 @@ class _LatestViewState extends State<LatestView> with AutomaticKeepAliveClientMi
   @override
   void dispose() {
     widget.scrollController.dispose();
-    apiController.clearSearch();
+    if (!uiController.isSubSearch) {
+      apiController.clearSearch();
+    } else {
+      uiController.isSubSearch = false; // Reset sub-search state
+    }
     print('LatestView disposed');
 
     super.dispose();

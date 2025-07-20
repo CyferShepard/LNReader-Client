@@ -31,6 +31,18 @@ class UIController extends GetxController {
     _settingsPage.value = value;
   }
 
+  final _searchPage = 'sources'.obs;
+  String get searchPage => _searchPage.value;
+  set searchPage(String value) {
+    _searchPage.value = value;
+  }
+
+  final _isSubSearch = false.obs;
+  bool get isSubSearch => _isSubSearch.value;
+  set isSubSearch(bool value) {
+    _isSubSearch.value = value;
+  }
+
   final _fontSize = 18.0.obs;
   double get fontSize => _fontSize.value;
   set fontSize(double value) {

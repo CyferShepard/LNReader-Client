@@ -10,6 +10,7 @@ import 'package:light_novel_reader_client/pages/auth/login.dart';
 import 'package:light_novel_reader_client/pages/auth/register.dart';
 import 'package:light_novel_reader_client/pages/favourites_view.dart';
 import 'package:light_novel_reader_client/pages/history.dart';
+import 'package:light_novel_reader_client/pages/search/multiple_search_view.dart';
 import 'package:light_novel_reader_client/pages/search/search.dart';
 import 'package:light_novel_reader_client/pages/settings/settings.dart';
 import 'package:light_novel_reader_client/pages/sources.dart';
@@ -178,7 +179,9 @@ class _HomePageState extends State<HomePage> {
             NavBarItem(
               label: 'Search',
               icon: Icons.search,
-              child: (apiController.currentSource != "") ? SearchPage() : SourcesPage(),
+              child: (uiController.searchPage == "globalSearch")
+                  ? MultipleSearchView()
+                  : ((uiController.searchPage == "search") ? SearchPage() : SourcesPage()),
             ),
             NavBarItem(
               label: 'Settings',

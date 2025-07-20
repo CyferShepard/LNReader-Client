@@ -4,13 +4,39 @@ import 'package:light_novel_reader_client/pages/search/latest_view.dart';
 import 'package:light_novel_reader_client/pages/search/search_view.dart';
 import 'package:tab_container/tab_container.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
+
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (uiController.isSubSearch) {
+        // _tabController.index = 1; // Switch to Search tab if it's a sub-search
+        _tabController.animateTo(1);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final ScrollController latestScrollController = ScrollController();
     final ScrollController searchScrollController = ScrollController();
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (popScope, result) {
@@ -25,6 +51,7 @@ class SearchPage extends StatelessWidget {
           print('Error resetting search scroll position: $e');
         }
         apiController.currentSource = '';
+        uiController.searchPage = uiController.isSubSearch ? 'globalSearch' : 'sources'; // Reset to sources page
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
@@ -45,11 +72,12 @@ class SearchPage extends StatelessWidget {
               }
               // uiController.selectedIndex = 2; // Navigate back to the previous page
               apiController.currentSource = '';
+              uiController.searchPage = uiController.isSubSearch ? 'globalSearch' : 'sources'; // Reset to sources page
             },
           ),
         ),
         body: TabContainer(
-          // controller: _tabController,
+          controller: _tabController,
           key: const Key('search_tab_container'),
           tabEdge: TabEdge.top,
           borderRadius: BorderRadius.circular(10),

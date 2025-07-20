@@ -41,7 +41,7 @@ class _SearchViewState extends State<SearchView> with AutomaticKeepAliveClientMi
   @override
   void dispose() {
     widget.scrollController.dispose();
-    apiController.clearSearch();
+
     print('SearchView disposed');
 
     super.dispose();
