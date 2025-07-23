@@ -92,6 +92,21 @@ class ApiClient {
     }
   }
 
+  Future<String?> getVersion() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/api/configs?type=web'));
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)["version"] as String;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Version fetch failed: $e');
+      return null;
+    }
+  }
+
   Future<bool> canRegister() async {
     final response = await http.get(Uri.parse('$baseUrl/api/canRegister'));
     if (response.statusCode == 200) {

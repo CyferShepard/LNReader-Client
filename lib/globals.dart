@@ -31,3 +31,18 @@ LoggerController get logger => Get.put(LoggerController());
 final GlobalKey<TextFieldEditorState> serverUrlFieldKey = GlobalKey<TextFieldEditorState>();
 final themeMode = ThemeMode.dark.obs;
 String appVersion = '1.0.0'; // Default version, will be updated later
+
+compareVersions(String v1, String v2) {
+  final parts1 = v1.replaceAll(',', '.').split('.').map(int.parse).toList();
+  final parts2 = v2.replaceAll(',', '.').split('.').map(int.parse).toList();
+  final maxLength = parts1.length > parts2.length ? parts1.length : parts2.length;
+
+  for (int i = 0; i < maxLength; i++) {
+    final p1 = i < parts1.length ? parts1[i] : 0;
+    final p2 = i < parts2.length ? parts2[i] : 0;
+    if (p1 != p2) return p1.compareTo(p2);
+  }
+  return 0;
+}
+
+bool hasUpdates = false;

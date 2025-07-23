@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/nav_bar.dart';
@@ -16,6 +17,7 @@ import 'package:light_novel_reader_client/pages/settings/settings.dart';
 import 'package:light_novel_reader_client/pages/sources.dart';
 import 'package:light_novel_reader_client/pages/updates.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:universal_html/html.dart' as html;
 
 Future<void> main() async {
   try {
@@ -29,6 +31,7 @@ Future<void> main() async {
         await serverController.loadServerUrl();
         await authController.loadAuth();
         await uiController.loadUISettings();
+
         try {
           if (appVersion == '1.0.0') {
             PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -37,6 +40,18 @@ Future<void> main() async {
           }
         } catch (e) {
           print('Error fetching app version: $e');
+        }
+
+        try {
+          String? serverVersion = await client.getVersion();
+          if (serverVersion != null) {
+            print('latest version: $serverVersion');
+            hasUpdates = compareVersions(appVersion, serverVersion) < 0;
+            print('has updates: $hasUpdates');
+          }
+        } catch (e) {
+          print('Error fetching server version: $e');
+          hasUpdates = false; // Default to no updates if there's an error
         }
 
         runApp(const MyApp());
@@ -127,97 +142,234 @@ class _HomePageState extends State<HomePage> {
         );
       }
 
-      if (serverController.serverResponse.success && !authController.auth.isAuthenticated) {
-        return Scaffold(
-          body: MainNavigationBar(navItems: [
-            NavBarItem(
-              label: 'Login',
-              icon: Icons.login,
-              child: const LoginPage(),
-              onTap: () {
-                authController.clearFields();
-                uiController.setPage(0);
-              },
-            ),
-            if (serverController.canRegister)
-              NavBarItem(
-                label: 'Register',
-                icon: Icons.app_registration,
-                child: const RegisterPage(),
-                onTap: () {
-                  authController.clearFields();
-                  uiController.setPage(1);
-                },
+      if (hasUpdates && kIsWeb) {
+        return Stack(
+          children: [
+            // Your normal navigation bar or home content
+            Scaffold(
+              body: MainNavigationBar(
+                navItems: [
+                  // ...your nav items...
+                ],
               ),
-            NavBarItem(
-              label: 'Settings',
-              icon: Icons.settings,
-              child: SettingsPage(),
             ),
-          ]),
+            // Overlay for update notification
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'A new version is available!',
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Please reload the page to update and clear cached files.',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton(
+                            onPressed: () {
+                              // For web: reload and clear cache
+                              html.window.location.reload();
+                              // For mobile: you might want to use a different method
+                              // Navigator.of(context).pop(); // Close the dialog if needed
+                            },
+                            child: const Text('Reload Now'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
       }
 
-      return Scaffold(
-        body: MainNavigationBar(
-          navItems: [
-            NavBarItem(
-              label: 'Favourites',
-              icon: Icons.favorite,
-              child: FavouritesView(),
-            ),
-            NavBarItem(
-              label: 'Updates',
-              icon: Icons.new_releases,
-              child: UpdatesPage(),
-            ),
-            NavBarItem(
-              label: 'History',
-              icon: Icons.timer_outlined,
-              child: History(),
-            ),
-            NavBarItem(
-              label: 'Search',
-              icon: Icons.search,
-              child: (uiController.searchPage == "globalSearch")
-                  ? MultipleSearchView()
-                  : ((uiController.searchPage == "search") ? SearchPage() : SourcesPage()),
-            ),
-            NavBarItem(
-              label: 'Settings',
-              icon: Icons.settings,
-              child: SettingsPage(),
-            ),
-            NavBarItem(
-              label: 'Logout',
-              icon: Icons.logout,
-              child: Container(),
-              showInMobile: false,
-              onTap: () async {
-                final shouldLogout = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Confirm Logout'),
-                    content: const Text('Are you sure you want to log out?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        child: const Text('Logout'),
-                      ),
-                    ],
+      if (serverController.serverResponse.success && !authController.auth.isAuthenticated) {
+        return Stack(
+          children: [
+            Scaffold(
+              body: MainNavigationBar(navItems: [
+                NavBarItem(
+                  label: 'Login',
+                  icon: Icons.login,
+                  child: const LoginPage(),
+                  onTap: () {
+                    authController.clearFields();
+                    uiController.setPage(0);
+                  },
+                ),
+                if (serverController.canRegister)
+                  NavBarItem(
+                    label: 'Register',
+                    icon: Icons.app_registration,
+                    child: const RegisterPage(),
+                    onTap: () {
+                      authController.clearFields();
+                      uiController.setPage(1);
+                    },
                   ),
-                );
-                if (shouldLogout == true) {
-                  authController.logout();
-                }
-              },
+                NavBarItem(
+                  label: 'Settings',
+                  icon: Icons.settings,
+                  child: SettingsPage(),
+                ),
+              ]),
             ),
+            if (hasUpdates && kIsWeb)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black54,
+                  child: Center(
+                    child: Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'A new version is available!',
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Please reload the page to update and clear cached files.',
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 24),
+                            ElevatedButton(
+                              onPressed: () {
+                                // For web: reload and clear cache
+                                html.window.location.reload();
+                                // For mobile: you might want to use a different method
+                                // Navigator.of(context).pop(); // Close the dialog if needed
+                              },
+                              child: const Text('Reload Now'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
-        ),
+        );
+      }
+
+      return Stack(
+        children: [
+          Scaffold(
+            body: MainNavigationBar(
+              navItems: [
+                NavBarItem(
+                  label: 'Favourites',
+                  icon: Icons.favorite,
+                  child: FavouritesView(),
+                ),
+                NavBarItem(
+                  label: 'Updates',
+                  icon: Icons.new_releases,
+                  child: UpdatesPage(),
+                ),
+                NavBarItem(
+                  label: 'History',
+                  icon: Icons.timer_outlined,
+                  child: History(),
+                ),
+                NavBarItem(
+                  label: 'Search',
+                  icon: Icons.search,
+                  child: (uiController.searchPage == "globalSearch")
+                      ? MultipleSearchView()
+                      : ((uiController.searchPage == "search") ? SearchPage() : SourcesPage()),
+                ),
+                NavBarItem(
+                  label: 'Settings',
+                  icon: Icons.settings,
+                  child: SettingsPage(),
+                ),
+                NavBarItem(
+                  label: 'Logout',
+                  icon: Icons.logout,
+                  child: Container(),
+                  showInMobile: false,
+                  onTap: () async {
+                    final shouldLogout = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Confirm Logout'),
+                        content: const Text('Are you sure you want to log out?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text('Logout'),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (shouldLogout == true) {
+                      authController.logout();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          if (hasUpdates && kIsWeb)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'A new version is available!',
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Please reload the page to update and clear cached files.',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton(
+                            onPressed: () {
+                              // For web: reload and clear cache
+                              html.window.location.reload();
+                              // For mobile: you might want to use a different method
+                              // Navigator.of(context).pop(); // Close the dialog if needed
+                            },
+                            child: const Text('Reload Now'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       );
     });
   }
