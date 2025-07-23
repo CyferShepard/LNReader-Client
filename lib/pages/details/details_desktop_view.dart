@@ -124,7 +124,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                           tooltip: 'Mark as Unread',
                           onPressed: () {
                             historyController.markAsRead(
-                              apiController.chapters!.where((c) => uiController.selectedChapters.contains(c.index - 1)).toList(),
+                              apiController.chapters!.where((c) => uiController.selectedChapters.contains(c.index)).toList(),
                               apiController.details!,
                               widget.source ?? apiController.currentSource,
                               isRead: false,
@@ -138,9 +138,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                           tooltip: 'Mark as Read',
                           onPressed: () {
                             historyController.markAsRead(
-                                apiController.chapters!
-                                    .where((c) => uiController.selectedChapters.contains(c.index - 1))
-                                    .toList(),
+                                apiController.chapters!.where((c) => uiController.selectedChapters.contains(c.index)).toList(),
                                 apiController.details!,
                                 widget.source ?? apiController.currentSource);
                             Get.toNamed('/history');

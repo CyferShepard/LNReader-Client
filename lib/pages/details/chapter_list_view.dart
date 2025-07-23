@@ -101,7 +101,7 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
                 itemBuilder: (context, index) {
                   return Obx(() {
                     final chapter = apiController.chapters![index];
-                    final isSelected = uiController.selectedChapters.contains(index);
+                    final isSelected = uiController.selectedChapters.contains(chapter.index);
                     final isCurrent = chapter.url == apiController.chapter?.url;
                     final position = historyController.novelhistory
                         .firstWhereOrNull((historyItem) =>
@@ -112,7 +112,7 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
 
                     return GestureDetector(
                       key: ValueKey(index),
-                      onLongPress: () => uiController.toggleChapterSelection(index, apiController.chapters!.length),
+                      onLongPress: () => uiController.toggleChapterSelection(chapter.index, apiController.chapters!.length),
                       onTap: () {
                         if (uiController.multiSelectMode) {
                           uiController.toggleChapterSelection(index, apiController.chapters!.length);
@@ -126,6 +126,7 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
                           title: chapter.title,
                           position: position,
                           selected: isCurrent,
+                          isChecked: isSelected,
                           onTap: uiController.multiSelectMode
                               ? null
                               : () => apiController.fetchChapter(chapter.url, source: widget.source),

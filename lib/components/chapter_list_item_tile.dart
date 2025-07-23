@@ -6,6 +6,7 @@ class ChapterListItemTile extends StatelessWidget {
 
   final double? position;
   final bool selected;
+  final bool isChecked;
   final VoidCallback? onTap;
 
   const ChapterListItemTile({
@@ -13,6 +14,7 @@ class ChapterListItemTile extends StatelessWidget {
     required this.title,
     this.position,
     this.selected = false,
+    this.isChecked = false,
     this.onTap,
   });
 
@@ -31,7 +33,7 @@ class ChapterListItemTile extends StatelessWidget {
           ),
           border: Border(
             left: BorderSide(
-              color: selected ? Theme.of(context).colorScheme.primary : Colors.transparent,
+              color: selected && !isChecked ? Theme.of(context).colorScheme.primary : Colors.transparent,
               width: 3,
             ),
           ),
@@ -41,12 +43,14 @@ class ChapterListItemTile extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          tileColor:
-              selected ? Theme.of(context).colorScheme.inversePrimary : Theme.of(context).colorScheme.surfaceContainerHighest,
+          tileColor: isChecked
+              ? Theme.of(context).colorScheme.primary
+              : (selected ? Theme.of(context).colorScheme.inversePrimary : Theme.of(context).colorScheme.surfaceContainerHighest),
           title: Text(
             title,
             style: TextStyle(
               fontSize: 16,
+              color: isChecked ? Theme.of(context).colorScheme.onPrimary : null,
             ),
           ),
           subtitle: position != null
@@ -54,6 +58,7 @@ class ChapterListItemTile extends StatelessWidget {
                   '${(position! * 100).toStringAsFixed(2)}%',
                   style: TextStyle(
                     fontSize: 14,
+                    color: isChecked ? Theme.of(context).colorScheme.onPrimary : null,
                   ),
                 )
               : null,
