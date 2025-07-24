@@ -14,6 +14,7 @@ class FavouriteWithNovelMeta {
   final int readCount;
   final List<String> categories;
   final DateTime? chapterDateAdded;
+  final DateTime? lastRead;
 
   FavouriteWithNovelMeta({
     required this.dateAdded,
@@ -31,6 +32,7 @@ class FavouriteWithNovelMeta {
     this.readCount = 0,
     required this.categories,
     this.chapterDateAdded,
+    this.lastRead,
   });
 
   Map<String, dynamic> toJson() {
@@ -50,6 +52,7 @@ class FavouriteWithNovelMeta {
       'readCount': readCount,
       'category': categories,
       'chapter_date_added': chapterDateAdded?.toIso8601String(),
+      'last_read': lastRead?.toIso8601String(),
     };
   }
 
@@ -80,6 +83,7 @@ class FavouriteWithNovelMeta {
       readCount: json['readCount'] as int? ?? 0,
       categories: (json['categories'] as List<dynamic>).cast<String>().toList(),
       chapterDateAdded: json['chapter_date_added'] != null ? DateTime.parse(json['chapter_date_added'] as String) : null,
+      lastRead: json['last_read'] != null ? DateTime.parse(json['last_read'] as String) : null,
     );
   }
 
@@ -99,6 +103,7 @@ class FavouriteWithNovelMeta {
     int? readCount,
     List<String>? categories,
     DateTime? chapterDateAdded,
+    DateTime? lastRead,
   }) {
     return FavouriteWithNovelMeta(
       dateAdded: dateAdded ?? this.dateAdded,
@@ -116,6 +121,7 @@ class FavouriteWithNovelMeta {
       readCount: readCount ?? this.readCount,
       categories: categories ?? this.categories,
       chapterDateAdded: chapterDateAdded ?? this.chapterDateAdded,
+      lastRead: lastRead ?? this.lastRead,
     );
   }
 

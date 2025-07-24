@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/favouriteWithNovelMeta.dart';
 
-enum SortBy { dateAdded, lastUpdated, title, author }
+enum SortBy { dateAdded, lastRead, lastUpdated, title, author }
 
 class FavouritesController extends GetxController {
   final _favourites = List<FavouriteWithNovelMeta>.empty(growable: true).obs;
@@ -37,6 +37,13 @@ class FavouritesController extends GetxController {
       switch (sortOrder) {
         case SortBy.dateAdded:
           return sortAsc ? a.dateAdded.compareTo(b.dateAdded) : b.dateAdded.compareTo(a.dateAdded);
+        case SortBy.lastRead:
+          if (a.lastRead != null && b.lastRead != null) {
+            return sortAsc ? a.lastRead!.compareTo(b.lastRead!) : b.lastRead!.compareTo(a.lastRead!);
+          }
+
+          if (a.lastRead == null) return 1; // a at end
+          return -1;
         case SortBy.lastUpdated:
           if (a.chapterDateAdded != null && b.chapterDateAdded != null) {
             return sortAsc
