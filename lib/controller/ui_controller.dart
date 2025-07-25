@@ -70,6 +70,12 @@ class UIController extends GetxController {
     saveUISettings();
   }
 
+  final _hasUpdates = false.obs;
+  bool get hasUpdates => _hasUpdates.value;
+  set hasUpdates(bool value) {
+    _hasUpdates.value = value;
+  }
+
   void setPage(int index) {
     if (index < 0 || index >= navController.itemsCount) {
       throw Exception('Index out of bounds');

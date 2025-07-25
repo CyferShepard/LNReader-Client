@@ -44,5 +44,3 @@ compareVersions(String v1, String v2) {
   }
   return 0;
 }
-
-bool hasUpdates = false;

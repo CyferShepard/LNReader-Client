@@ -19,6 +19,33 @@ import 'package:light_novel_reader_client/pages/updates.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:universal_html/html.dart' as html;
 
+updateChecker() {
+  try {
+    client.getVersion().then(
+      (serverVersion) {
+        if (serverVersion != null) {
+          print('App version: $appVersion');
+          print('latest version: $serverVersion');
+          uiController.hasUpdates = compareVersions(appVersion, serverVersion) < 0;
+          print('has updates: ${uiController.hasUpdates}');
+        }
+      },
+    );
+  } catch (e) {
+    print('Error fetching server version: $e');
+    uiController.hasUpdates = false; // Default to no updates if there's an error
+  }
+}
+
+void startUpdateCheckerLoop() {
+  // Run immediately once
+  updateChecker();
+  // Then run every 1 minute
+  Timer.periodic(const Duration(minutes: 5), (timer) {
+    updateChecker();
+  });
+}
+
 Future<void> main() async {
   try {
     FlutterError.onError = (FlutterErrorDetails details) {
@@ -34,26 +61,16 @@ Future<void> main() async {
 
         try {
           if (appVersion == '1.0.0') {
-            PackageInfo packageInfo = await PackageInfo.fromPlatform();
-            appVersion = packageInfo.version;
-            print('App version: $appVersion');
+            PackageInfo.fromPlatform().then(
+              (packageInfo) {
+                appVersion = packageInfo.version;
+              },
+            );
           }
         } catch (e) {
           print('Error fetching app version: $e');
         }
-
-        try {
-          String? serverVersion = await client.getVersion();
-          if (serverVersion != null) {
-            print('latest version: $serverVersion');
-            hasUpdates = compareVersions(appVersion, serverVersion) < 0;
-            print('has updates: $hasUpdates');
-          }
-        } catch (e) {
-          print('Error fetching server version: $e');
-          hasUpdates = false; // Default to no updates if there's an error
-        }
-
+        startUpdateCheckerLoop();
         runApp(const MyApp());
       },
       zoneSpecification: ZoneSpecification(
@@ -142,7 +159,7 @@ class _HomePageState extends State<HomePage> {
         );
       }
 
-      if (hasUpdates && kIsWeb) {
+      if (uiController.hasUpdates && kIsWeb) {
         return Stack(
           children: [
             // Your normal navigation bar or home content
@@ -226,7 +243,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ]),
             ),
-            if (hasUpdates && kIsWeb)
+            if (uiController.hasUpdates && kIsWeb)
               Positioned.fill(
                 child: Container(
                   color: Colors.black54,
@@ -331,7 +348,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          if (hasUpdates && kIsWeb)
+          if (uiController.hasUpdates && kIsWeb)
             Positioned.fill(
               child: Container(
                 color: Colors.black54,
