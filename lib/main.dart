@@ -60,17 +60,16 @@ Future<void> main() async {
         await uiController.loadUISettings();
 
         try {
-          if (appVersion == '1.0.0') {
-            PackageInfo.fromPlatform().then(
-              (packageInfo) {
-                appVersion = packageInfo.version;
-              },
-            );
-          }
+          PackageInfo.fromPlatform().then(
+            (packageInfo) {
+              appVersion = packageInfo.version;
+              startUpdateCheckerLoop();
+            },
+          );
         } catch (e) {
           print('Error fetching app version: $e');
         }
-        startUpdateCheckerLoop();
+
         runApp(const MyApp());
       },
       zoneSpecification: ZoneSpecification(
