@@ -79,6 +79,7 @@ class ApiController extends GetxController {
   set sortAsc(bool value) {
     _sortAsc.value = value;
     sortChapters();
+    uiController.saveUISettings();
   }
 
   final _currentLatestPage = 1.obs;

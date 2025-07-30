@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/nav_bar.dart';
+import 'package:light_novel_reader_client/controller/favourites_controller.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/categories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,6 +93,9 @@ class UIController extends GetxController {
           'lineHeight': lineHeight,
           'fontColor': fontColor,
           'darkMode': themeMode.value == ThemeMode.dark,
+          'favouritesSortOrder': favouritesController.sortOrder.index,
+          'favouritesSortAsc': favouritesController.sortAsc,
+          'chapterSortOrder': apiController.sortAsc,
         }));
   }
 
@@ -153,6 +157,9 @@ class UIController extends GetxController {
       } else {
         themeMode.value = ThemeMode.dark; // Default to system theme
       }
+      favouritesController.sortOrder = SortBy.values[data['favouritesSortOrder'] ?? 0];
+      favouritesController.sortAsc = data['favouritesSortAsc'] ?? true;
+      apiController.sortAsc = data['chapterSortOrder'] ?? true;
     } else {
       // Set default values if no settings are found
       fontSize = 18.0;

@@ -22,6 +22,7 @@ class FavouritesController extends GetxController {
   set sortOrder(SortBy value) {
     _sortOrder.value = value;
     sortFavourites();
+    uiController.saveUISettings();
   }
 
   final _sortAsc = false.obs;
@@ -29,6 +30,7 @@ class FavouritesController extends GetxController {
   set sortAsc(bool value) {
     _sortAsc.value = value;
     sortFavourites();
+    uiController.saveUISettings();
   }
 
   sortFavourites() {
