@@ -61,7 +61,7 @@ class Auth {
       'accessToken': token,
       'refreshToken': refreshToken,
       'username': username,
-      'password': password,
+      'password': '', // Password should not be stored in JSON
       'status': status,
       'errorMessage': errorMessage,
     };

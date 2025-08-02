@@ -36,7 +36,7 @@ class ApiClient {
     if (response.statusCode == 401 && authController.auth.isAuthenticated) {
       // Try to refresh the token
       print('Token expired, refreshing...');
-      bool refreshed = await _refreshToken();
+      bool refreshed = await refreshToken();
       if (refreshed) {
         // Retry with new token
         token = authController.auth.token;
@@ -50,7 +50,7 @@ class ApiClient {
     return response;
   }
 
-  Future<bool> _refreshToken() async {
+  Future<bool> refreshToken() async {
     String? refreshToken = authController.auth.refreshToken;
     if (refreshToken == null) {
       return false; // No refresh token available

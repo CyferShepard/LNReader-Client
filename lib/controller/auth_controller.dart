@@ -37,6 +37,7 @@ class AuthController extends GetxController {
         jsonDecode(authString) as Map,
       );
       auth = Auth.fromJson(json);
+      await client.refreshToken();
     }
   }
 

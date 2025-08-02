@@ -16,7 +16,6 @@ import 'package:light_novel_reader_client/pages/search/search.dart';
 import 'package:light_novel_reader_client/pages/settings/settings.dart';
 import 'package:light_novel_reader_client/pages/sources.dart';
 import 'package:light_novel_reader_client/pages/updates.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:universal_html/html.dart' as html;
 
 updateChecker() {
@@ -60,12 +59,7 @@ Future<void> main() async {
         await uiController.loadUISettings();
 
         try {
-          PackageInfo.fromPlatform().then(
-            (packageInfo) {
-              appVersion = packageInfo.version;
-              startUpdateCheckerLoop();
-            },
-          );
+          startUpdateCheckerLoop();
         } catch (e) {
           print('Error fetching app version: $e');
         }
@@ -94,16 +88,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (authController.auth.isAuthenticated) {
-      // If the user is authenticated, fetch the sources and history
-      uiController.getCategories();
-      apiController.fetchSources();
-      historyController.getHistory();
-      favouritesController.getFavourites();
-      updatesController.getUpdates();
-    }
-    return Obx(
-      () => MaterialApp(
+    return Obx(() {
+      if (authController.auth.isAuthenticated) {
+        // If the user is authenticated, fetch the sources and history
+        uiController.getCategories();
+        apiController.fetchSources();
+        historyController.getHistory();
+        favouritesController.getFavourites();
+        updatesController.getUpdates();
+      }
+      return MaterialApp(
         title: 'Light Novel Reader',
         theme: FlexThemeData.light(
           // scheme: scheme,
@@ -131,8 +125,8 @@ class MyApp extends StatelessWidget {
         themeMode: themeMode.value,
         debugShowCheckedModeBanner: false,
         home: const HomePage(),
-      ),
-    );
+      );
+    });
   }
 }
 
