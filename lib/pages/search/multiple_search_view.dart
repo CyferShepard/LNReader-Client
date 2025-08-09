@@ -160,6 +160,7 @@ class _MultipleSearchViewState extends State<MultipleSearchView> {
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) => DetailsView(
+                                                  source: sourceSearch.source,
                                                   canCacheChapters: false,
                                                   canCacheNovel: false,
                                                 ),

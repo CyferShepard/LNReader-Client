@@ -214,7 +214,7 @@ class DetailsMobilePage extends StatelessWidget {
             ),
           ],
         ),
-        if (apiController.chapter != null) ...[
+        if (apiController.details?.lastHistory != null) ...[
           const SizedBox(height: 16),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -236,7 +236,7 @@ class DetailsMobilePage extends StatelessWidget {
               );
             },
             child: Text(
-              'Resume: ${apiController.chapter!.title} (${((historyController.novelhistory.firstWhereOrNull((historyItem) => historyItem.novel.url == apiController.details?.url && historyItem.chapter.url == apiController.chapter!.url && historyItem.source == source)?.position ?? 0) * 100).toStringAsFixed(2)}%)',
+              'Resume: ${apiController.details?.lastHistory!.chapter.title} (${(apiController.details?.lastHistory?.position ?? 0 * 100).toStringAsFixed(2)}%)',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Colors.white,
                   ),

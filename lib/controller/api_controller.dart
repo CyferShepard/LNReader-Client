@@ -354,8 +354,7 @@ class ApiController extends GetxController {
           details = details!.copyWith(url: url);
         }
         if (lastChapterUrl == null) {
-          History? history = historyController.history
-              .firstWhereOrNull((h) => h.novel.url == details!.url && h.source == (source ?? currentSource));
+          History? history = details!.lastHistory;
           lastChapterUrl = history?.chapter.url;
         }
         if (lastChapterUrl != null && lastChapterUrl.isNotEmpty) {
