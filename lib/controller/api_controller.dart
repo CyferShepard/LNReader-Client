@@ -357,15 +357,12 @@ class ApiController extends GetxController {
           History? history = details!.lastHistory;
           lastChapterUrl = history?.chapter.url;
         }
-        if (lastChapterUrl != null && lastChapterUrl.isNotEmpty) {
-          // Fetch chapters only if lastChapterUrl is provided
-          await historyController.getNovelHistory(
-            details!.url!,
-            source ?? currentSource,
-          );
-          lastChapterUrl = historyController.getLatestChapterHistory()?.url;
-          isChapterLoading = true;
-        }
+        await historyController.getNovelHistory(
+          details!.url!,
+          source ?? currentSource,
+        );
+        lastChapterUrl = historyController.getLatestChapterHistory()?.url;
+        isChapterLoading = true;
         fetchChapters(
           url,
           source: source ?? currentSource,
