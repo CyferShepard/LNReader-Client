@@ -3,16 +3,21 @@ import 'package:flutter/material.dart';
 class SideNavBarController extends ChangeNotifier {
   int _selectedIndex = 0;
   int _itemsCount = 0;
+  bool _collapsed = true;
+  bool _showLabels = false; // decouple label visibility from width (for fade)
+
+  Duration _lastDuration = const Duration(milliseconds: 250);
+  set animationDuration(Duration d) => _lastDuration = d;
+
+  int get selectedIndex => _selectedIndex;
+  int get itemsCount => _itemsCount;
+  bool get collapsed => _collapsed;
+  bool get showLabels => _showLabels;
+
   set itemsCount(int count) {
     _itemsCount = count;
     notifyListeners();
   }
-
-  int get itemsCount => _itemsCount;
-  bool _collapsed = true;
-
-  int get selectedIndex => _selectedIndex;
-  bool get collapsed => _collapsed;
 
   void select(int index) {
     if (_selectedIndex != index) {
@@ -21,9 +26,24 @@ class SideNavBarController extends ChangeNotifier {
     }
   }
 
-  void toggleCollapse() {
-    _collapsed = !_collapsed;
-    notifyListeners();
+  Future<void> toggleCollapse({Duration? duration}) async {
+    final d = duration ?? _lastDuration;
+    // Expanding: grow width first, then fade labels in
+    if (_collapsed) {
+      _collapsed = false;
+      notifyListeners();
+      // wait a frame so width anim starts
+      await Future.delayed(d * 0.6);
+      _showLabels = true;
+      notifyListeners();
+    } else {
+      // Collapsing: fade labels out first, then shrink width
+      _showLabels = false;
+      notifyListeners();
+      await Future.delayed(d * 0.6);
+      _collapsed = true;
+      notifyListeners();
+    }
   }
 }
 
@@ -53,6 +73,7 @@ class SideNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final navBarStyle = style ?? SideNavBarStyle();
     controller.itemsCount = items.length;
+    controller.animationDuration = animationDuration;
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
@@ -94,6 +115,7 @@ class SideNavBar extends StatelessWidget {
                           isCollapsed: isCollapsed,
                           item: item,
                           onTap: () => controller.select(index),
+                          animationDuration: animationDuration,
                         );
                       },
                     ),
@@ -130,6 +152,7 @@ class _HoverableListTile extends StatefulWidget {
   final bool isCollapsed;
   final NavBarItem item;
   final VoidCallback onTap;
+  final Duration animationDuration;
 
   const _HoverableListTile({
     required this.selected,
@@ -137,6 +160,7 @@ class _HoverableListTile extends StatefulWidget {
     required this.isCollapsed,
     required this.item,
     required this.onTap,
+    this.animationDuration = const Duration(milliseconds: 250),
   });
 
   @override
@@ -145,6 +169,31 @@ class _HoverableListTile extends StatefulWidget {
 
 class _HoverableListTileState extends State<_HoverableListTile> {
   bool _hovering = false;
+
+  Widget _buildTitle(BuildContext context) {
+    final text = Text(
+      widget.item.label,
+      softWrap: false,
+      overflow: TextOverflow.fade,
+      style: widget.selected
+          ? widget.navBarStyle.selectedItemStyle?.textStyle ?? Theme.of(context).textTheme.bodyLarge
+          : widget.navBarStyle.textStyle ?? Theme.of(context).textTheme.bodyMedium,
+    );
+
+    // Controller now controls when labels show (passed via isCollapsed & showLabels decoupled)
+    // We infer showLabels via an inherited flag: use widget.isCollapsed only for tooltip,
+    // fade based on a new flag we pass (add parameter showLabels to _HoverableListTile if needed)
+    return AnimatedOpacity(
+      opacity: (context.findAncestorWidgetOfExactType<SideNavBar>()?.controller.showLabels ?? false) ? 1.0 : 0.0,
+      duration: widget.animationDuration,
+      curve: Curves.fastOutSlowIn,
+      // Keep layout space so fade is visible before width shrinks
+      child: IgnorePointer(
+        ignoring: !(context.findAncestorWidgetOfExactType<SideNavBar>()?.controller.showLabels ?? false),
+        child: Align(alignment: Alignment.centerLeft, child: text),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,33 +213,28 @@ class _HoverableListTileState extends State<_HoverableListTile> {
       onExit: (_) => setState(() => _hovering = false),
       child: Container(
         color: highlightColor,
-        child: ListTile(
-          leading: Icon(
-            widget.item.icon,
-            size: 24,
-            color: widget.selected ? widget.navBarStyle.selectedItemStyle?.iconColor : widget.navBarStyle.unselectedIconColor,
-          ),
-          title: widget.isCollapsed
-              ? null
-              : Text(
-                  widget.item.label,
-                  softWrap: false,
-                  style: widget.selected
-                      ? widget.navBarStyle.selectedItemStyle?.textStyle ?? Theme.of(context).textTheme.bodyLarge
-                      : widget.navBarStyle.textStyle ?? Theme.of(context).textTheme.bodyMedium,
-                ),
-          onTap: () {
-            if (widget.item.onTap != null) {
-              widget.item.onTap!();
-              if (widget.item.navigateWithOnTap) {
+        child: Tooltip(
+          message: widget.isCollapsed ? widget.item.label : "",
+          child: ListTile(
+            leading: Icon(
+              widget.item.icon,
+              size: 24,
+              color: widget.selected ? widget.navBarStyle.selectedItemStyle?.iconColor : widget.navBarStyle.unselectedIconColor,
+            ),
+            title: _buildTitle(context),
+            onTap: () {
+              if (widget.item.onTap != null) {
+                widget.item.onTap!();
+                if (widget.item.navigateWithOnTap) {
+                  widget.onTap();
+                }
+              } else {
                 widget.onTap();
               }
-            } else {
-              widget.onTap();
-            }
-          },
-          shape: widget.navBarStyle.tileShape,
-          contentPadding: contentPadding,
+            },
+            shape: widget.navBarStyle.tileShape,
+            contentPadding: contentPadding,
+          ),
         ),
       ),
     );

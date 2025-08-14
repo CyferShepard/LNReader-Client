@@ -236,7 +236,7 @@ class DetailsMobilePage extends StatelessWidget {
               );
             },
             child: Text(
-              'Resume: ${apiController.details?.lastHistory!.chapter.title} (${(apiController.details?.lastHistory?.position ?? 0 * 100).toStringAsFixed(2)}%)',
+              'Resume: ${apiController.details?.lastHistory!.chapter.title} (${((apiController.details?.lastHistory?.position ?? 0) * 100).toStringAsFixed(2)}%)',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Colors.white,
                   ),
