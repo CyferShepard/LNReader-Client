@@ -77,6 +77,11 @@ class UIController extends GetxController {
     _hasUpdates.value = value;
   }
 
+  final _initialDataLoaded = false.obs;
+  bool get initialDataLoaded => _initialDataLoaded.value;
+  void markInitialDataLoaded() => _initialDataLoaded.value = true;
+  void resetInitialDataLoaded() => _initialDataLoaded.value = false;
+
   void setPage(int index) {
     if (index < 0 || index >= navController.itemsCount) {
       throw Exception('Index out of bounds');

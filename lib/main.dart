@@ -89,13 +89,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (authController.auth.isAuthenticated) {
+      if (authController.auth.isAuthenticated && !uiController.initialDataLoaded) {
         // If the user is authenticated, fetch the sources and history
         uiController.getCategories();
         apiController.fetchSources();
         historyController.getHistory();
         favouritesController.getFavourites();
         updatesController.getUpdates();
+        uiController.markInitialDataLoaded();
       }
       return MaterialApp(
         title: 'Light Novel Reader',
@@ -334,8 +335,19 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                     if (shouldLogout == true) {
+                      uiController.resetInitialDataLoaded();
                       authController.logout();
                     }
+                  },
+                ),
+              ],
+              bottomNavItems: [
+                NavBarItem(
+                  label: themeMode.value == ThemeMode.dark ? 'Dark Mode' : 'Light Mode',
+                  icon: themeMode.value == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode,
+                  child: Container(),
+                  onTap: () {
+                    uiController.toggleDarkMode();
                   },
                 ),
               ],

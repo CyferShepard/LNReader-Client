@@ -4,9 +4,10 @@ import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
 
 class MainNavigationBar extends StatefulWidget {
-  const MainNavigationBar({super.key, required this.navItems});
+  const MainNavigationBar({super.key, required this.navItems, this.bottomNavItems});
 
   final List<NavBarItem> navItems;
+  final List<NavBarItem>? bottomNavItems;
 
   @override
   State<MainNavigationBar> createState() => _MainNavigationBarState();
@@ -115,6 +116,7 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
       children: [
         SideNavBar(
           items: widget.navItems,
+          bottomItems: widget.bottomNavItems,
           controller: navController,
           style: SideNavBarStyle(
             backgroundColor: Theme.of(context).colorScheme.primary,

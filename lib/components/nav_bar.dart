@@ -29,6 +29,7 @@ class SideNavBarController extends ChangeNotifier {
 
 class SideNavBar extends StatelessWidget {
   final List<NavBarItem> items;
+  final List<NavBarItem>? bottomItems;
   final SideNavBarController controller;
   final double width;
   final double collapsedWidth;
@@ -39,6 +40,7 @@ class SideNavBar extends StatelessWidget {
   const SideNavBar({
     super.key,
     required this.items,
+    this.bottomItems,
     required this.controller,
     this.width = 220,
     this.collapsedWidth = 60,
@@ -76,19 +78,42 @@ class SideNavBar extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    final selected = controller.selectedIndex == index;
-                    final item = items[index];
-                    return _HoverableListTile(
-                      selected: selected,
-                      navBarStyle: navBarStyle,
-                      isCollapsed: isCollapsed,
-                      item: item,
-                      onTap: () => controller.select(index),
-                    );
-                  },
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final selected = controller.selectedIndex == index;
+                        final item = items[index];
+                        return _HoverableListTile(
+                          selected: selected,
+                          navBarStyle: navBarStyle,
+                          isCollapsed: isCollapsed,
+                          item: item,
+                          onTap: () => controller.select(index),
+                        );
+                      },
+                    ),
+                    if (bottomItems != null)
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: bottomItems!.length,
+                        itemBuilder: (context, index) {
+                          // final selected = controller.selectedIndex == index;
+                          final item = bottomItems![index];
+                          return _HoverableListTile(
+                            selected: false,
+                            navBarStyle: navBarStyle,
+                            isCollapsed: isCollapsed,
+                            item: item,
+                            onTap: () => item.onTap,
+                          );
+                        },
+                      ),
+                  ],
                 ),
               ),
             ],
