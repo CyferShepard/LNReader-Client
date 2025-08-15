@@ -13,6 +13,7 @@ import 'package:light_novel_reader_client/pages/favourites_view.dart';
 import 'package:light_novel_reader_client/pages/history.dart';
 import 'package:light_novel_reader_client/pages/search/multiple_search_view.dart';
 import 'package:light_novel_reader_client/pages/search/search.dart';
+import 'package:light_novel_reader_client/pages/server_error.dart';
 import 'package:light_novel_reader_client/pages/settings/settings.dart';
 import 'package:light_novel_reader_client/pages/sources.dart';
 import 'package:light_novel_reader_client/pages/updates.dart';
@@ -147,6 +148,18 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Obx(() {
+      if (serverController.isLoading) {
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      if (!serverController.serverResponse.success && serverController.serverResponse.message.isNotEmpty) {
+        return Scaffold(
+          body: ServerErrorView(),
+        );
+      }
+
       if (!serverController.serverResponse.success && !authController.auth.isAuthenticated) {
         return Scaffold(
           body: SettingsPage(),

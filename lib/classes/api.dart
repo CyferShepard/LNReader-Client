@@ -52,7 +52,7 @@ class ApiClient {
 
   Future<bool> refreshToken() async {
     String? refreshToken = authController.auth.refreshToken;
-    if (refreshToken == null) {
+    if (refreshToken == null || authController.auth.status == false) {
       return false; // No refresh token available
     }
     final response = await http.post(
