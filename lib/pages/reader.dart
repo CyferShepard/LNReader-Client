@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/components/font_settings.dart';
-import 'package:light_novel_reader_client/components/scroll_bar_vertical.dart';
+import 'package:light_novel_reader_client/components/scroll_bar.dart';
 import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/chapters.dart';
@@ -25,6 +25,10 @@ class _ReaderPageState extends State<ReaderPage> {
   Timer? _debounceTimer;
   late Worker _chapterWorker;
 
+  bool showUI = false;
+  double _lastScrollOffset = 0;
+  static const _hideDeltaThreshold = 3.0;
+
   Future<void> jumpToRatio(double ratio) async {
     // Wait until the scroll view is ready
     for (int i = 0; i < 10; i++) {
@@ -42,6 +46,13 @@ class _ReaderPageState extends State<ReaderPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {
+      final current = _scrollController.position.pixels;
+
+      // Hide UI on any meaningful scroll (up or down)
+      if (showUI && (current - _lastScrollOffset).abs() > _hideDeltaThreshold) {
+        setState(() => showUI = false);
+      }
+      _lastScrollOffset = current;
       ChapterListItem? chapterMeta =
           apiController.chapters?.firstWhereOrNull((chapter) => chapter.url == apiController.chapter?.url);
       if (apiController.details != null && apiController.chapter != null && chapterMeta != null) {
@@ -96,7 +107,7 @@ class _ReaderPageState extends State<ReaderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-      appBar: widget.showHeader
+      appBar: widget.showHeader && context.isTabletOrDesktop
           ? AppBar(
               scrolledUnderElevation: 0,
               title: Obx(() => Text(apiController.chapter?.title ?? 'Reader')),
@@ -176,8 +187,161 @@ class _ReaderPageState extends State<ReaderPage> {
           );
         }
 
-        return mainReaderView(context);
+        return SafeArea(
+          child: Stack(
+            children: [
+              GestureDetector(
+                  behavior: HitTestBehavior.deferToChild,
+                  onVerticalDragStart: (details) {
+                    if (showUI) {
+                      // If UI is shown, hide it on drag start
+                      setState(() {
+                        showUI = false;
+                        print('Hiding UI on drag start');
+                      });
+                    }
+                  },
+                  onTap: () {
+                    if (widget.showHeader == false) return; // Prevent toggling UI if header is shown
+                    setState(() {
+                      // Toggle UI visibility
+                      showUI = !showUI;
+                      print('Toggling UI visibility: $showUI');
+                    });
+                  },
+                  child: mainReaderView(context)),
+              if (context.isMobile)
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  bottom: showUI ? 0 : -kToolbarHeight - 20, // slide fully out
+                  left: 0,
+                  right: 0,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: showUI ? 1 : 0,
+                    child: _mobileSlider(context),
+                  ),
+                ),
+              if (context.isMobile)
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  top: showUI ? 0 : -kToolbarHeight - 20, // slide fully out
+                  left: 0,
+                  right: 0,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: showUI ? 1 : 0,
+                    child: _customAppBar(context),
+                  ),
+                ),
+            ],
+          ),
+        );
       }),
+    );
+  }
+
+  Container _customAppBar(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+      ),
+      height: kToolbarHeight,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface)),
+          SizedBox(width: 12),
+          Expanded(
+            child: Obx(() => Text(
+                  apiController.chapter?.title ?? 'Reader',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  softWrap: false,
+                )),
+          ),
+          Obx(() {
+            if (!apiController.isChapterLoading &&
+                apiController.chapter?.previousPage != null &&
+                apiController.chapter!.previousPage!.isNotEmpty) {
+              return Tooltip(
+                message: 'Previous Chapter',
+                child: IconButton(
+                  icon: const Icon(Icons.navigate_before),
+                  onPressed: () {
+                    apiController.fetchChapter(
+                      apiController.chapter!.previousPage!,
+                      source: widget.source,
+                    );
+                  },
+                ),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
+          if (!apiController.isChapterLoading &&
+              apiController.chapter?.nextPage != null &&
+              apiController.chapter!.nextPage!.isNotEmpty)
+            SizedBox(width: 12),
+          Obx(() {
+            if (!apiController.isChapterLoading &&
+                apiController.chapter?.nextPage != null &&
+                apiController.chapter!.nextPage!.isNotEmpty) {
+              return Tooltip(
+                message: 'Next Chapter',
+                child: IconButton(
+                  icon: const Icon(Icons.navigate_next),
+                  onPressed: () {
+                    apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
+                  },
+                ),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
+          FontSettingsButton(),
+          if ((apiController.details != null && apiController.details!.fullUrl != null) ||
+              (apiController.chapter != null && apiController.chapter!.fullUrl != null))
+            IconButton(
+              icon: const Icon(Icons.open_in_new),
+              tooltip: 'Open in Browser',
+              onPressed: () async {
+                final url = apiController.chapter?.fullUrl ?? apiController.details?.fullUrl;
+                if (url != null) {
+                  try {
+                    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                  } catch (e) {
+                    // Optionally show an error to the user
+                    print('Could not launch $url: $e');
+                  }
+                }
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Container _mobileSlider(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+      ),
+      height: kToolbarHeight + 20,
+      child: CustomScrollBar(
+        scrollController: _scrollController,
+        isVertical: false,
+      ),
     );
   }
 
@@ -246,7 +410,7 @@ class _ReaderPageState extends State<ReaderPage> {
                           ),
                         ),
                       ),
-                      if (context.isTabletOrDesktop) ScrollBarVertical(scrollController: _scrollController),
+                      if (context.isTabletOrDesktop) CustomScrollBar(scrollController: _scrollController),
                     ],
                   ),
                 ),

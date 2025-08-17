@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:light_novel_reader_client/globals.dart';
+import 'package:light_novel_reader_client/pages/settings/admin/server_page.dart';
 
 class ServerErrorView extends StatelessWidget {
   const ServerErrorView({super.key});
@@ -29,6 +30,30 @@ class ServerErrorView extends StatelessWidget {
               await uiController.loadUISettings();
             },
             child: const Text('Retry'),
+          ),
+          const SizedBox(height: 4),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Material(
+                      child: Scaffold(
+                          appBar: AppBar(
+                            title: const Text('Server Settings'),
+                            scrolledUnderElevation: 0,
+                            actions: [
+                              IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                            ],
+                          ),
+                          body: Padding(padding: EdgeInsetsGeometry.directional(top: kToolbarHeight), child: ServerPage()))),
+                ),
+              );
+            },
+            child: const Text('Change Server Settings'),
           ),
         ],
       ),
