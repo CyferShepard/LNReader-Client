@@ -91,7 +91,7 @@ class Auth {
       refreshToken: json['refreshToken'] as String?,
       username: username,
       password: password,
-      status: status,
+      status: true,
       errorMessage: '',
     );
   }
