@@ -32,29 +32,30 @@ class ServerErrorView extends StatelessWidget {
             child: const Text('Retry'),
           ),
           const SizedBox(height: 4),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Material(
-                      child: Scaffold(
-                          appBar: AppBar(
-                            title: const Text('Server Settings'),
-                            scrolledUnderElevation: 0,
-                            actions: [
-                              IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () => Navigator.pop(context),
-                              ),
-                            ],
-                          ),
-                          body: Padding(padding: EdgeInsetsGeometry.directional(top: kToolbarHeight), child: ServerPage()))),
-                ),
-              );
-            },
-            child: const Text('Change Server Settings'),
-          ),
+          if (uiController.allowChangeServerOnError)
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Material(
+                        child: Scaffold(
+                            appBar: AppBar(
+                              title: const Text('Server Settings'),
+                              scrolledUnderElevation: 0,
+                              actions: [
+                                IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                              ],
+                            ),
+                            body: Padding(padding: EdgeInsetsGeometry.directional(top: kToolbarHeight), child: ServerPage()))),
+                  ),
+                );
+              },
+              child: const Text('Change Server Settings'),
+            ),
         ],
       ),
     );

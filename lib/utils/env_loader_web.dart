@@ -12,3 +12,12 @@ String? getApiUrlFromEnv() {
   }
   return null;
 }
+
+bool allowChangeServerFromEnv() {
+  final env = _env;
+  if (env != null) {
+    final allowChangeServer = env.getProperty('ALLOW_CHANGE_SERVER_ON_ERROR'.toJS) as bool?;
+    return allowChangeServer ?? true;
+  }
+  return false;
+}

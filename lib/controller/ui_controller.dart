@@ -6,6 +6,8 @@ import 'package:light_novel_reader_client/components/nav_bar.dart';
 import 'package:light_novel_reader_client/controller/favourites_controller.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/categories.dart';
+import 'package:light_novel_reader_client/utils/env_loader.dart'
+    if (dart.library.js_interop) 'package:light_novel_reader_client/utils/env_loader_web.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UIController extends GetxController {
@@ -81,6 +83,12 @@ class UIController extends GetxController {
   bool get initialDataLoaded => _initialDataLoaded.value;
   void markInitialDataLoaded() => _initialDataLoaded.value = true;
   void resetInitialDataLoaded() => _initialDataLoaded.value = false;
+
+  final _allowChangeServerOnError = true.obs;
+  bool get allowChangeServerOnError => _allowChangeServerOnError.value;
+  set allowChangeServerOnError(bool value) {
+    _allowChangeServerOnError.value = value;
+  }
 
   void setPage(int index) {
     if (index < 0 || index >= navController.itemsCount) {
@@ -171,6 +179,8 @@ class UIController extends GetxController {
       lineHeight = 1.5;
       fontColor = 0; // Default to 0 if not set
     }
+
+    allowChangeServerOnError = allowChangeServerFromEnv();
   }
 
   void toggleChapterSelection(int index, int totalChapters) {
