@@ -55,20 +55,25 @@ class ApiClient {
     if (refreshToken == null || authController.auth.status == false) {
       return false; // No refresh token available
     }
-    final response = await http.post(
-      Uri.parse('$baseUrl/auth/refresh'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'token': refreshToken}),
-    );
-    if (response.statusCode == 200) {
-      print('Token Refreshed successfully');
-      final data = jsonDecode(response.body);
-      authController.auth.token = data['accessToken'];
-      authController.auth.refreshToken = data['refreshToken'];
-      authController.saveAuth();
-      return true;
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/refresh'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'token': refreshToken}),
+      );
+      if (response.statusCode == 200) {
+        print('Token Refreshed successfully');
+        final data = jsonDecode(response.body);
+        authController.auth.token = data['accessToken'];
+        authController.auth.refreshToken = data['refreshToken'];
+        authController.saveAuth();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Token refresh failed: $e');
+      return false;
     }
-    return false;
   }
 
   Future<ServerResponse> ping(Uri uri) async {

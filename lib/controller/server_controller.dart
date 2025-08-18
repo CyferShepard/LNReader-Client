@@ -1,14 +1,9 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/classes/api.dart';
-import 'package:light_novel_reader_client/components/websocket_toast.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/utils/env_loader.dart'
     if (dart.library.js_interop) 'package:light_novel_reader_client/utils/env_loader_web.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ServerController extends GetxController {
   final _serverUrl = 'http://127.0.0.1:8000'.obs;
@@ -27,66 +22,66 @@ class ServerController extends GetxController {
   bool get canRegister => _canRegister.value;
   set canRegister(bool value) => _canRegister.value = value;
 
-  WebSocketChannel? _channel;
-  WebSocketChannel? get channel => _channel;
+  // WebSocketChannel? _channel;
+  // WebSocketChannel? get channel => _channel;
 
-  endWsConnection() {
-    if (_channel != null) {
-      _channel!.sink.close();
-      _channel = null;
-      print('WebSocket connection closed');
-    }
-  }
+//   endWsConnection() {
+//     if (_channel != null) {
+//       _channel!.sink.close();
+//       _channel = null;
+//       print('WebSocket connection closed');
+//     }
+//   }
 
-  Future<void> connectWebSocket({BuildContext? context}) async {
-    if (authController.auth.isAuthenticated == false) {
-      print('User is not authenticated, skipping WebSocket connection');
-      return;
-    }
-    _channel?.sink.close(); // Close previous connection if any
-// Parse the base server URL
-    Uri baseUri = Uri.parse(serverUrl);
+//   Future<void> connectWebSocket({BuildContext? context}) async {
+//     if (authController.auth.isAuthenticated == false) {
+//       print('User is not authenticated, skipping WebSocket connection');
+//       return;
+//     }
+//     _channel?.sink.close(); // Close previous connection if any
+// // Parse the base server URL
+//     Uri baseUri = Uri.parse(serverUrl);
 
-    // Build the WebSocket URI
-    final wsScheme = baseUri.scheme == 'https' ? 'wss' : 'ws';
-    final wsUri = Uri(
-      scheme: wsScheme,
-      host: baseUri.host,
-      port: baseUri.hasPort ? baseUri.port : null,
-      path: '/wss',
-    );
-    print('Connecting to WebSocket: $wsUri');
-    _channel = WebSocketChannel.connect(
-      wsUri,
-      protocols: ['Bearer ${authController.auth.token}'],
-    );
-    await _channel!.ready;
-    _channel!.stream.listen(
-      (message) {
-        print('WebSocket message: $message');
-        if (context != null && context.mounted) {
-          try {
-            Map<String, dynamic> jsonMessage =
-                message is String ? Map<String, dynamic>.from(jsonDecode(message)) : message as Map<String, dynamic>;
-            WebsocketToast.show(context, jsonMessage["message"], key: jsonMessage["type"]);
-          } catch (e) {
-            print('Error parsing WebSocket message: $e');
-            print(message);
-            WebsocketToast.show(context, 'Error parsing message', key: 'error');
-          }
-        }
+//     // Build the WebSocket URI
+//     final wsScheme = baseUri.scheme == 'https' ? 'wss' : 'ws';
+//     final wsUri = Uri(
+//       scheme: wsScheme,
+//       host: baseUri.host,
+//       port: baseUri.hasPort ? baseUri.port : null,
+//       path: '/wss',
+//     );
+//     print('Connecting to WebSocket: $wsUri');
+//     _channel = WebSocketChannel.connect(
+//       wsUri,
+//       protocols: ['Bearer ${authController.auth.token}'],
+//     );
+//     await _channel!.ready;
+//     _channel!.stream.listen(
+//       (message) {
+//         print('WebSocket message: $message');
+//         if (context != null && context.mounted) {
+//           try {
+//             Map<String, dynamic> jsonMessage =
+//                 message is String ? Map<String, dynamic>.from(jsonDecode(message)) : message as Map<String, dynamic>;
+//             WebsocketToast.show(context, jsonMessage["message"], key: jsonMessage["type"]);
+//           } catch (e) {
+//             print('Error parsing WebSocket message: $e');
+//             print(message);
+//             WebsocketToast.show(context, 'Error parsing message', key: 'error');
+//           }
+//         }
 
-        // Handle incoming messages here
-      },
-      onError: (error) {
-        print('WebSocket error: $error');
-      },
-      onDone: () {
-        print('WebSocket closed');
-      },
-      cancelOnError: true,
-    );
-  }
+//         // Handle incoming messages here
+//       },
+//       onError: (error) {
+//         print('WebSocket error: $error');
+//       },
+//       onDone: () {
+//         print('WebSocket closed');
+//       },
+//       cancelOnError: true,
+//     );
+//   }
 
   void setServerUrl(String url) {
     serverUrl = url;

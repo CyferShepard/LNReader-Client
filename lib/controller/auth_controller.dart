@@ -80,7 +80,7 @@ class AuthController extends GetxController {
       );
     });
 
-    serverController.connectWebSocket();
+    // serverController.connectWebSocket();
     isLoading = false;
     if (newUser) {
       reinitUser();
@@ -157,6 +157,6 @@ class AuthController extends GetxController {
     SharedPreferences.getInstance().then((prefs) => prefs.remove('auth'));
 
     uiController.setPage(0);
-    serverController.endWsConnection();
+    // serverController.endWsConnection();
   }
 }
