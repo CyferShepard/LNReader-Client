@@ -28,6 +28,8 @@ class _ReaderPageState extends State<ReaderPage> {
   bool showUI = false;
   double _lastScrollOffset = 0;
   static const _hideDeltaThreshold = 3.0;
+  bool _isScrollbarDrag = false;
+  Timer? _scrollbarReleaseTimer;
 
   Future<void> jumpToRatio(double ratio) async {
     // Wait until the scroll view is ready
@@ -49,7 +51,7 @@ class _ReaderPageState extends State<ReaderPage> {
       final current = _scrollController.position.pixels;
 
       // Hide UI on any meaningful scroll (up or down)
-      if (showUI && (current - _lastScrollOffset).abs() > _hideDeltaThreshold) {
+      if (!_isScrollbarDrag && showUI && (current - _lastScrollOffset).abs() > _hideDeltaThreshold) {
         setState(() => showUI = false);
       }
       _lastScrollOffset = current;
@@ -98,6 +100,7 @@ class _ReaderPageState extends State<ReaderPage> {
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    _scrollbarReleaseTimer?.cancel();
     _scrollController.dispose();
     _chapterWorker.dispose(); // <-- Dispose the worker!
     super.dispose();
@@ -332,15 +335,32 @@ class _ReaderPageState extends State<ReaderPage> {
     );
   }
 
-  Container _mobileSlider(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
-      ),
-      height: kToolbarHeight + 20,
-      child: CustomScrollBar(
-        scrollController: _scrollController,
-        isVertical: false,
+  Widget _mobileSlider(BuildContext context) {
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) {
+        _scrollbarReleaseTimer?.cancel();
+        if (!_isScrollbarDrag) setState(() => _isScrollbarDrag = true);
+      },
+      onPointerUp: (_) {
+        _scrollbarReleaseTimer?.cancel();
+        _scrollbarReleaseTimer = Timer(const Duration(milliseconds: 150), () {
+          if (mounted) setState(() => _isScrollbarDrag = false);
+        });
+      },
+      onPointerCancel: (_) {
+        _scrollbarReleaseTimer?.cancel();
+        if (mounted) setState(() => _isScrollbarDrag = false);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainer,
+        ),
+        height: kToolbarHeight + 20,
+        child: CustomScrollBar(
+          scrollController: _scrollController,
+          isVertical: false,
+        ),
       ),
     );
   }
