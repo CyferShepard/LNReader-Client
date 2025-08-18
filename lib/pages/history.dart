@@ -114,7 +114,6 @@ class History extends StatelessWidget {
                             apiController.fetchDetails(
                               historyItem.novel.url,
                               source: historyItem.source,
-                              lastChapterUrl: historyItem.chapter.url,
                               canCacheChapters: true,
                               canCacheNovel: true,
                             );

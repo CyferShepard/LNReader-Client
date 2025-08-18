@@ -4,7 +4,6 @@ import 'package:light_novel_reader_client/models/chapter.dart';
 import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/models/details.dart';
 import 'package:light_novel_reader_client/models/favouriteWithNovelMeta.dart';
-import 'package:light_novel_reader_client/models/history.dart';
 import 'package:light_novel_reader_client/models/latest.dart';
 import 'package:light_novel_reader_client/models/search.dart';
 import 'package:light_novel_reader_client/models/search_result.dart';
@@ -328,7 +327,6 @@ class ApiController extends GetxController {
   Future<Details?> fetchDetails(
     String url, {
     String? source,
-    String? lastChapterUrl,
     bool refresh = false,
     List<String>? categories,
     required bool canCacheNovel,
@@ -353,21 +351,18 @@ class ApiController extends GetxController {
         if (details!.url == null) {
           details = details!.copyWith(url: url);
         }
-        if (lastChapterUrl == null) {
-          History? history = details!.lastHistory;
-          lastChapterUrl = history?.chapter.url;
-        }
+
         await historyController.getNovelHistory(
           details!.url!,
           source ?? currentSource,
         );
-        lastChapterUrl = historyController.getLatestChapterHistory()?.url;
+
         isChapterLoading = true;
         fetchChapters(
           url,
           source: source ?? currentSource,
           additionalProps: details!.additionalProps,
-          lastChapterUrl: lastChapterUrl,
+          lastChapterUrl: details!.lastHistory?.url,
           refresh: refresh,
           canCacheChapters: canCacheChapters,
         );

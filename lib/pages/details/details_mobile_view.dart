@@ -87,8 +87,13 @@ class DetailsMobilePage extends StatelessWidget {
           ),
           body: RefreshIndicator(
             onRefresh: () async {
-              await apiController.fetchDetails(apiController.details?.url ?? '',
-                  source: source, refresh: true, canCacheChapters: canCacheChapters, canCacheNovel: canCacheNovel);
+              await apiController.fetchDetails(
+                apiController.details?.url ?? '',
+                source: source,
+                refresh: true,
+                canCacheChapters: canCacheChapters,
+                canCacheNovel: canCacheNovel,
+              );
             },
             child: Obx(() {
               if (apiController.isLoading) {

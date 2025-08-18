@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/history.dart';
 
@@ -35,8 +34,13 @@ class Details {
     this.categories = const [],
   });
 
-  History? get lastHistory => historyController.history
-      .firstWhereOrNull((h) => h.novel.url == url && h.source == (source ?? apiController.currentSource));
+  History? get lastHistory {
+    final matches = historyController.novelhistory;
+
+    if (matches.isEmpty) return null;
+    matches.sort((a, b) => b.lastRead.compareTo(a.lastRead));
+    return matches.first;
+  }
 
   Map<String, dynamic> toJson() {
     return {

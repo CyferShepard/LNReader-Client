@@ -119,7 +119,6 @@ class UpdatesPage extends StatelessWidget {
                             apiController.fetchDetails(
                               updateItem.url,
                               source: updateItem.source,
-                              lastChapterUrl: updateItem.chapter.url,
                               canCacheChapters: true,
                               canCacheNovel: true,
                             );
