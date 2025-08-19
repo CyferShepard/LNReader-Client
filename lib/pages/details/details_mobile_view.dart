@@ -5,6 +5,7 @@ import 'package:light_novel_reader_client/components/chapter_list_item_tile.dart
 import 'package:light_novel_reader_client/components/expandable.dart';
 import 'package:light_novel_reader_client/components/genre_chip.dart';
 import 'package:light_novel_reader_client/components/label_text.dart';
+import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -97,9 +98,7 @@ class DetailsMobilePage extends StatelessWidget {
             },
             child: Obx(() {
               if (apiController.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return Center(child: context.isTabletOrDesktop ? CircularProgressIndicator() : Container());
               }
 
               if (apiController.details == null) {
@@ -221,14 +220,14 @@ class DetailsMobilePage extends StatelessWidget {
         ),
         if (apiController.details?.lastHistory != null) ...[
           const SizedBox(height: 16),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50), // Full width button
+          TextButton.icon(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              // minimumSize: const Size(double.infinity, 50), // Full width button
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             ),
             onPressed: () {
               Navigator.push(
@@ -240,12 +239,9 @@ class DetailsMobilePage extends StatelessWidget {
                 ),
               );
             },
-            child: Text(
-              'Resume: ${apiController.details?.lastHistory!.chapter.title} (${((apiController.details?.lastHistory?.position ?? 0) * 100).toStringAsFixed(2)}%)',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.white,
-                  ),
-            ),
+            icon: const Icon(Icons.play_arrow),
+            label: Text(
+                'Chapter ${apiController.details?.lastHistory!.chapter.index} (${((apiController.details?.lastHistory?.position ?? 0) * 100).toStringAsFixed(2)}%)'),
           ),
         ],
         const SizedBox(height: 16),

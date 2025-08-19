@@ -92,10 +92,10 @@ class MyApp extends StatelessWidget {
     return Obx(() {
       if (authController.auth.isAuthenticated && !uiController.initialDataLoaded) {
         // If the user is authenticated, fetch the sources and history
-        uiController.getCategories();
+        // uiController.getCategories();
         apiController.fetchSources();
         historyController.getHistory();
-        favouritesController.getFavourites();
+        favouritesController.getFavourites(getCategories: true);
         updatesController.getUpdates();
         uiController.markInitialDataLoaded();
       }

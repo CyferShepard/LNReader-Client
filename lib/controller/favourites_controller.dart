@@ -65,9 +65,13 @@ class FavouritesController extends GetxController {
     favourites = tempFavourites;
   }
 
-  Future<void> getFavourites({bool suppressLoader = false}) async {
+  Future<void> getFavourites({bool suppressLoader = false, bool getCategories = false}) async {
     if (suppressLoader == false) {
       isLoading = true;
+    }
+
+    if (getCategories) {
+      await uiController.getCategories();
     }
 
     await client.getFavourites().then((value) {

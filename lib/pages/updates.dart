@@ -44,7 +44,7 @@ class UpdatesPage extends StatelessWidget {
           },
           child: Obx(() {
             if (updatesController.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: context.isTabletOrDesktop ? CircularProgressIndicator() : Container());
             }
             if (updatesController.updates.isEmpty) {
               return const Center(child: Text('No Chapters found.'));

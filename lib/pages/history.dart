@@ -44,7 +44,7 @@ class History extends StatelessWidget {
           },
           child: Obx(() {
             if (historyController.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: context.isTabletOrDesktop ? CircularProgressIndicator() : Container());
             }
 
             final items = historyController.history.where((historyItem) {

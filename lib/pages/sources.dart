@@ -37,9 +37,7 @@ class SourcesPage extends StatelessWidget {
         },
         child: Obx(() {
           if (apiController.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return Center(child: context.isTabletOrDesktop ? CircularProgressIndicator() : Container());
           }
 
           if (apiController.sources.isEmpty) {
