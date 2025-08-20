@@ -35,7 +35,6 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
   }
 
   void _showRefreshIndicator() {
-    // Ensure it runs after build & scroll position is at top
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshKey.currentState?.show();
     });
@@ -44,7 +43,6 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Auto show once if no data yet
     if (apiController.isLoading) {
       _showRefreshIndicator();
     }
