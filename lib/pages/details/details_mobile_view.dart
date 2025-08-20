@@ -10,12 +10,45 @@ import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DetailsMobilePage extends StatelessWidget {
+class DetailsMobilePage extends StatefulWidget {
   final String? source;
   final bool canCacheChapters;
   final bool canCacheNovel;
 
   const DetailsMobilePage({super.key, this.source, this.canCacheChapters = true, this.canCacheNovel = true});
+
+  @override
+  State<DetailsMobilePage> createState() => _DetailsMobilePageState();
+}
+
+class _DetailsMobilePageState extends State<DetailsMobilePage> {
+  final GlobalKey<RefreshIndicatorState> _refreshKey = GlobalKey<RefreshIndicatorState>();
+
+  Future<void> _refreshDetails() async {
+    await apiController.fetchDetails(
+      apiController.details?.url ?? '',
+      source: widget.source,
+      refresh: true,
+      canCacheChapters: widget.canCacheChapters,
+      canCacheNovel: widget.canCacheNovel,
+    );
+  }
+
+  void _showRefreshIndicator() {
+    // Ensure it runs after build & scroll position is at top
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshKey.currentState?.show();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Auto show once if no data yet
+    if (apiController.isLoading) {
+      _showRefreshIndicator();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +61,7 @@ class DetailsMobilePage extends StatelessWidget {
             if (apiController.details?.url != null) {
               int readCount = historyController.novelhistory.length;
               favouritesController.updateReadCount(
-                  readCount, apiController.details?.url ?? '', source ?? apiController.currentSource);
+                  readCount, apiController.details?.url ?? '', widget.source ?? apiController.currentSource);
             }
             apiController.clearDetails();
             historyController.clearNovelHistory();
@@ -55,7 +88,8 @@ class DetailsMobilePage extends StatelessWidget {
                       : 'Add to Favourites',
                   onPressed: () {
                     if (apiController.details?.url != null) {
-                      favouritesController.addToFavourites(apiController.details!.url!, source ?? apiController.currentSource);
+                      favouritesController.addToFavourites(
+                          apiController.details!.url!, widget.source ?? apiController.currentSource);
                     }
                   },
                 ),
@@ -87,15 +121,8 @@ class DetailsMobilePage extends StatelessWidget {
             ],
           ),
           body: RefreshIndicator(
-            onRefresh: () async {
-              await apiController.fetchDetails(
-                apiController.details?.url ?? '',
-                source: source,
-                refresh: true,
-                canCacheChapters: canCacheChapters,
-                canCacheNovel: canCacheNovel,
-              );
-            },
+            key: _refreshKey,
+            onRefresh: _refreshDetails,
             child: Obx(() {
               if (apiController.isLoading) {
                 return Center(child: context.isTabletOrDesktop ? CircularProgressIndicator() : Container());
@@ -234,7 +261,7 @@ class DetailsMobilePage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ReaderPage(
-                    source: source,
+                    source: widget.source,
                   ),
                 ),
               );
@@ -335,15 +362,15 @@ class DetailsMobilePage extends StatelessWidget {
                           .firstWhereOrNull((historyItem) =>
                               historyItem.novel.url == apiController.details?.url &&
                               historyItem.chapter.url == apiController.chapters![index].url &&
-                              historyItem.source == source)
+                              historyItem.source == widget.source)
                           ?.position,
                       selected: apiController.chapters![index].url == apiController.chapter?.url,
                       onTap: () {
-                        apiController.fetchChapter(apiController.chapters![index].url, source: source);
+                        apiController.fetchChapter(apiController.chapters![index].url, source: widget.source);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ReaderPage(source: source),
+                            builder: (context) => ReaderPage(source: widget.source),
                           ),
                         );
                       },
