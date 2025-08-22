@@ -392,6 +392,9 @@ class _ReaderPageState extends State<ReaderPage> {
                               width: double.infinity,
                               child: Obx(
                                 () => Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Text(
                                       '\n${apiController.chapter!.content}',
