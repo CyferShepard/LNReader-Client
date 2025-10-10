@@ -37,7 +37,7 @@ class _FilterBuilderState extends State<FilterBuilder> {
             (filter.type.defaultValue != null
                 ? filter.type.defaultValue is int
                     ? filter.type.defaultValue.toString()
-                    : filter.type.defaultValue.value
+                    : filter.type.defaultValue
                 : null);
       }
     }
@@ -164,6 +164,23 @@ class _FilterBuilderState extends State<FilterBuilder> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(10),
             ),
+          ),
+        );
+
+      case 'toggle':
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: SwitchListTile(
+            title: Text(filter.fieldName),
+            value: _values[filter.fieldName] != null ? true : false,
+            onChanged: (val) {
+              if (val == false) {
+                _values.remove(filter.fieldName);
+              } else {
+                _values[filter.fieldName] = filter.type.defaultValue?.value ?? true;
+              }
+              setState(() {});
+            },
           ),
         );
 
