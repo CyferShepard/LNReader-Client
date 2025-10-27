@@ -178,7 +178,7 @@ class _ReaderPageState extends State<ReaderPage> {
             )
           : null,
       body: Obx(() {
-        if (apiController.isChapterLoading) {
+        if (apiController.isChapterLoading || apiController.isChaptersLoading) {
           return const Center(
             child: CircularProgressIndicator(),
           );

@@ -63,6 +63,7 @@ class Details {
   factory Details.fromJson(Map<String, dynamic> json) {
     List<String> genres = [];
     String? summary = "";
+    String? authors = "";
 
     if (json['genres'] is String) {
       // If genres is a single string, split it into an array
@@ -80,6 +81,14 @@ class Details {
       summary = (json['summary'] as List<dynamic>).cast<String>().join("\n");
     }
 
+    if (json['author'] is String) {
+      // If summary is a single string, split it into an array
+      authors = (json['author'] as String);
+    } else if (json['author'] is List) {
+      // If genres is already an array, use it directly
+      authors = (json['author'] as List<dynamic>).join(", ");
+    }
+
     return Details(
       source: json['source'] as String?,
       url: json['url'] as String?,
@@ -88,7 +97,7 @@ class Details {
       title: json['title'] as String,
       summary: summary,
       tags: (json['tags'] as List<dynamic>?)?.cast<String>() ?? [],
-      author: json['author'] as String? ?? "",
+      author: authors,
       status: json['status'] as String? ?? "Unknown",
       genre: genres,
       chapters: json['chapters'] as String? ?? "0",

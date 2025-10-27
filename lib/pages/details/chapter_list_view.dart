@@ -112,10 +112,10 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
 
                     return GestureDetector(
                       key: ValueKey(index),
-                      onLongPress: () => uiController.toggleChapterSelection(chapter.index, apiController.chapters!.length),
+                      onLongPress: () => uiController.toggleChapterSelection(chapter.index),
                       onTap: () {
                         if (uiController.multiSelectMode) {
-                          uiController.toggleChapterSelection(index, apiController.chapters!.length);
+                          uiController.toggleChapterSelection(chapter.index);
                         } else {
                           apiController.fetchChapter(chapter.url, source: widget.source);
                         }

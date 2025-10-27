@@ -183,7 +183,7 @@ class UIController extends GetxController {
     allowChangeServerOnError = allowChangeServerFromEnv();
   }
 
-  void toggleChapterSelection(int index, int totalChapters) {
+  void toggleChapterSelection(int index) {
     if (selectedChapters.contains(index)) {
       selectedChapters.remove(index);
     } else {
@@ -198,7 +198,7 @@ class UIController extends GetxController {
   }
 
   void selectAllChapters(int totalChapters) {
-    selectedChapters.addAll(List.generate(totalChapters, (i) => i));
+    selectedChapters.addAll(List.generate(totalChapters, (i) => i + 1));
     _multiSelectMode.value = true;
   }
 }

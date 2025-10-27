@@ -357,7 +357,6 @@ class ApiController extends GetxController {
           source ?? currentSource,
         );
 
-        isChapterLoading = true;
         fetchChapters(
           url,
           source: source ?? currentSource,
