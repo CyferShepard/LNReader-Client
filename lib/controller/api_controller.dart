@@ -309,7 +309,8 @@ class ApiController extends GetxController {
 
   setCategories(List<String> categories, {Details? novelDetails}) async {
     if (details != null) {
-      await client.updateFavouriteCategory((novelDetails ?? details!).url!, (novelDetails ?? details!).source!, categories);
+      await client.updateFavouriteCategory(
+          (novelDetails ?? details!).url!, (novelDetails ?? details!).source ?? currentSource, categories);
       details = details!.copyWith(categories: categories);
       final updatedFavs = favouritesController.favourites
           .map((favourite) {
@@ -390,9 +391,12 @@ class ApiController extends GetxController {
       Map<String, String>? additionalProps,
       String? lastChapterUrl,
       bool refresh = false,
+      bool suppressLoader = false,
       required bool canCacheChapters}) async {
     try {
-      isChaptersLoading = true;
+      if (!suppressLoader) {
+        isChaptersLoading = true;
+      }
       chapters = (await client.getChapters(url, source ?? currentSource, additionalProps,
               refresh: refresh, canCacheChapters: canCacheChapters))
           .chapters;

@@ -327,7 +327,7 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
-            apiController.details!.cover != null && apiController.details!.cover != ""
+            apiController.details?.cover != null && apiController.details!.cover != ""
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(12), // Adjust the radius as needed
                     child: ConstrainedBox(

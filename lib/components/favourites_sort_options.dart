@@ -50,6 +50,9 @@ class _FavouritesSortButtonState extends State<FavouritesSortButton> {
                           children: [
                             for (SortBy sortOption in SortBy.values)
                               ListTile(
+                                onTap: () {
+                                  favouritesController.sortOrder = sortOption;
+                                },
                                 contentPadding: EdgeInsets.all(0),
                                 title: Text(sortOption.name.splitCamelCaseAndCapitalize()),
                                 leading: Radio<SortBy>(

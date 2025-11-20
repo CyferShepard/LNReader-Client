@@ -37,20 +37,24 @@ class AuthController extends GetxController {
         jsonDecode(authString) as Map,
       );
       auth = Auth.fromJson(json);
-      await client.refreshToken();
+      bool isRefreshed = await client.refreshToken();
+      if (!isRefreshed) {
+        logout();
+      }
     }
   }
 
-  void reinitUser({bool gotToHome = true}) {
+  Future<void> reinitUser({bool gotToHome = true}) async {
     apiController.clearAll();
     favouritesController.clearFavourites();
     historyController.clearHistory();
     secondaryPassword = '';
     if (auth.isAuthenticated) {
       ///////
-      historyController.getHistory();
-      favouritesController.getFavourites();
       apiController.fetchSources();
+      historyController.getHistory();
+      favouritesController.getFavourites(getCategories: true);
+      updatesController.getUpdates();
       /////
       if (gotToHome) {
         uiController.navController.select(0);

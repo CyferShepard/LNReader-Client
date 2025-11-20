@@ -173,11 +173,11 @@ class HttpClient {
     _dio.interceptors.add(_cacheInterceptor);
 
     // Add logging interceptor (optional)
-    _dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: false,
-      logPrint: (obj) => print(obj),
-    ));
+    // _dio.interceptors.add(LogInterceptor(
+    //   requestBody: true,
+    //   responseBody: false,
+    //   logPrint: (obj) => print(obj),
+    // ));
   }
 
   // Add auth token to requests
@@ -197,17 +197,20 @@ class HttpClient {
     bool useCache = false,
     bool forceRefresh = false,
     Duration? cacheDuration,
+    ResponseType? responseType,
   }) async {
+    final mergedOptions = (options ?? Options()).copyWith(
+      responseType: responseType, // <-- Respect caller's responseType
+      extra: {
+        'useCache': useCache,
+        'forceRefresh': forceRefresh,
+        'cacheDuration': cacheDuration,
+      },
+    );
     return _dio.get(
       path,
       queryParameters: queryParameters,
-      options: (options ?? Options()).copyWith(
-        extra: {
-          'useCache': useCache,
-          'forceRefresh': forceRefresh,
-          'cacheDuration': cacheDuration,
-        },
-      ),
+      options: mergedOptions,
     );
   }
 
@@ -217,7 +220,7 @@ class HttpClient {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-    bool useCache = true,
+    bool useCache = false,
     bool forceRefresh = false,
     Duration? cacheDuration,
   }) async {

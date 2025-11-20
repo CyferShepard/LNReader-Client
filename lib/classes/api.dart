@@ -62,34 +62,6 @@ class ApiClient {
     ));
   }
 
-  // Future<http.Response> _authorizedRequest(
-  //   Future<http.Response> Function() requestFn,
-  // ) async {
-  //   String? token = authController.auth.token;
-
-  //   if (token == null) {
-  //     // If no token is available, return an unauthorized response
-  //     return http.Response('Unauthorized', 401);
-  //   }
-  //   http.Response response = await requestFn();
-
-  //   if (response.statusCode == 401 && authController.auth.isAuthenticated) {
-  //     // Try to refresh the token
-  //     print('Token expired, refreshing...');
-  //     bool refreshed = await refreshToken();
-  //     if (refreshed) {
-  //       // Retry with new token
-  //       token = authController.auth.token;
-  //       response = await requestFn();
-  //     } else {
-  //       // If refresh fails, logout
-  //       authController.logout();
-  //     }
-  //   }
-
-  //   return response;
-  // }
-
   Future<bool> refreshToken() async {
     String? refreshToken = authController.auth.refreshToken;
     if (refreshToken == null || authController.auth.status == false) {
@@ -165,7 +137,6 @@ class ApiClient {
     final response = await _httpClient.post(
       '/api/canRegister',
       data: {'canRegister': enable},
-      useCache: false,
     );
 
     if (response.statusCode == 200) {
@@ -382,15 +353,19 @@ class ApiClient {
   }
 
   Future<List<FavouriteWithNovelMeta>> getFavourites({String? url, String? source}) async {
-    final response = await _httpClient.get(
-      '/favourites/get',
-      queryParameters: url != null && source != null ? {'url': url, 'source': source} : null,
-    );
+    Map<String, dynamic>? queryParameters = url != null && source != null ? {'url': url, 'source': source} : null;
 
-    if (response.statusCode == 200) {
-      return FavouriteWithNovelMeta.fromJsonList(response.data);
-    } else {
-      throw Exception('Failed to fetch favourites: ${response.data}');
+    try {
+      final response = await _httpClient.get('/favourites/get', queryParameters: queryParameters);
+
+      if (response.statusCode == 200) {
+        return FavouriteWithNovelMeta.fromJsonList(response.data);
+      } else {
+        throw Exception('Failed to fetch favourites: ${response.data}');
+      }
+    } catch (e) {
+      print('Error fetching favourites: $e');
+      throw Exception('Failed to fetch favourites: $e');
     }
   }
 

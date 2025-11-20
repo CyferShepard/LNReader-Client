@@ -119,6 +119,7 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
             scrolledUnderElevation: 0,
             actions: uiController.multiSelectMode
                 ? [
+                    Text('${uiController.selectedChapters.length} selected'),
                     if (uiController.selectedChapters.isNotEmpty)
                       IconButton(
                         icon: const Icon(Icons.check_circle_outline),

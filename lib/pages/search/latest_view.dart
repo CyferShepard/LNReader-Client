@@ -122,6 +122,7 @@ class _LatestViewState extends State<LatestView> with AutomaticKeepAliveClientMi
                     context,
                     MaterialPageRoute(
                       builder: (context) => DetailsView(
+                        source: apiController.currentSource,
                         canCacheChapters: false,
                         canCacheNovel: false,
                       ),
