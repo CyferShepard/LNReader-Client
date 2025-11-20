@@ -330,30 +330,35 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
             apiController.details!.cover != null && apiController.details!.cover != ""
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(12), // Adjust the radius as needed
-                    child: Image.network(
-                      '${client.baseUrl}/proxy/imageProxy?imageUrl=${apiController.details!.cover!}',
-                      // height: 350,
-                      width: 310,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Container(
-                          width: 310,
-                          height: 310,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12), // Adjust the radius as needed
-                            color: Theme.of(context).colorScheme.surfaceContainer,
-                          ),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                                  : null,
-                            ),
-                          ),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) => placeHolderImage,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: 310,
+                        minWidth: 310,
+                      ),
+                      child: Image.network(
+                        '${client.baseUrl}/proxy/imageProxy?imageUrl=${apiController.details!.cover!}',
+                        // height: 350,
+                        width: 310,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Stack(
+                            alignment: Alignment.center, // Ensure children are centered in the Stack
+
+                            children: [
+                              placeHolderImage,
+                              Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                      : null,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) => placeHolderImage,
+                      ),
                     ),
                   )
                 : placeHolderImage,

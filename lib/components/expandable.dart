@@ -51,20 +51,11 @@ class _ExpandableTextState extends State<ExpandableText> {
           if (canExpand) const SizedBox(height: 16.0), // Add some space when expanded
           if (canExpand)
             Center(
-                child: Container(
-              decoration: BoxDecoration(
+              child: Icon(
+                expanded ? Icons.expand_less : Icons.expand_more,
                 color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(8.0),
-                shape: BoxShape.rectangle,
               ),
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                expanded ? widget.collapseText : widget.expandText,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white,
-                    ),
-              ),
-            )),
+            ),
         ],
       ),
     );

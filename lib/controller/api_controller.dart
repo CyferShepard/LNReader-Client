@@ -333,6 +333,9 @@ class ApiController extends GetxController {
     required bool canCacheChapters,
   }) async {
     try {
+      if (isLoading) {
+        return null;
+      }
       isLoading = true;
       details = await client.getDetails(url, source ?? currentSource, refresh: refresh, canCacheNovel: canCacheNovel);
       if (details != null) {

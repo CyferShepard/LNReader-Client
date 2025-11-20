@@ -8,6 +8,7 @@ class ChapterListItemTile extends StatelessWidget {
   final bool selected;
   final bool isChecked;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   const ChapterListItemTile({
     super.key,
@@ -16,6 +17,7 @@ class ChapterListItemTile extends StatelessWidget {
     this.selected = false,
     this.isChecked = false,
     this.onTap,
+    this.onLongPress,
   });
 
   @override
@@ -61,10 +63,11 @@ class ChapterListItemTile extends StatelessWidget {
                     color: isChecked ? Theme.of(context).colorScheme.onPrimary : null,
                   ),
                 )
-              : null,
+              : SizedBox(height: 14),
           trailing: position != null && position == 1 ? const Icon(Icons.check_circle) : null,
           contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
           onTap: onTap,
+          onLongPress: onLongPress,
         ),
       ),
     );

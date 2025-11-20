@@ -6,7 +6,7 @@ import 'package:light_novel_reader_client/utils/env_loader.dart'
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServerController extends GetxController {
-  final _serverUrl = 'http://127.0.0.1:8000'.obs;
+  final _serverUrl = 'https://reader-api.nexusserver.co.za'.obs;
   String get serverUrl => _serverUrl.value;
   set serverUrl(String value) => _serverUrl.value = value;
 

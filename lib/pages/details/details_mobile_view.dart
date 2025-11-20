@@ -7,6 +7,7 @@ import 'package:light_novel_reader_client/components/genre_chip.dart';
 import 'package:light_novel_reader_client/components/label_text.dart';
 import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
+import 'package:light_novel_reader_client/models/chapters.dart';
 import 'package:light_novel_reader_client/pages/reader.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -63,60 +64,100 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
             }
             apiController.clearDetails();
             historyController.clearNovelHistory();
+            uiController.clearChapterSelection();
           });
         }
       },
-      child: Obx(
-        () => Scaffold(
+      child: Obx(() {
+        List<Widget> actions = [
+          if (apiController.details != null && favouritesController.favourites.isNotEmpty)
+            IconButton(
+              icon: Icon(
+                favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
+                    ? Icons.favorite
+                    : Icons.favorite_outline,
+                color: favouritesController.favourites.any((fav) => fav.url == apiController.details?.url) ? Colors.red : null,
+              ),
+              tooltip: favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
+                  ? 'Remove from Favourites'
+                  : 'Add to Favourites',
+              onPressed: () {
+                if (apiController.details?.url != null) {
+                  favouritesController.addToFavourites(apiController.details!.url!, widget.source ?? apiController.currentSource);
+                }
+              },
+            ),
+          if (favouritesController.favourites.any((fav) => fav.url == apiController.details?.url) &&
+              uiController.categories.isNotEmpty &&
+              uiController.categories[0].position != -999)
+            CategoriesDropdownButton(
+              onChanged: (p0) {
+                apiController.setCategories(p0, novelDetails: apiController.details);
+              },
+            ),
+          if ((apiController.details != null && apiController.details!.fullUrl != null) ||
+              (apiController.chapter != null && apiController.chapter!.fullUrl != null))
+            IconButton(
+              icon: const Icon(Icons.open_in_new),
+              tooltip: 'Open in Browser',
+              onPressed: () async {
+                final url = apiController.details?.fullUrl;
+                if (url != null) {
+                  try {
+                    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                  } catch (e) {
+                    // Optionally show an error to the user
+                    print('Could not launch $url: $e');
+                  }
+                }
+              },
+            ),
+        ];
+        return Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
           appBar: AppBar(
             scrolledUnderElevation: 0,
-            actions: [
-              if (apiController.details != null && favouritesController.favourites.isNotEmpty)
-                IconButton(
-                  icon: Icon(
-                    favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
-                        ? Icons.favorite
-                        : Icons.favorite_outline,
-                    color:
-                        favouritesController.favourites.any((fav) => fav.url == apiController.details?.url) ? Colors.red : null,
-                  ),
-                  tooltip: favouritesController.favourites.any((fav) => fav.url == apiController.details?.url)
-                      ? 'Remove from Favourites'
-                      : 'Add to Favourites',
-                  onPressed: () {
-                    if (apiController.details?.url != null) {
-                      favouritesController.addToFavourites(
-                          apiController.details!.url!, widget.source ?? apiController.currentSource);
-                    }
-                  },
-                ),
-              if (favouritesController.favourites.any((fav) => fav.url == apiController.details?.url) &&
-                  uiController.categories.isNotEmpty &&
-                  uiController.categories[0].position != -999)
-                CategoriesDropdownButton(
-                  onChanged: (p0) {
-                    apiController.setCategories(p0, novelDetails: apiController.details);
-                  },
-                ),
-              if ((apiController.details != null && apiController.details!.fullUrl != null) ||
-                  (apiController.chapter != null && apiController.chapter!.fullUrl != null))
-                IconButton(
-                  icon: const Icon(Icons.open_in_new),
-                  tooltip: 'Open in Browser',
-                  onPressed: () async {
-                    final url = apiController.details?.fullUrl;
-                    if (url != null) {
-                      try {
-                        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-                      } catch (e) {
-                        // Optionally show an error to the user
-                        print('Could not launch $url: $e');
-                      }
-                    }
-                  },
-                ),
-            ],
+            actions: uiController.multiSelectMode
+                ? [
+                    if (uiController.selectedChapters.isNotEmpty)
+                      IconButton(
+                        icon: const Icon(Icons.check_circle_outline),
+                        tooltip: 'Mark as Unread',
+                        onPressed: () {
+                          historyController.markAsRead(
+                            apiController.chapters!.where((c) => uiController.selectedChapters.contains(c.index)).toList(),
+                            apiController.details!,
+                            widget.source ?? apiController.currentSource,
+                            isRead: false,
+                          );
+                          Get.toNamed('/history');
+                        },
+                      ),
+                    if (uiController.selectedChapters.isNotEmpty)
+                      IconButton(
+                        icon: const Icon(Icons.check_circle),
+                        tooltip: 'Mark as Read',
+                        onPressed: () {
+                          historyController.markAsRead(
+                              apiController.chapters!.where((c) => uiController.selectedChapters.contains(c.index)).toList(),
+                              apiController.details!,
+                              widget.source ?? apiController.currentSource);
+                          Get.toNamed('/history');
+                        },
+                      ),
+                    IconButton(
+                      icon: const Icon(Icons.select_all),
+                      tooltip: 'Select All',
+                      onPressed: () => uiController.selectAllChapters(apiController.chapters!.length),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.clear),
+                      tooltip: 'Clear Selection',
+                      onPressed: uiController.clearChapterSelection,
+                    ),
+                    // ...other actions
+                  ]
+                : actions,
           ),
           body: RefreshIndicator(
             key: _refreshKey,
@@ -135,8 +176,8 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
               return detailsView(context);
             }),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -156,92 +197,174 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
         ),
       );
       return [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Stack(
           children: [
-            // Cover Image
-            apiController.details!.cover != null && apiController.details!.cover != ""
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(12), // Adjust the radius as needed
-                    child: Image.network(
-                      '${client.baseUrl}/proxy/imageProxy?imageUrl=${apiController.details!.cover!}',
-                      // width: 100,
-                      height: 200,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                                : null,
-                          ),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) => placeHolderImage,
-                    ),
-                  )
-                : placeHolderImage,
-
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
+            // Background image
+            Positioned.fill(
+              child: Image.network(
+                '${client.baseUrl}/proxy/imageProxy?imageUrl=${apiController.details!.cover!}',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                ),
+              ),
+            ),
+            // Gradient overlay
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Theme.of(context).colorScheme.surfaceContainerHigh.withAlpha(215), // Transparent at the top
+                      Theme.of(context).colorScheme.surfaceContainerHigh.withAlpha(225), // Transparent at the top
+                      Theme.of(context).colorScheme.surfaceContainerHigh.withAlpha(235), // Transparent at the top
+                      Theme.of(context).colorScheme.surfaceContainerHigh, // Darker at the bottom
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    apiController.details!.title,
-                    softWrap: true,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                  ),
-                  if (apiController.details?.source != null) const SizedBox(height: 8),
-                  if (apiController.details?.source != null)
-                    LabeledText(
-                      label: 'Source',
-                      text: apiController.details!.source!,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface,
+                  // Cover Image
+                  apiController.details!.cover != null && apiController.details!.cover != ""
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(12), // Adjust the radius as needed
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minWidth: 150,
+                            ),
+                            child: Image.network(
+                              '${client.baseUrl}/proxy/imageProxy?imageUrl=${apiController.details!.cover!}',
+                              // width: 100,
+                              height: 200,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Stack(
+                                  alignment: Alignment.center, // Ensure children are centered in the Stack
+
+                                  children: [
+                                    placeHolderImage,
+                                    Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                            : null,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) => placeHolderImage,
+                            ),
                           ),
+                        )
+                      : placeHolderImage,
+
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          apiController.details!.title,
+                          softWrap: true,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                        ),
+                        if (apiController.details?.source != null) const SizedBox(height: 8),
+                        if (apiController.details?.source != null)
+                          LabeledText(
+                            label: 'Source',
+                            text: apiController.details!.source!,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                ),
+                          ),
+                        const SizedBox(height: 8),
+                        LabeledText(
+                          label: 'Author',
+                          text: apiController.details!.author,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                        ),
+                        const SizedBox(height: 8),
+                        LabeledText(
+                            label: 'Status',
+                            text: apiController.details!.status,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                )),
+                        const SizedBox(height: 8),
+                        LabeledText(
+                          label: 'Genre',
+                          softWrap: true,
+                          maxLines: 5,
+                          text: apiController.details!.genre.join(', '),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                        ),
+                        const SizedBox(height: 8),
+                        LabeledText(
+                          label: 'Last Updated',
+                          text: apiController.details!.lastUpdate,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                        ),
+                      ],
                     ),
-                  const SizedBox(height: 8),
-                  LabeledText(
-                    label: 'Author',
-                    text: apiController.details!.author,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  LabeledText(
-                      label: 'Status',
-                      text: apiController.details!.status,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface,
-                          )),
-                  const SizedBox(height: 8),
-                  LabeledText(
-                    label: 'Genre',
-                    softWrap: true,
-                    maxLines: 5,
-                    text: apiController.details!.genre.join(', '),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  LabeledText(
-                    label: 'Last Updated',
-                    text: apiController.details!.lastUpdate,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
                   ),
                 ],
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (apiController.details!.tags.isNotEmpty)
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    for (final tags in apiController.details!.tags)
+                      GenreChip(
+                        genre: tags.trim(),
+                        textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                        // margin: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
+                      ),
+                  ],
+                ),
+              const SizedBox(height: 8),
+              ExpandableText(
+                text: apiController.details!.summary,
+                maxLines: 3,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+          ),
         ),
         if (apiController.details?.lastHistory != null) ...[
           const SizedBox(height: 16),
@@ -269,39 +392,6 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
                 'Chapter ${apiController.details?.lastHistory!.chapter.index} (${((apiController.details?.lastHistory?.position ?? 0) * 100).toStringAsFixed(2)}%)'),
           ),
         ],
-        const SizedBox(height: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (apiController.details!.tags.isNotEmpty)
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  for (final tags in apiController.details!.tags)
-                    GenreChip(
-                      genre: tags.trim(),
-                      textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-                      // margin: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
-                    ),
-                ],
-              ),
-            const SizedBox(height: 8),
-            ExpandableText(
-              text: apiController.details!.summary,
-              maxLines: 3,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          ],
-        ),
       ];
     }
   }
@@ -312,7 +402,7 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
       ),
-      padding: const EdgeInsets.all(8.0),
+      // padding: const EdgeInsets.all(8.0),
       child: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -324,7 +414,7 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
           SliverToBoxAdapter(child: const SizedBox(height: 16)),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -353,8 +443,10 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  return Obx(
-                    () => ChapterListItemTile(
+                  return Obx(() {
+                    ChapterListItem chapter = apiController.chapters![index];
+                    final isSelected = uiController.selectedChapters.contains(chapter.index);
+                    return ChapterListItemTile(
                       title: apiController.chapters![index].title,
                       position: historyController.novelhistory
                           .firstWhereOrNull((historyItem) =>
@@ -363,17 +455,23 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
                               historyItem.source == widget.source)
                           ?.position,
                       selected: apiController.chapters![index].url == apiController.chapter?.url,
+                      isChecked: isSelected,
                       onTap: () {
-                        apiController.fetchChapter(apiController.chapters![index].url, source: widget.source);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ReaderPage(source: widget.source),
-                          ),
-                        );
+                        if (uiController.multiSelectMode) {
+                          uiController.toggleChapterSelection(chapter.index);
+                        } else {
+                          apiController.fetchChapter(chapter.url, source: widget.source);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReaderPage(source: widget.source),
+                            ),
+                          );
+                        }
                       },
-                    ),
-                  );
+                      onLongPress: () => uiController.toggleChapterSelection(apiController.chapters![index].index),
+                    );
+                  });
                 },
                 childCount: apiController.chapters?.length ?? 0,
               ),

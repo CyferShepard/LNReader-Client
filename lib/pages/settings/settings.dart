@@ -64,7 +64,7 @@ class SettingsPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-              if (authController.auth.isAuthenticated && authController.auth.isAdmin)
+              if (authController.auth.isAdmin)
                 ListTile(
                   title: const Text('Users'),
                   leading: const Icon(Icons.supervised_user_circle),
@@ -98,17 +98,18 @@ class SettingsPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              ListTile(
-                title: const Text('Logs'),
-                leading: const Icon(Icons.notes),
-                onTap: () {
-                  uiController.settingsPage = 'logs';
-                },
-                contentPadding: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+              if (authController.auth.isAdmin)
+                ListTile(
+                  title: const Text('Logs'),
+                  leading: const Icon(Icons.notes),
+                  onTap: () {
+                    uiController.settingsPage = 'logs';
+                  },
+                  contentPadding: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-              ),
               if (authController.auth.isAuthenticated && context.isMobile)
                 ListTile(
                   title: const Text('Logout'),
