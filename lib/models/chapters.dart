@@ -19,7 +19,20 @@ class Chapters {
 
   factory Chapters.fromJson(List<dynamic> json) {
     return Chapters(
-      chapters: json.map((e) => ChapterListItem.fromJson(e)).toList(),
+      chapters: json
+          .map((e) {
+            try {
+              return ChapterListItem.fromJson(Map<String, dynamic>.from(e as Map));
+            } catch (_) {
+              return ChapterListItem(
+                url: '',
+                title: 'Error parsing chapter',
+                date: '',
+              );
+            }
+          })
+          .where((c) => c.url.isNotEmpty)
+          .toList(),
     );
   }
 }

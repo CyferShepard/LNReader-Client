@@ -85,6 +85,7 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
                     tooltip: 'Sort Chapters',
                     onPressed: () {
                       apiController.sortAsc = !apiController.sortAsc; // Toggle sort direction
+                      setState(() {});
                     },
                   ),
                 ],

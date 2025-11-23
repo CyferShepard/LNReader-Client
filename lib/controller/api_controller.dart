@@ -379,6 +379,17 @@ class ApiController extends GetxController {
     return null;
   }
 
+  bool hasDuplicateChapterIndexes(List<ChapterListItem>? chapters) {
+    if (chapters == null) return false;
+    final seen = <int>{};
+    for (final chapter in chapters) {
+      if (!seen.add(chapter.index)) {
+        return true; // Duplicate found
+      }
+    }
+    return false; // No duplicates
+  }
+
   sortChapters() {
     print('Sorting chapters: ${sortAsc ? "Ascending" : "Descending"}');
     List<ChapterListItem> tempChapters = chapters ?? [];
@@ -400,7 +411,14 @@ class ApiController extends GetxController {
       chapters = (await client.getChapters(url, source ?? currentSource, additionalProps,
               refresh: refresh, canCacheChapters: canCacheChapters))
           .chapters;
+
       if (chapters != null) {
+        if (chapters!.isNotEmpty && hasDuplicateChapterIndexes(chapters)) {
+          print('Warning: Duplicate chapter indexes found. Reassigning indexes based on order.');
+          for (int i = 0; i < chapters!.length; i++) {
+            chapters![i].index = i + 1; // Reassign index starting from 1
+          }
+        }
         if (refresh) {
           updatesController.getUpdates();
         }
