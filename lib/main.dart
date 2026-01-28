@@ -1,11 +1,10 @@
 import 'dart:async';
 
+import 'package:drawer_navigator/drawer_navigator.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:light_novel_reader_client/components/nav_bar.dart';
-import 'package:light_novel_reader_client/components/navigation.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/pages/auth/login.dart';
 import 'package:light_novel_reader_client/pages/auth/register.dart';
@@ -296,6 +295,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Scaffold(
             body: MainNavigationBar(
+              uiController: uiController.navController,
               navItems: [
                 NavBarItem(
                   label: 'Favourites',

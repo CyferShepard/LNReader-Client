@@ -1,8 +1,8 @@
 import 'dart:convert';
 
+import 'package:drawer_navigator/drawer_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:light_novel_reader_client/components/nav_bar.dart';
 import 'package:light_novel_reader_client/controller/favourites_controller.dart';
 import 'package:light_novel_reader_client/globals.dart';
 import 'package:light_novel_reader_client/models/categories.dart';
