@@ -295,7 +295,8 @@ class _HomePageState extends State<HomePage> {
         children: [
           Scaffold(
             body: MainNavigationBar(
-              uiController: uiController.navController,
+              navController: uiController.navController,
+              jumpToFirstOnPop: uiController.searchPage == "sources" && uiController.settingsPage == "main",
               navItems: [
                 NavBarItem(
                   label: 'Favourites',
