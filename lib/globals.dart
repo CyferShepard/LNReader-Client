@@ -30,7 +30,7 @@ UpdatesController get updatesController => Get.put(UpdatesController());
 LoggerController get logger => Get.put(LoggerController());
 final GlobalKey<TextFieldEditorState> serverUrlFieldKey = GlobalKey<TextFieldEditorState>();
 final themeMode = ThemeMode.dark.obs;
-String appVersion = '1.0.49'; // Needs to be updated manually or via CI/CD
+String appVersion = '1.0.50'; // Needs to be updated manually or via CI/CD
 
 compareVersions(String v1, String v2) {
   final parts1 = v1.replaceAll(',', '.').split('.').map(int.parse).toList();

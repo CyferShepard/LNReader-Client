@@ -126,7 +126,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "28cb5157a7f7f840942f75e2196544c947fec9d4"
+      resolved-ref: "0a62f3c252aeca3513776855185c0930824fe15f"
       url: "https://gitea.nexusserver.co.za/FlutterPackages/DrawerNavigator.git"
     source: git
     version: "0.0.1"

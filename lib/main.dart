@@ -297,6 +297,28 @@ class _HomePageState extends State<HomePage> {
             body: MainNavigationBar(
               navController: uiController.navController,
               jumpToFirstOnPop: uiController.searchPage == "sources" && uiController.settingsPage == "main",
+              mobileStyle: SideNavBarStyle(
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+                textStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                selectedItemStyle: SelectedItemStyle(
+                    textStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
+                    iconColor: Theme.of(context).colorScheme.primary,
+                    indicatorColor: Colors.transparent),
+                unselectedIconColor: Theme.of(context).colorScheme.onPrimary.withAlpha(220),
+              ),
+              desktopStyle: SideNavBarStyle(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                textStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                selectedItemStyle: SelectedItemStyle(
+                    textStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
+                    iconColor: Theme.of(context).colorScheme.onSurface,
+                    indicatorColor: Colors.transparent),
+                unselectedIconColor: Theme.of(context).colorScheme.onPrimary.withAlpha(220),
+              ),
               navItems: [
                 NavBarItem(
                   label: 'Favourites',
@@ -355,7 +377,7 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ],
-              bottomNavItems: [
+              footerItems: [
                 NavBarItem(
                   label: themeMode.value == ThemeMode.dark ? 'Dark Mode' : 'Light Mode',
                   icon: themeMode.value == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode,
