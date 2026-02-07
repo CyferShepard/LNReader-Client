@@ -1,3 +1,4 @@
+import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -90,102 +91,158 @@ class UpdatesPage extends StatelessWidget {
 
             return Padding(
               padding: const EdgeInsets.only(top: 8.0, left: 8, right: 8),
-              child: ListView.builder(
-                itemCount: displayList.length,
-                itemBuilder: (context, index) {
-                  final entry = displayList[index];
-                  if (entry['isHeader'] == true) {
-                    // Date header
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                      child: Text(
-                        DateFormat.yMMMMd().format(DateTime.parse(entry['date'])),
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    );
-                  } else {
-                    final updateItem = entry['item'];
-                    final novelCardData = updateItem;
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        height: 108,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(8),
-                          onTap: () {
-                            apiController.fetchDetails(
-                              updateItem.url,
-                              source: updateItem.source,
-                              canCacheChapters: true,
-                              canCacheNovel: true,
-                            );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetailsView(
-                                  source: updateItem.source,
-                                  canCacheChapters: true,
-                                  canCacheNovel: true,
-                                ),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  height: 100,
-                                  width: 70,
-                                  '${client.baseUrl}/proxy/imageProxy?imageUrl=${novelCardData.cover}',
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) => placeHolderImage,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      novelCardData.title,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: context.isTabletOrDesktop
-                                          ? Theme.of(context).textTheme.headlineSmall
-                                          : Theme.of(context).textTheme.bodyLarge,
-                                    ),
-                                    Text(
-                                      'Chapter ${updateItem.chapter.chapterIndex} - ${DateFormat.jm().format(updateItem.chapter.dateAdded)}',
-                                      style: (context.isTabletOrDesktop
-                                              ? Theme.of(context).textTheme.bodyLarge
-                                              : Theme.of(context).textTheme.bodyMedium)
-                                          ?.copyWith(
-                                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // IconButton(
-                              //     onPressed: () {
-                              //       historyController.removeFromHistory(historyItem.chapter.url, historyItem.source);
-                              //     },
-                              //     icon: Icon(Icons.delete)),
-                            ],
+              child: EnhancedPaginatedView(
+                onLoadMore: (page) {
+                  // Load more data
+                  updatesController.loadMoreUpdates();
+                },
+                hasReachedMax: updatesController.currentPage >= updatesController.totalPages,
+                itemsPerPage: updatesController.pageSize,
+                delegate: EnhancedDelegate(
+                  listOfData: displayList,
+                  status: EnhancedStatus.loaded,
+                ),
+                builder: (items, physics, reverse, shrinkWrap) {
+                  return ListView.builder(
+                    itemCount: items.length,
+                    physics: physics,
+                    shrinkWrap: shrinkWrap,
+                    reverse: reverse,
+                    itemBuilder: (context, index) {
+                      final entry = displayList[index];
+                      if (entry['isHeader'] == true) {
+                        // Date header
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          child: Text(
+                            DateFormat.yMMMMd().format(DateTime.parse(entry['date'])),
+                            style: Theme.of(context).textTheme.headlineSmall,
                           ),
-                        ),
-                      ),
-                    );
-                  }
+                        );
+                      } else {
+                        final updateItem = entry['item'];
+                        final novelCardData = updateItem;
+                        return updatedChapterListItem(
+                            updateItem: updateItem, novelCardData: novelCardData, placeHolderImage: placeHolderImage);
+                      }
+                    },
+                  );
                 },
               ),
+              // child: ListView.builder(
+              //   itemCount: displayList.length,
+              //   itemBuilder: (context, index) {
+              //     final entry = displayList[index];
+              //     if (entry['isHeader'] == true) {
+              //       // Date header
+              //       return Padding(
+              //         padding: const EdgeInsets.symmetric(vertical: 12.0),
+              //         child: Text(
+              //           DateFormat.yMMMMd().format(DateTime.parse(entry['date'])),
+              //           style: Theme.of(context).textTheme.headlineSmall,
+              //         ),
+              //       );
+              //     } else {
+              //       final updateItem = entry['item'];
+              //       final novelCardData = updateItem;
+              //       return updatedChapterListItem(updateItem: updateItem, novelCardData: novelCardData, placeHolderImage: placeHolderImage);
+              //     }
+              //   },
+              // ),
             );
           }),
+        ),
+      ),
+    );
+  }
+}
+
+class updatedChapterListItem extends StatelessWidget {
+  const updatedChapterListItem({
+    super.key,
+    required this.updateItem,
+    required this.novelCardData,
+    required this.placeHolderImage,
+  });
+
+  final dynamic updateItem;
+  final dynamic novelCardData;
+  final DefaultPlaceholderImage placeHolderImage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        height: 108,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () {
+            apiController.fetchDetails(
+              updateItem.url,
+              source: updateItem.source,
+              canCacheChapters: true,
+              canCacheNovel: true,
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailsView(
+                  source: updateItem.source,
+                  canCacheChapters: true,
+                  canCacheNovel: true,
+                ),
+              ),
+            );
+          },
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  height: 100,
+                  width: 70,
+                  '${client.baseUrl}/proxy/imageProxy?imageUrl=${novelCardData.cover}',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => placeHolderImage,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      novelCardData.title,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.isTabletOrDesktop
+                          ? Theme.of(context).textTheme.headlineSmall
+                          : Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    Text(
+                      'Chapter ${updateItem.chapter.chapterIndex} - ${DateFormat.jm().format(updateItem.chapter.dateAdded)}',
+                      style: (context.isTabletOrDesktop
+                              ? Theme.of(context).textTheme.bodyLarge
+                              : Theme.of(context).textTheme.bodyMedium)
+                          ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // IconButton(
+              //     onPressed: () {
+              //       historyController.removeFromHistory(historyItem.chapter.url, historyItem.source);
+              //     },
+              //     icon: Icon(Icons.delete)),
+            ],
+          ),
         ),
       ),
     );

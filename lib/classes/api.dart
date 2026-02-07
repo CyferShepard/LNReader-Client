@@ -14,6 +14,7 @@ import 'package:light_novel_reader_client/models/favouriteWithNovelMeta.dart';
 import 'package:light_novel_reader_client/models/favouritesWithChapterMeta.dart';
 import 'package:light_novel_reader_client/models/history.dart';
 import 'package:light_novel_reader_client/models/latest.dart';
+import 'package:light_novel_reader_client/models/pagination_wrapper.dart';
 import 'package:light_novel_reader_client/models/search.dart';
 import 'package:light_novel_reader_client/models/source.dart';
 import 'package:light_novel_reader_client/models/source_search.dart';
@@ -339,16 +340,30 @@ class ApiClient {
     }
   }
 
-  Future<List<FavouriteWitChapterMeta>?> getLatestChapters() async {
+  Future<PaginationWrapper<FavouriteWitChapterMeta>> getLatestChapters({int page = 1, int pageSize = 10}) async {
     final response = await _httpClient.get(
       '/api/updates',
+      queryParameters: {'page': page, 'pageSize': pageSize},
     );
 
     if (response.statusCode == 200) {
-      return FavouriteWitChapterMeta.fromJsonList(response.data);
+      try {
+        PaginationWrapper<FavouriteWitChapterMeta> wrapper = PaginationWrapper<FavouriteWitChapterMeta>(
+          results: FavouriteWitChapterMeta.fromJsonList(response.data["results"]),
+          page: response.data['page'] ?? 1,
+          pageSize: response.data['pageSize'] ?? 10,
+          totalCount: response.data['totalCount'] ?? 0,
+          totalPages: response.data['totalPages'] ?? 1,
+        );
+        return wrapper;
+      } catch (e) {
+        print('Error parsing latest chapters: $e');
+        return PaginationWrapper<FavouriteWitChapterMeta>.empty();
+      }
+      // return FavouriteWitChapterMeta.fromJsonList(response.data);
     } else {
       print('Failed to fetch latest: ${response.data}');
-      return null;
+      return PaginationWrapper<FavouriteWitChapterMeta>.empty();
     }
   }
 
