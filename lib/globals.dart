@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
@@ -30,7 +31,23 @@ UpdatesController get updatesController => Get.put(UpdatesController());
 LoggerController get logger => Get.put(LoggerController());
 final GlobalKey<TextFieldEditorState> serverUrlFieldKey = GlobalKey<TextFieldEditorState>();
 final themeMode = ThemeMode.dark.obs;
-String appVersion = '1.0.51'; // Needs to be updated manually or via CI/CD
+String appVersion = '1.0.52'; // Needs to be updated manually or via CI/CD
+String? latestVersion; // Fetched from the server to check for updates
+String? latestVersionUrl; // URL to the latest version, if available
+
+String platformType = kIsWeb
+    ? 'web'
+    : defaultTargetPlatform == TargetPlatform.android
+        ? 'android'
+        : defaultTargetPlatform == TargetPlatform.iOS
+            ? 'ios'
+            : defaultTargetPlatform == TargetPlatform.macOS
+                ? 'macos'
+                : defaultTargetPlatform == TargetPlatform.windows
+                    ? 'windows'
+                    : defaultTargetPlatform == TargetPlatform.linux
+                        ? 'linux'
+                        : 'unknown';
 
 compareVersions(String v1, String v2) {
   final parts1 = v1.replaceAll(',', '.').split('.').map(int.parse).toList();

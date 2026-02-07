@@ -18,6 +18,9 @@ class UpdatesController extends GetxController {
   int currentPage = 1;
   int pageSize = 10;
   int totalPages = 1;
+  final _itemCount = 0.obs;
+  int get itemCount => _itemCount.value;
+  set itemCount(int value) => _itemCount.value = value;
 
   Future<void> getUpdates() async {
     isLoading = true;
@@ -33,6 +36,7 @@ class UpdatesController extends GetxController {
       currentPage = value.page;
       pageSize = value.pageSize;
       totalPages = value.totalPages;
+      itemCount = value.totalCount;
     }).catchError((error) {
       print('Error fetching history: $error');
     });

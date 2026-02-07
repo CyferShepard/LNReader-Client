@@ -9,6 +9,7 @@ import 'package:light_novel_reader_client/models/auth.dart';
 import 'package:light_novel_reader_client/models/categories.dart';
 import 'package:light_novel_reader_client/models/chapter.dart';
 import 'package:light_novel_reader_client/models/chapters.dart';
+import 'package:light_novel_reader_client/models/config.dart';
 import 'package:light_novel_reader_client/models/details.dart';
 import 'package:light_novel_reader_client/models/favouriteWithNovelMeta.dart';
 import 'package:light_novel_reader_client/models/favouritesWithChapterMeta.dart';
@@ -110,18 +111,18 @@ class ApiClient {
     }
   }
 
-  Future<String?> getVersion() async {
+  Future<List<Config>> getVersion() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/configs?type=web'));
+      final response = await http.get(Uri.parse('$baseUrl/api/configs'));
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body)["version"] as String;
+        return Config.fromJsonList(jsonDecode(response.body));
       } else {
-        return null;
+        return [];
       }
     } catch (e) {
       print('Version fetch failed: $e');
-      return null;
+      return [];
     }
   }
 

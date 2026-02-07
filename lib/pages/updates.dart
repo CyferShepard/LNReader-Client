@@ -18,7 +18,7 @@ class UpdatesPage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         appBar: AppBar(
           scrolledUnderElevation: 0,
-          title: Text('Updates (${updatesController.updates.length})'),
+          title: Text('Updates (${updatesController.itemCount})'),
           actions: [
             CustomSearchBar(
               initialValue: updatesController.searchQuery,

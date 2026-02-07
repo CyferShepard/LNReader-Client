@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:drawer_navigator/drawer_navigator.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:light_novel_reader_client/globals.dart';
+import 'package:light_novel_reader_client/models/config.dart';
 import 'package:light_novel_reader_client/pages/auth/login.dart';
 import 'package:light_novel_reader_client/pages/auth/register.dart';
 import 'package:light_novel_reader_client/pages/favourites_view.dart';
@@ -15,17 +15,20 @@ import 'package:light_novel_reader_client/pages/search/search.dart';
 import 'package:light_novel_reader_client/pages/server_error.dart';
 import 'package:light_novel_reader_client/pages/settings/settings.dart';
 import 'package:light_novel_reader_client/pages/sources.dart';
+import 'package:light_novel_reader_client/pages/update_notification.dart';
 import 'package:light_novel_reader_client/pages/updates.dart';
-import 'package:universal_html/html.dart' as html;
 
 updateChecker() {
   try {
     client.getVersion().then(
-      (serverVersion) {
-        if (serverVersion != null) {
+      (configs) {
+        Config? config = configs.firstWhereOrNull((c) => c.type == platformType);
+        if (config != null && config.version.isNotEmpty && config.version != latestVersion) {
+          latestVersion = config.version;
           print('App version: $appVersion');
-          print('latest version: $serverVersion');
-          uiController.hasUpdates = compareVersions(appVersion, serverVersion) < 0;
+          print('latest version: $latestVersion');
+          uiController.hasUpdates = compareVersions(appVersion, config.version) < 0;
+          latestVersionUrl = config.url;
           print('has updates: ${uiController.hasUpdates}');
         }
       },
@@ -165,7 +168,7 @@ class _HomePageState extends State<HomePage> {
         );
       }
 
-      if (uiController.hasUpdates && kIsWeb) {
+      if (uiController.hasUpdates) {
         return Stack(
           children: [
             // Your normal navigation bar or home content
@@ -177,43 +180,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             // Overlay for update notification
-            Positioned.fill(
-              child: Container(
-                color: Colors.black54,
-                child: Center(
-                  child: Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'A new version is available!',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Please reload the page to update and clear cached files.',
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton(
-                            onPressed: () {
-                              // For web: reload and clear cache
-                              html.window.location.reload();
-                              // For mobile: you might want to use a different method
-                              // Navigator.of(context).pop(); // Close the dialog if needed
-                            },
-                            child: const Text('Reload Now'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            UpdateNotification(),
           ],
         );
       }
@@ -249,44 +216,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ]),
             ),
-            if (uiController.hasUpdates && kIsWeb)
-              Positioned.fill(
-                child: Container(
-                  color: Colors.black54,
-                  child: Center(
-                    child: Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 32),
-                      child: Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'A new version is available!',
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Please reload the page to update and clear cached files.',
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 24),
-                            ElevatedButton(
-                              onPressed: () {
-                                // For web: reload and clear cache
-                                html.window.location.reload();
-                                // For mobile: you might want to use a different method
-                                // Navigator.of(context).pop(); // Close the dialog if needed
-                              },
-                              child: const Text('Reload Now'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            if (uiController.hasUpdates) UpdateNotification(),
           ],
         );
       }
@@ -389,44 +319,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          if (uiController.hasUpdates && kIsWeb)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black54,
-                child: Center(
-                  child: Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'A new version is available!',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Please reload the page to update and clear cached files.',
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton(
-                            onPressed: () {
-                              // For web: reload and clear cache
-                              html.window.location.reload();
-                              // For mobile: you might want to use a different method
-                              // Navigator.of(context).pop(); // Close the dialog if needed
-                            },
-                            child: const Text('Reload Now'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          if (uiController.hasUpdates) UpdateNotification(),
         ],
       );
     });
