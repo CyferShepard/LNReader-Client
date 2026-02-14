@@ -341,7 +341,7 @@ class ApiClient {
     }
   }
 
-  Future<PaginationWrapper<FavouriteWitChapterMeta>> getLatestChapters({int page = 1, int pageSize = 10}) async {
+  Future<PaginationWrapper<FavouriteWitChapterMeta>> getLatestChapters({int page = 1, int pageSize = 50}) async {
     final response = await _httpClient.get(
       '/api/updates',
       queryParameters: {'page': page, 'pageSize': pageSize},

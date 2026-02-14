@@ -16,7 +16,7 @@ class UpdatesController extends GetxController {
   set searchQuery(String value) => _searchQuery.value = value;
 
   int currentPage = 1;
-  int pageSize = 10;
+  int pageSize = 50;
   int totalPages = 1;
   final _itemCount = 0.obs;
   int get itemCount => _itemCount.value;
