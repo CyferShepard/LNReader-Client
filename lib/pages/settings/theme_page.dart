@@ -39,6 +39,21 @@ class ThemePage extends StatelessWidget {
                   )),
             ],
           ),
+          if (platformType == 'android')
+            Row(
+              children: [
+                const Icon(Icons.phone_iphone),
+                const SizedBox(width: 8),
+                const Text('Force Mobile Layout'),
+                const Spacer(),
+                Obx(() => Switch(
+                      value: forceMobileLayout.value,
+                      onChanged: (val) {
+                        uiController.toggleForceMobileLayout();
+                      },
+                    )),
+              ],
+            ),
         ],
       ),
     );

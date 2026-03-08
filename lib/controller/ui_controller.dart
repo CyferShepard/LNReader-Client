@@ -109,6 +109,7 @@ class UIController extends GetxController {
           'favouritesSortOrder': favouritesController.sortOrder.index,
           'favouritesSortAsc': favouritesController.sortAsc,
           'chapterSortOrder': apiController.sortAsc,
+          'forceMobileLayout': forceMobileLayout.value,
         }));
   }
 
@@ -118,6 +119,12 @@ class UIController extends GetxController {
     } else {
       themeMode.value = ThemeMode.dark;
     }
+    saveUISettings();
+  }
+
+  toggleForceMobileLayout() {
+    forceMobileLayout.value = !forceMobileLayout.value;
+    setPage(0); // Jump back to home page to apply layout change immediately
     saveUISettings();
   }
 
@@ -173,6 +180,9 @@ class UIController extends GetxController {
       favouritesController.sortOrder = SortBy.values[data['favouritesSortOrder'] ?? 0];
       favouritesController.sortAsc = data['favouritesSortAsc'] ?? true;
       apiController.sortAsc = data['chapterSortOrder'] ?? true;
+      if (data['forceMobileLayout'] != null) {
+        forceMobileLayout.value = data['forceMobileLayout'];
+      }
     } else {
       // Set default values if no settings are found
       fontSize = 18.0;

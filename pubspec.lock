@@ -126,10 +126,10 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "0a62f3c252aeca3513776855185c0930824fe15f"
+      resolved-ref: "6e4ddc62afe4097e39b1236ad6953a9b4f8110c2"
       url: "https://gitea.nexusserver.co.za/FlutterPackages/DrawerNavigator.git"
     source: git
-    version: "0.0.1"
+    version: "0.0.2"
   enhanced_paginated_view:
     dependency: "direct main"
     description:

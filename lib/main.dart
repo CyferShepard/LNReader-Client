@@ -225,6 +225,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Scaffold(
             body: MainNavigationBar(
+              forceMobile: forceMobileLayout.value,
               navController: uiController.navController,
               jumpToFirstOnPop: uiController.searchPage == "sources" && uiController.settingsPage == "main",
               mobileStyle: SideNavBarStyle(

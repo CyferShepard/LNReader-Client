@@ -31,7 +31,8 @@ UpdatesController get updatesController => Get.put(UpdatesController());
 LoggerController get logger => Get.put(LoggerController());
 final GlobalKey<TextFieldEditorState> serverUrlFieldKey = GlobalKey<TextFieldEditorState>();
 final themeMode = ThemeMode.dark.obs;
-String appVersion = '1.0.53'; // Needs to be updated manually or via CI/CD
+final forceMobileLayout = false.obs;
+String appVersion = '1.0.54'; // Needs to be updated manually or via CI/CD
 String? latestVersion; // Fetched from the server to check for updates
 String? latestVersionUrl; // URL to the latest version, if available
 
