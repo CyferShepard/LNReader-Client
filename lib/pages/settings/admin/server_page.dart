@@ -5,9 +5,7 @@ import 'package:light_novel_reader_client/extensions/context_extensions.dart';
 import 'package:light_novel_reader_client/globals.dart';
 
 class ServerPage extends StatelessWidget {
-  const ServerPage({super.key, this.isDesktop = false});
-
-  final bool isDesktop;
+  const ServerPage({super.key});
 
   @override
   Widget build(BuildContext context) {

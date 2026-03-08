@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:light_novel_reader_client/globals.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 extension SizedContext on BuildContext {
@@ -49,10 +50,10 @@ extension SizedContext on BuildContext {
   double heightPct(double fraction) => fraction * heightPx;
 
   double get shortestSide => mq.size.shortestSide;
-  bool get isMobile => shortestSide < 600.0;
-  bool get isTablet => shortestSide >= 600.0 && shortestSide < 1000.0;
-  bool get isTabletOrDesktop => shortestSide >= 600.0;
-  bool get isDesktop => shortestSide >= 1000.0;
+  bool get isMobile => shortestSide < 600.0 || forceMobileLayout.value;
+  bool get isTablet => shortestSide >= 600.0 && shortestSide < 1000.0 && !forceMobileLayout.value;
+  bool get isTabletOrDesktop => shortestSide >= 600.0 && !forceMobileLayout.value;
+  bool get isDesktop => shortestSide >= 1000.0 && !forceMobileLayout.value;
   bool get isWatch => shortestSide < 300.0;
   bool get isSmallScreen => shortestSide < 600.0;
   bool get isMediumScreen => shortestSide >= 600.0 && shortestSide < 1000.0;
