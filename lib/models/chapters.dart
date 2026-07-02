@@ -25,9 +25,11 @@ class Chapters {
               return ChapterListItem.fromJson(Map<String, dynamic>.from(e as Map));
             } catch (_) {
               return ChapterListItem(
+                source: '',
                 url: '',
                 title: 'Error parsing chapter',
                 date: '',
+                novelUrl: '',
               );
             }
           })
@@ -38,24 +40,30 @@ class Chapters {
 }
 
 class ChapterListItem {
+  String source;
   String url;
   int index;
   String title;
   String date;
+  String novelUrl;
 
   ChapterListItem({
+    required this.source,
     required this.url,
     this.index = 0,
     required this.title,
     required this.date,
+    required this.novelUrl,
   });
 
   Map<String, dynamic> toJson() {
     return {
+      'source': source,
       'url': url,
       'index': index,
       'title': title,
       'date': date,
+      'novelUrl': novelUrl,
     };
   }
 
@@ -65,10 +73,12 @@ class ChapterListItem {
 
   factory ChapterListItem.fromJson(Map<String, dynamic> json) {
     return ChapterListItem(
+      source: json['source'] as String,
       url: json['url'] as String,
       index: json['index'] as int? ?? 0,
       title: json['title'] as String,
       date: json['date'] as String? ?? '',
+      novelUrl: json['novelUrl'] as String? ?? '',
     );
   }
 }

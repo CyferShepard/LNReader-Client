@@ -239,10 +239,10 @@ class ApiClient {
     }
   }
 
-  Future<Search?> search(String source, {String? searchParams, int page = 1}) async {
+  Future<Search?> search(String source, {String? query, int page = 1}) async {
     final response = await _httpClient.post(
       '/api/search',
-      data: {'source': source, 'searchParams': searchParams, 'page': page},
+      data: {'source': source, 'query': query, 'page': page},
     );
     if (response.statusCode == 200) {
       return Search.fromJson(response.data);
@@ -489,17 +489,10 @@ class ApiClient {
   }
 
   Future<History?> addToHistory(
-      {required Details novel,
-      required ChapterListItem chapter,
-      required String source,
-      int page = 0,
-      double position = 0.0}) async {
-    Map<String, dynamic> novelMeta = novel.toJson();
-    novelMeta['source'] = source;
-
+      {required ChapterListItem chapter, required String source, int page = 0, double position = 0.0}) async {
     final response = await _httpClient.post(
       '/history/insert',
-      data: {'novel': novelMeta, 'chapter': chapter.toJson(), 'page': page, 'position': position},
+      data: {'chapter': chapter.toJson(), 'page': page, 'position': position},
     );
 
     if (response.statusCode == 200) {

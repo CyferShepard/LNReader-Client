@@ -171,21 +171,21 @@ class ApiController extends GetxController {
       }
       currentSearchPage = page;
       var csource = sources.firstWhereOrNull((s) => s.name == currentSource);
-      String? searchParams = getFilters();
+      // String? searchParams = getFilters();
 
       if (csource == null) {
         print('Error: Current source not found in sources list.');
         return;
       }
-      var mainSearchField = csource.filters.firstWhereOrNull((f) => f.isMainSearchField);
-      if (searchTerm.isNotEmpty && mainSearchField != null) {
-        searchParams ??= '';
-        searchParams += '&${mainSearchField.fieldVar}=$searchTerm';
-      }
+      // var mainSearchField = csource.filters.firstWhereOrNull((f) => f.isMainSearchField);
+      // if (searchTerm.isNotEmpty && mainSearchField != null) {
+      //   searchParams ??= '';
+      //   searchParams += '&${mainSearchField.fieldVar}=$searchTerm';
+      // }
       isLoading = page == 1;
       search = await client.search(
         currentSource,
-        searchParams: searchParams,
+        query: searchTerm,
         page: page,
       );
       if (search != null && search!.results.isNotEmpty) {
@@ -210,15 +210,17 @@ class ApiController extends GetxController {
         continue;
       }
 
-      String? searchParams = getFilters(source: source.name);
-      var mainSearchField = source.filters.firstWhereOrNull((f) => f.isMainSearchField);
-      if (searchTerm.isNotEmpty && mainSearchField != null) {
-        searchParams ??= '';
-        searchParams += '&${mainSearchField.fieldVar}=$searchTerm';
-      }
-      if (searchParams != null && searchParams.isNotEmpty) {
-        searchPayload.add(SourceSearch(source: source.name, searchParams: searchParams));
-      }
+      // String? searchParams = getFilters(source: source.name);
+      // var mainSearchField = source.filters.firstWhereOrNull((f) => f.isMainSearchField);
+      // if (searchTerm.isNotEmpty && mainSearchField != null) {
+      //   searchParams ??= '';
+      //   searchParams += '&${mainSearchField.fieldVar}=$searchTerm';
+      // }
+      // if (searchParams != null && searchParams.isNotEmpty) {
+
+      // }
+
+      searchPayload.add(SourceSearch(source: source.name, query: searchTerm));
     }
 
     if (searchPayload.isEmpty) {

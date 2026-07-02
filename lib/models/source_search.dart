@@ -2,22 +2,22 @@ import 'package:light_novel_reader_client/models/search.dart';
 
 class SourceSearch {
   final String source;
-  final String searchParams;
+  final String query;
   Search? searchResult;
 
   SourceSearch({
     required this.source,
-    required this.searchParams,
+    required this.query,
     this.searchResult,
   });
 
   factory SourceSearch.fromJson(Map<String, dynamic> json) {
-    if (json['source'] is! String || json['searchParams'] is! String) {
+    if (json['source'] is! String || json['query'] is! String) {
       throw Exception('Invalid properties in JSON object');
     }
     return SourceSearch(
       source: json['source'],
-      searchParams: json['searchParams'],
+      query: json['query'],
       searchResult: json['searchResult'] != null ? Search.fromJson(json['searchResult'] as Map<String, dynamic>) : null,
     );
   }
@@ -29,7 +29,7 @@ class SourceSearch {
   Map<String, dynamic> toJson() {
     return {
       'source': source,
-      'searchParams': searchParams,
+      'query': query,
       'searchResult': searchResult?.toJson(),
     };
   }

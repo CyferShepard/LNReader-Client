@@ -61,8 +61,7 @@ class HistoryController extends GetxController {
     // isLoading = true;
     try {
       print('Adding to history: ${novel.title} - ${chapter.title} at position $position');
-      History? history =
-          await client.addToHistory(novel: novel, chapter: chapter, source: source, page: page, position: position);
+      History? history = await client.addToHistory(chapter: chapter, source: source, page: page, position: position);
       if (history != null) {
         // Check if the novel already exists in history
         final existingIndex = this.history.indexWhere((h) => h.novel.url == history.novel.url);

@@ -1,6 +1,6 @@
 class ChapterMeta {
   final String source;
-  final int chapterIndex;
+  final int index;
   final String url;
   final String title;
   final String novelUrl;
@@ -8,7 +8,7 @@ class ChapterMeta {
 
   ChapterMeta({
     required this.source,
-    required this.chapterIndex,
+    required this.index,
     required this.url,
     required this.title,
     required this.novelUrl,
@@ -18,7 +18,7 @@ class ChapterMeta {
   factory ChapterMeta.fromJson(Map<String, dynamic> json) {
     return ChapterMeta(
       source: json['source'] as String,
-      chapterIndex: json['chapterIndex'] as int,
+      index: (json['index']) as int,
       url: json['url'] as String,
       title: json['title'] as String,
       novelUrl: json['novelUrl'] as String,
@@ -28,7 +28,7 @@ class ChapterMeta {
 
   Map<String, dynamic> toJson() => {
         'source': source,
-        'chapterIndex': chapterIndex,
+        'index': index,
         'url': url,
         'title': title,
         'novelUrl': novelUrl,

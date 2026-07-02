@@ -225,7 +225,7 @@ class updatedChapterListItem extends StatelessWidget {
                           : Theme.of(context).textTheme.bodyLarge,
                     ),
                     Text(
-                      'Chapter ${updateItem.chapter.chapterIndex} - ${DateFormat.jm().format(updateItem.chapter.dateAdded)}',
+                      'Chapter ${updateItem.chapter.index} - ${DateFormat.jm().format(updateItem.chapter.dateAdded)}',
                       style: (context.isTabletOrDesktop
                               ? Theme.of(context).textTheme.bodyLarge
                               : Theme.of(context).textTheme.bodyMedium)
