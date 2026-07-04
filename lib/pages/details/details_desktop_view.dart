@@ -92,14 +92,16 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
         onKeyEvent: (node, event) {
           // Example: Left arrow for previous, right arrow for next
           if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-            if (apiController.chapter?.previousPage != null && apiController.chapter!.previousPage!.isNotEmpty) {
-              apiController.fetchChapter(apiController.chapter!.previousPage!, source: widget.source);
+            if (apiController.chapter?.previousPage != null) {
+              apiController.fetchChapter(apiController.chapter!.previousPage!.url,
+                  source: widget.source, additionalProps: apiController.chapter?.previousPage?.additionalProps);
               return KeyEventResult.handled;
             }
           }
           if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-            if (apiController.chapter?.nextPage != null && apiController.chapter!.nextPage!.isNotEmpty) {
-              apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
+            if (apiController.chapter?.nextPage != null) {
+              apiController.fetchChapter(apiController.chapter!.nextPage!.url,
+                  source: widget.source, additionalProps: apiController.chapter?.nextPage?.additionalProps);
               return KeyEventResult.handled;
             }
           }
@@ -157,20 +159,22 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                       // ...other actions
                     ],
                   ),
-                if (apiController.chapter?.previousPage != null && apiController.chapter!.previousPage!.isNotEmpty)
+                if (apiController.chapter?.previousPage != null)
                   IconButton(
                     icon: const Icon(Icons.navigate_before),
                     tooltip: 'Previous Chapter',
                     onPressed: () {
-                      apiController.fetchChapter(apiController.chapter!.previousPage!, source: widget.source);
+                      apiController.fetchChapter(apiController.chapter!.previousPage!.url,
+                          source: widget.source, additionalProps: apiController.chapter?.previousPage?.additionalProps);
                     },
                   ),
-                if (apiController.chapter?.nextPage != null && apiController.chapter!.nextPage!.isNotEmpty)
+                if (apiController.chapter?.nextPage != null)
                   IconButton(
                     icon: const Icon(Icons.navigate_next),
                     tooltip: 'Next Chapter',
                     onPressed: () {
-                      apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
+                      apiController.fetchChapter(apiController.chapter!.nextPage!.url,
+                          source: widget.source, additionalProps: apiController.chapter?.nextPage?.additionalProps);
                     },
                   ),
                 if (apiController.details != null)
@@ -206,11 +210,14 @@ class _DetailsDesktopPageState extends State<DetailsDesktopPage> with TickerProv
                     icon: const Icon(Icons.refresh),
                     tooltip: 'Refresh Details',
                     onPressed: () {
-                      apiController.fetchDetails(apiController.details!.url!,
-                          source: widget.source,
-                          refresh: true,
-                          canCacheChapters: widget.canCacheChapters,
-                          canCacheNovel: widget.canCacheNovel);
+                      apiController.fetchDetails(
+                        apiController.details!.url!,
+                        source: widget.source,
+                        refresh: true,
+                        canCacheChapters: widget.canCacheChapters,
+                        canCacheNovel: widget.canCacheNovel,
+                        additionalProps: apiController.details?.additionalProps,
+                      );
                     },
                   ),
                 if ((apiController.details != null && apiController.details!.fullUrl != null) ||

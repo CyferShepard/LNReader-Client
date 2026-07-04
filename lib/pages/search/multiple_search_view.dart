@@ -155,6 +155,7 @@ class _MultipleSearchViewState extends State<MultipleSearchView> {
                                               source: sourceSearch.source,
                                               canCacheChapters: false,
                                               canCacheNovel: false,
+                                              additionalProps: result.additionalProps,
                                             );
                                             Navigator.push(
                                               context,

@@ -116,6 +116,7 @@ class History extends StatelessWidget {
                               source: historyItem.source,
                               canCacheChapters: true,
                               canCacheNovel: true,
+                              additionalProps: historyItem.novel.additionalProps,
                             );
                             Navigator.push(
                               context,

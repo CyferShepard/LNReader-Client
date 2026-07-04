@@ -142,6 +142,7 @@ class FavouritesView extends StatelessWidget {
                   canCacheChapters: true,
                   canCacheNovel: true,
                   categories: items[index].categories,
+                  additionalProps: items[index].additionalProps,
                 );
                 Navigator.push(
                   context,

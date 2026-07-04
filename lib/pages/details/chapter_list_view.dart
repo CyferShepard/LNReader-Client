@@ -115,7 +115,8 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
                         if (uiController.multiSelectMode) {
                           uiController.toggleChapterSelection(chapter.index);
                         } else {
-                          apiController.fetchChapter(chapter.url, source: widget.source);
+                          apiController.fetchChapter(chapter.url,
+                              source: widget.source, addToHistory: true, additionalProps: chapter.additionalProps);
                         }
                       },
                       child: Container(
@@ -127,7 +128,8 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
                           isChecked: isSelected,
                           onTap: uiController.multiSelectMode
                               ? null
-                              : () => apiController.fetchChapter(chapter.url, source: widget.source),
+                              : () => apiController.fetchChapter(chapter.url,
+                                  source: widget.source, addToHistory: true, additionalProps: chapter.additionalProps),
                         ),
                       ),
                     );

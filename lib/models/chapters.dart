@@ -46,6 +46,7 @@ class ChapterListItem {
   String title;
   String date;
   String novelUrl;
+  Map<String, dynamic>? additionalProps;
 
   ChapterListItem({
     required this.source,
@@ -54,6 +55,7 @@ class ChapterListItem {
     required this.title,
     required this.date,
     required this.novelUrl,
+    this.additionalProps,
   });
 
   Map<String, dynamic> toJson() {
@@ -64,6 +66,7 @@ class ChapterListItem {
       'title': title,
       'date': date,
       'novelUrl': novelUrl,
+      'additionalProps': additionalProps,
     };
   }
 
@@ -73,12 +76,12 @@ class ChapterListItem {
 
   factory ChapterListItem.fromJson(Map<String, dynamic> json) {
     return ChapterListItem(
-      source: json['source'] as String,
-      url: json['url'] as String,
-      index: json['index'] as int? ?? 0,
-      title: json['title'] as String,
-      date: json['date'] as String? ?? '',
-      novelUrl: json['novelUrl'] as String? ?? '',
-    );
+        source: json['source'] as String,
+        url: json['url'] as String,
+        index: json['index'] as int? ?? 0,
+        title: json['title'] as String,
+        date: json['date'] as String? ?? '',
+        novelUrl: json['novelUrl'] as String? ?? '',
+        additionalProps: json['additionalProps'] as Map<String, dynamic>?);
   }
 }

@@ -26,13 +26,12 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
   final GlobalKey<RefreshIndicatorState> _refreshKey = GlobalKey<RefreshIndicatorState>();
 
   Future<void> _refreshDetails() async {
-    await apiController.fetchDetails(
-      apiController.details?.url ?? '',
-      source: widget.source,
-      refresh: true,
-      canCacheChapters: widget.canCacheChapters,
-      canCacheNovel: widget.canCacheNovel,
-    );
+    await apiController.fetchDetails(apiController.details?.url ?? '',
+        source: widget.source,
+        refresh: true,
+        canCacheChapters: widget.canCacheChapters,
+        canCacheNovel: widget.canCacheNovel,
+        additionalProps: apiController.details?.additionalProps);
   }
 
   void _showRefreshIndicator() {

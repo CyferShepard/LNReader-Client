@@ -116,17 +116,16 @@ class _ReaderPageState extends State<ReaderPage> {
               title: Obx(() => Text(apiController.chapter?.title ?? 'Reader')),
               actions: [
                 Obx(() {
-                  if (!apiController.isChapterLoading &&
-                      apiController.chapter?.previousPage != null &&
-                      apiController.chapter!.previousPage!.isNotEmpty) {
+                  if (!apiController.isChapterLoading && apiController.chapter?.previousPage != null) {
                     return Tooltip(
                       message: 'Previous Chapter',
                       child: IconButton(
                         icon: const Icon(Icons.navigate_before),
                         onPressed: () {
                           apiController.fetchChapter(
-                            apiController.chapter!.previousPage!,
+                            apiController.chapter!.previousPage!.url,
                             source: widget.source,
+                            additionalProps: apiController.chapter?.previousPage?.additionalProps,
                           );
                         },
                       ),
@@ -135,20 +134,16 @@ class _ReaderPageState extends State<ReaderPage> {
                     return const SizedBox.shrink();
                   }
                 }),
-                if (!apiController.isChapterLoading &&
-                    apiController.chapter?.nextPage != null &&
-                    apiController.chapter!.nextPage!.isNotEmpty)
-                  SizedBox(width: 12),
+                if (!apiController.isChapterLoading && apiController.chapter?.nextPage != null) SizedBox(width: 12),
                 Obx(() {
-                  if (!apiController.isChapterLoading &&
-                      apiController.chapter?.nextPage != null &&
-                      apiController.chapter!.nextPage!.isNotEmpty) {
+                  if (!apiController.isChapterLoading && apiController.chapter?.nextPage != null) {
                     return Tooltip(
                       message: 'Next Chapter',
                       child: IconButton(
                         icon: const Icon(Icons.navigate_next),
                         onPressed: () {
-                          apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
+                          apiController.fetchChapter(apiController.chapter!.nextPage!.url,
+                              source: widget.source, additionalProps: apiController.chapter?.nextPage?.additionalProps);
                         },
                       ),
                     );
@@ -272,17 +267,16 @@ class _ReaderPageState extends State<ReaderPage> {
                 )),
           ),
           Obx(() {
-            if (!apiController.isChapterLoading &&
-                apiController.chapter?.previousPage != null &&
-                apiController.chapter!.previousPage!.isNotEmpty) {
+            if (!apiController.isChapterLoading && apiController.chapter?.previousPage != null) {
               return Tooltip(
                 message: 'Previous Chapter',
                 child: IconButton(
                   icon: const Icon(Icons.navigate_before),
                   onPressed: () {
                     apiController.fetchChapter(
-                      apiController.chapter!.previousPage!,
+                      apiController.chapter!.previousPage!.url,
                       source: widget.source,
+                      additionalProps: apiController.chapter?.previousPage?.additionalProps,
                     );
                   },
                 ),
@@ -291,20 +285,16 @@ class _ReaderPageState extends State<ReaderPage> {
               return const SizedBox.shrink();
             }
           }),
-          if (!apiController.isChapterLoading &&
-              apiController.chapter?.nextPage != null &&
-              apiController.chapter!.nextPage!.isNotEmpty)
-            SizedBox(width: 12),
+          if (!apiController.isChapterLoading && apiController.chapter?.nextPage != null) SizedBox(width: 12),
           Obx(() {
-            if (!apiController.isChapterLoading &&
-                apiController.chapter?.nextPage != null &&
-                apiController.chapter!.nextPage!.isNotEmpty) {
+            if (!apiController.isChapterLoading && apiController.chapter?.nextPage != null) {
               return Tooltip(
                 message: 'Next Chapter',
                 child: IconButton(
                   icon: const Icon(Icons.navigate_next),
                   onPressed: () {
-                    apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
+                    apiController.fetchChapter(apiController.chapter!.nextPage!.url,
+                        source: widget.source, additionalProps: apiController.chapter?.nextPage?.additionalProps);
                   },
                 ),
               );
@@ -404,8 +394,7 @@ class _ReaderPageState extends State<ReaderPage> {
                                             color: colourOptions[uiController.fontColor],
                                           ),
                                     ),
-                                    if (apiController.chapter?.nextPage != null &&
-                                        apiController.chapter!.nextPage!.isNotEmpty) ...[
+                                    if (apiController.chapter?.nextPage != null) ...[
                                       const SizedBox(height: 50),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
@@ -416,7 +405,9 @@ class _ReaderPageState extends State<ReaderPage> {
                                           backgroundColor: Theme.of(context).colorScheme.primary,
                                         ),
                                         onPressed: () {
-                                          apiController.fetchChapter(apiController.chapter!.nextPage!, source: widget.source);
+                                          apiController.fetchChapter(apiController.chapter!.nextPage!.url,
+                                              source: widget.source,
+                                              additionalProps: apiController.chapter?.nextPage?.additionalProps);
                                         },
                                         child: Text(
                                           'Next Chapter',

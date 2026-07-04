@@ -6,6 +6,7 @@ class SearchResult {
   List<String> genres;
   int? chapterCount;
   String source;
+  Map<String, dynamic>? additionalProps;
 
   SearchResult({
     required this.url,
@@ -15,6 +16,7 @@ class SearchResult {
     required this.genres,
     this.chapterCount,
     required this.source,
+    this.additionalProps,
   });
 
   Map<String, dynamic> toJson() {
@@ -26,6 +28,7 @@ class SearchResult {
       'genres': genres,
       'chapterCount': chapterCount,
       'source': source,
+      'additionalProps': additionalProps,
     };
   }
 
@@ -44,6 +47,7 @@ class SearchResult {
       genres: genres,
       chapterCount: json['chapterCount'] as int?,
       source: json['source'] as String? ?? 'Unknown Source',
+      additionalProps: json['additionalProps'] as Map<String, dynamic>?,
     );
   }
 

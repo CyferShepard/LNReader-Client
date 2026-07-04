@@ -266,13 +266,20 @@ class ApiClient {
 
   Future<Details> getDetails(
     String url,
-    String source, {
+    String source,
+    Map<String, dynamic>? additionalProps, {
     bool refresh = false,
     required bool canCacheNovel,
   }) async {
     final response = await _httpClient.post(
       '/api/novel',
-      data: {'source': source, 'url': url, 'clearCache': refresh, "cacheData": canCacheNovel},
+      data: {
+        'source': source,
+        'url': url,
+        'additionalProps': additionalProps ?? {},
+        'clearCache': refresh,
+        "cacheData": canCacheNovel
+      },
       useCache: !refresh,
     );
 
@@ -289,7 +296,7 @@ class ApiClient {
   Future<Chapters> getChapters(
     String url,
     String source,
-    Map<String, String>? additionalProps, {
+    Map<String, dynamic>? additionalProps, {
     bool refresh = false,
     required bool canCacheChapters,
   }) async {
@@ -315,8 +322,9 @@ class ApiClient {
     }
   }
 
-  Future<Chapter> getChapter(String url, String source) async {
-    final response = await _httpClient.post('/api/chapter', data: {'url': url, 'source': source}, useCache: true);
+  Future<Chapter> getChapter(String url, String source, Map<String, dynamic>? additionalProps) async {
+    final response = await _httpClient.post('/api/chapter',
+        data: {'url': url, 'source': source, 'additionalProps': additionalProps}, useCache: true);
 
     if (response.statusCode == 200) {
       return Chapter.fromJson(response.data);

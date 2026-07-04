@@ -117,6 +117,9 @@ class _LatestViewState extends State<LatestView> with AutomaticKeepAliveClientMi
                     item.url,
                     canCacheChapters: false,
                     canCacheNovel: false,
+                    source: apiController.currentSource,
+                    categories: null,
+                    additionalProps: item.additionalProps,
                   );
                   Navigator.push(
                     context,

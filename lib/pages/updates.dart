@@ -186,6 +186,7 @@ class updatedChapterListItem extends StatelessWidget {
               source: updateItem.source,
               canCacheChapters: true,
               canCacheNovel: true,
+              additionalProps: updateItem.additionalProps,
             );
             Navigator.push(
               context,

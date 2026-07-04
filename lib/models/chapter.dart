@@ -1,12 +1,13 @@
 import 'package:equatable/equatable.dart';
+import 'package:light_novel_reader_client/models/chapter_url_pagination.dart';
 
 class Chapter extends Equatable {
   final String novelTitle;
   final String novelUrl;
   final String title;
   final String content;
-  final String? previousPage;
-  final String? nextPage;
+  final ChapterUrlPagination? previousPage;
+  final ChapterUrlPagination? nextPage;
   final String? url;
   final String? fullUrl;
 
@@ -27,8 +28,8 @@ class Chapter extends Equatable {
       'novelUrl': novelUrl,
       'title': title,
       'content': content,
-      'previousPage': previousPage,
-      'nextPage': nextPage,
+      'previousPage': previousPage?.toJson(),
+      'nextPage': nextPage?.toJson(),
       'url': url,
       'fullUrl': fullUrl,
     };
@@ -50,8 +51,8 @@ class Chapter extends Equatable {
       novelUrl: json['novelUrl'],
       title: json['title'],
       content: content,
-      previousPage: json['previousPage'],
-      nextPage: json['nextPage'],
+      previousPage: json['previousPage'] != null ? ChapterUrlPagination.fromJson(json['previousPage']) : null,
+      nextPage: json['nextPage'] != null ? ChapterUrlPagination.fromJson(json['nextPage']) : null,
       url: json['url'],
       fullUrl: json['fullUrl'],
     );

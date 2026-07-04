@@ -334,13 +334,15 @@ class ApiController extends GetxController {
     List<String>? categories,
     required bool canCacheNovel,
     required bool canCacheChapters,
+    Map<String, dynamic>? additionalProps,
   }) async {
     try {
       if (isLoading) {
         return null;
       }
       isLoading = true;
-      details = await client.getDetails(url, source ?? currentSource, refresh: refresh, canCacheNovel: canCacheNovel);
+      details =
+          await client.getDetails(url, source ?? currentSource, additionalProps, refresh: refresh, canCacheNovel: canCacheNovel);
       if (details != null) {
         if (categories != null && categories.isNotEmpty) {
           details = details!.copyWith(categories: categories);
@@ -401,7 +403,7 @@ class ApiController extends GetxController {
 
   Future<Chapters?> fetchChapters(String url,
       {String? source,
-      Map<String, String>? additionalProps,
+      Map<String, dynamic>? additionalProps,
       String? lastChapterUrl,
       bool refresh = false,
       bool suppressLoader = false,
@@ -429,7 +431,8 @@ class ApiController extends GetxController {
         if (lastChapterUrl != null) {
           ChapterListItem? lastReadChapter = chapters!.firstWhereOrNull((chapter) => chapter.url == lastChapterUrl);
           if (lastReadChapter != null) {
-            fetchChapter(lastReadChapter.url, source: source ?? currentSource);
+            fetchChapter(lastReadChapter.url,
+                source: source ?? currentSource, addToHistory: true, additionalProps: lastReadChapter.additionalProps);
           }
         }
       }
@@ -441,13 +444,13 @@ class ApiController extends GetxController {
     return null;
   }
 
-  Future<void> fetchChapter(String url, {String? source, bool addToHistory = true}) async {
+  Future<void> fetchChapter(String url, {String? source, bool addToHistory = true, Map<String, dynamic>? additionalProps}) async {
     try {
       if (chapter != null && chapter!.url == url) {
         return; // Already loaded
       }
       isChapterLoading = true;
-      _chapter.value = await client.getChapter(url, source ?? currentSource);
+      _chapter.value = await client.getChapter(url, source ?? currentSource, additionalProps);
       // ChapterListItem? chapterMeta = chapters?.firstWhereOrNull((chapter) => chapter.url == url);
       // if (chapterMeta != null && addToHistory) {
       //   historyController.addToHistory(

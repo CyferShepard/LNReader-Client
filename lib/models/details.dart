@@ -14,7 +14,7 @@ class Details {
   List<String> genre;
   String chapters;
   String lastUpdate;
-  Map<String, String> additionalProps;
+  Map<String, dynamic> additionalProps;
   List<String> categories = [];
 
   Details({
@@ -120,7 +120,7 @@ class Details {
     List<String>? genre,
     String? chapters,
     String? lastUpdate,
-    Map<String, String>? additionalProps,
+    Map<String, dynamic>? additionalProps,
     List<String>? categories,
   }) {
     return Details(

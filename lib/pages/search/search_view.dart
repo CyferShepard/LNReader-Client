@@ -163,6 +163,9 @@ class _SearchViewState extends State<SearchView> with AutomaticKeepAliveClientMi
                           items[index].url,
                           canCacheChapters: false,
                           canCacheNovel: false,
+                          source: apiController.currentSource,
+                          categories: null,
+                          additionalProps: items[index].additionalProps,
                         );
                         Navigator.push(
                           context,
