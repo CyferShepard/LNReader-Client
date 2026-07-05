@@ -102,10 +102,8 @@ class _ChapterListViewState extends State<ChapterListView> with AutomaticKeepAli
                     final isSelected = uiController.selectedChapters.contains(chapter.index);
                     final isCurrent = chapter.url == apiController.chapter?.url;
                     final position = historyController.novelhistory
-                        .firstWhereOrNull((historyItem) =>
-                            historyItem.novel.url == apiController.details?.url &&
-                            historyItem.chapter.url == chapter.url &&
-                            historyItem.source == widget.source)
+                        .firstWhereOrNull(
+                            (historyItem) => historyItem.chapter.url == chapter.url && historyItem.source == widget.source)
                         ?.position;
 
                     return GestureDetector(

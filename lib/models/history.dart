@@ -1,32 +1,4 @@
-import 'package:light_novel_reader_client/models/search_result.dart';
-
-class HistoryChapter {
-  int index;
-  String title;
-  String url;
-
-  HistoryChapter({
-    required this.index,
-    required this.title,
-    required this.url,
-  });
-
-  factory HistoryChapter.fromJson(Map<String, dynamic> json) {
-    return HistoryChapter(
-      index: json['index'] as int,
-      title: json['title'] as String,
-      url: json['url'] as String,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'index': index,
-      'title': title,
-      'url': url,
-    };
-  }
-}
+import 'package:light_novel_reader_client/models/chapter_meta.dart';
 
 class History {
   String username;
@@ -35,8 +7,7 @@ class History {
   DateTime lastRead;
   int page;
   double position;
-  HistoryChapter chapter;
-  SearchResult novel;
+  ChapterMeta chapter;
 
   History({
     required this.username,
@@ -46,7 +17,6 @@ class History {
     required this.page,
     required this.position,
     required this.chapter,
-    required this.novel,
   });
 
   factory History.fromJson(Map<String, dynamic> json) {
@@ -64,8 +34,7 @@ class History {
       lastRead: DateTime.parse(json['last_read'] as String),
       page: json['page'] as int,
       position: parsePosition(json['position']),
-      chapter: HistoryChapter.fromJson(json['chapter'] as Map<String, dynamic>),
-      novel: SearchResult.fromJson(json['novel'] as Map<String, dynamic>),
+      chapter: ChapterMeta.fromJson(json['chapter'] as Map<String, dynamic>),
     );
   }
 
@@ -82,7 +51,6 @@ class History {
       'page': page,
       'position': position,
       'chapter': chapter.toJson(),
-      'novel': novel.toJson(),
     };
   }
 }

@@ -64,10 +64,10 @@ class HistoryController extends GetxController {
       History? history = await client.addToHistory(chapter: chapter, source: source, page: page, position: position);
       if (history != null) {
         // Check if the novel already exists in history
-        final existingIndex = this.history.indexWhere((h) => h.novel.url == history.novel.url);
+        final existingIndex = this.history.indexWhere((h) => h.chapter.novelUrl == history.chapter.novelUrl);
         if (existingIndex != -1) {
           // Update existing history entry
-          this.history = this.history.map((h) => h.novel.url == history.novel.url ? history : h).toList();
+          this.history = this.history.map((h) => h.chapter.novelUrl == history.chapter.novelUrl ? history : h).toList();
         } else {
           // Add new history entry
           this.history = [history, ...this.history];
@@ -90,14 +90,11 @@ class HistoryController extends GetxController {
 
   Future<void> markAsRead(
     List<ChapterListItem> chapters,
-    Details novel,
     String source, {
     bool isRead = true,
   }) async {
     try {
-      print('Marking chapters as read: ${novel.title}');
-      List<History>? history =
-          await client.markAsRead(novel: novel, chapters: chapters, source: source, page: 0, position: isRead ? 1 : 0);
+      List<History>? history = await client.markAsRead(chapters: chapters, source: source, page: 0, position: isRead ? 1 : 0);
 
       if (history != null && history.isNotEmpty) {
         updateNovelHistoryList(history);

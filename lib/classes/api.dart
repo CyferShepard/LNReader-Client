@@ -512,16 +512,10 @@ class ApiClient {
   }
 
   Future<List<History>?> markAsRead(
-      {required Details novel,
-      required List<ChapterListItem> chapters,
-      required String source,
-      int page = 0,
-      double position = 0.0}) async {
-    Map<String, dynamic> novelMeta = novel.toJson();
-    novelMeta['source'] = source;
+      {required List<ChapterListItem> chapters, required String source, int page = 0, double position = 0.0}) async {
     final response = await _httpClient.post(
       '/history/insertBulk',
-      data: {'novel': novelMeta, 'chapters': ChapterListItem.toJsonList(chapters), 'page': page, 'position': position},
+      data: {'chapters': ChapterListItem.toJsonList(chapters), 'page': page, 'position': position},
     );
 
     if (response.statusCode == 200) {

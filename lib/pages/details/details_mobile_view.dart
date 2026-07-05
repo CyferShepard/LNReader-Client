@@ -126,7 +126,6 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
                         onPressed: () {
                           historyController.markAsRead(
                             apiController.chapters!.where((c) => uiController.selectedChapters.contains(c.index)).toList(),
-                            apiController.details!,
                             widget.source ?? apiController.currentSource,
                             isRead: false,
                           );
@@ -140,7 +139,6 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
                         onPressed: () {
                           historyController.markAsRead(
                               apiController.chapters!.where((c) => uiController.selectedChapters.contains(c.index)).toList(),
-                              apiController.details!,
                               widget.source ?? apiController.currentSource);
                           Get.toNamed('/history');
                         },
@@ -450,7 +448,6 @@ class _DetailsMobilePageState extends State<DetailsMobilePage> {
                       title: apiController.chapters![index].title,
                       position: historyController.novelhistory
                           .firstWhereOrNull((historyItem) =>
-                              historyItem.novel.url == apiController.details?.url &&
                               historyItem.chapter.url == apiController.chapters![index].url &&
                               historyItem.source == widget.source)
                           ?.position,
