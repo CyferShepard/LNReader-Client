@@ -1,4 +1,5 @@
 import 'package:light_novel_reader_client/models/chapter_meta.dart';
+import 'package:light_novel_reader_client/models/details.dart';
 
 class History {
   String username;
@@ -8,6 +9,7 @@ class History {
   int page;
   double position;
   ChapterMeta chapter;
+  Details? novel;
 
   History({
     required this.username,
@@ -17,6 +19,7 @@ class History {
     required this.page,
     required this.position,
     required this.chapter,
+    this.novel,
   });
 
   factory History.fromJson(Map<String, dynamic> json) {
@@ -35,6 +38,7 @@ class History {
       page: json['page'] as int,
       position: parsePosition(json['position']),
       chapter: ChapterMeta.fromJson(json['chapter'] as Map<String, dynamic>),
+      novel: json['novel'] != null ? Details.fromJson(json['novel'] as Map<String, dynamic>) : null,
     );
   }
 
@@ -51,6 +55,7 @@ class History {
       'page': page,
       'position': position,
       'chapter': chapter.toJson(),
+      'novel': novel?.toJson(),
     };
   }
 }

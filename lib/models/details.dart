@@ -96,7 +96,7 @@ class Details {
       cover: json['cover'] as String? ?? "",
       title: json['title'] as String,
       summary: summary,
-      tags: (json['tags'] as List<dynamic>?)?.cast<String>() ?? [],
+      tags: json['tags'] is List ? (json['tags'] as List<dynamic>).cast<String>() : [],
       author: authors,
       status: json['status'] as String? ?? "Unknown",
       genre: genres,

@@ -49,7 +49,7 @@ class History extends StatelessWidget {
 
             final items = historyController.history.where((historyItem) {
               final searchQuery = historyController.searchQuery.toLowerCase();
-              return historyItem.chapter.title.toLowerCase().contains(searchQuery);
+              return historyItem.chapter.title.toLowerCase().contains(searchQuery) && historyItem.novel != null;
             }).toList();
 
             if (items.isEmpty) {
